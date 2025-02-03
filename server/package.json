@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Server for Project_WhiteBoard",
+  "license": "ISC",
+  "author": "Ajeet Singh",
+  "type": "commonjs",
+  "main": "main.server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "path": "^0.12.7",
+    "socket.io": "^4.8.1",
+    "websocket": "^1.0.35"
+  }
+}

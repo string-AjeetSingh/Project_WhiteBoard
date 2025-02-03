@@ -1,0 +1,15 @@
+.nam {
+    position: relative;
+
+    transition: transform 500ms, background-color 1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nam:is(:hover) {
+
+    background-color: aqua;
+    transform: translateX(15%) rotate(10deg);
+}
+
+.btn {
+    transition: transform 200ms ease-in-out;
+}

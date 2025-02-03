@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+    --color-lightPanle: #3a7188;
+    --color-darkPanle: #0a445f;
+    --color-whiteBoard-one: #c3daf1;
+    --color-screenModeButton: #002f42;
+
+}
