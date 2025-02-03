@@ -9,24 +9,10 @@ dotenv.config();
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
 
 // Middleware to serve React build files
 app.use(express.static(path.join(__dirname, 'clientBuild')));
 
-// Real-time collaboration using Socket.io
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  // Example event for real-time updates
-  socket.on("draw", (data) => {
-    socket.broadcast.emit("draw", data);  // Broadcast the drawing to others
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
 
 // Catch-all route to serve the React app for all unknown routes (SPA)
 app.get("*", (req, res) => {
