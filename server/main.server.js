@@ -12,8 +12,7 @@ const server = createServer(app);
 const io = new Server(server);
 
 // Middleware to serve React build files
-const __dirname = path.resolve();
-app.use(express.static("/clientBuild/"));
+app.use(express.static(path.join(__dirname, 'clientBuild')));
 
 // Real-time collaboration using Socket.io
 io.on("connection", (socket) => {
@@ -30,8 +29,8 @@ io.on("connection", (socket) => {
 });
 
 // Catch-all route to serve the React app for all unknown routes (SPA)
-app.get("/", (req, res) => {
-  res.sendFile(path.join("/clientBuild", "index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "clientBuild", "index.html"));
 });
 
 app.use((req, res) => {
