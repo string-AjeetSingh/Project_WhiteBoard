@@ -7,7 +7,7 @@
     "dev": "vite",
     "start": "vite",
     "build": "vite build",
-    "postbuild": "cp -r dist ../server",
+    "postbuild": "xcopy /E /I dist ..\\server\\clientBuild",
     "lint": "eslint .",
     "preview": "vite preview"
   },

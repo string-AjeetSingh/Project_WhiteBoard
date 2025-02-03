@@ -4,7 +4,7 @@
   "description": "Server for Project_WhiteBoard",
   "license": "ISC",
   "author": "Ajeet Singh",
-  "type": "commonjs",
+  "type": "module",
   "main": "main.server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
