@@ -4,7 +4,8 @@ import { Route, BrowserRouter, Routes, Outlet } from 'react-router-dom'
 import "../src/style.css"
 import "./main.css"
 
-import { Rough } from './components/rough/rough'
+import { Rough } from './components/rough/rough';
+import { Home } from './pages/Home'
 
 function Dashboard({ }) {
   return (
@@ -20,7 +21,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<h1>Comming Soon .. .. ..</h1>}></Route>
+        <Route path='/' element={<Home />}></Route>
         <Route path='/rough' element={<Rough />}></Route>
         <Route path='/dashboard' element={<Dashboard />}>
           <Route index element={<h1>From /dashboard</h1>}></Route>

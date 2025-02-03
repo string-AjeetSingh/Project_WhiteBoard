@@ -1,7 +1,6 @@
-import { motion } from "framer-motion";
+
 import "../../cssAnimations/rough.css";
 import { useRef } from "react";
-import { div } from "framer-motion/client";
 
 function MyGrid({ }) {
     const divRef = useRef(null);
@@ -29,7 +28,7 @@ function MyGrid({ }) {
                 <div className="bg-pink-500 rounded-md">2</div>
                 <div className="bg-pink-500 rounded-md">3</div>
                 <div className="bg-pink-500 rounded-md">4</div>
-                <div className="bg-pink-500 rounded-md">5</div>
+                <div className="bg-pink-500 text- rounded-md">5</div>
 
             </div>
             <div ref={divRef} className="nam m-3 bg-pink-400 p-4 size-40 rounded-3xl
