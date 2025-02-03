@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
 
 // Catch-all route to serve the React app for all unknown routes (SPA)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "clientBuild/", "index.html"));
+  res.sendFile(path.join(__dirname, "clientBuild", "index.html"));
 });
 
 app.use((req, res) => {
