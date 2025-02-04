@@ -4,12 +4,26 @@
     transition: transform 500ms, background-color 1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.nam:is(:hover) {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
 
-    background-color: aqua;
-    transform: translateX(15%) rotate(10deg);
+    to {
+        opacity: 1;
+    }
 }
 
-.btn {
-    transition: transform 200ms ease-in-out;
+.nam2 {
+    animation: fadeIn 500ms ease-in;
+    transition: transform 1200ms, background-color 500ms, opacity 800ms ease-in;
+}
+
+.nam2:hover {
+    background-color: aqua;
+}
+
+.active {
+    transform: translateY(200px);
+    opacity: 0;
 }

@@ -6,12 +6,10 @@ function Panel({ func_OutNavProperties }) {
     const panelRef = useRef(null);
 
     function on() {
-        panelRef.current.style.transform = "translateY(122%)";
-        // panelRef.current.style.opacity = 1;
+        panelRef.current.classList.add('theactive');
     }
     function off() {
-        panelRef.current.style.transform = "translateY(-150px)";
-        //panelRef.current.style.opacity = 0;
+        panelRef.current.classList.remove('theactive');
     }
 
     useEffect(() => {
@@ -26,8 +24,11 @@ function Panel({ func_OutNavProperties }) {
 
     return (
         <>
-            <div ref={panelRef} className=" navPanel top-[-150px] z-[3]
-            absolute w-full h-40 mt-1 bg-lightPanle  flex flex-col p-1  ">
+            <div ref={panelRef} className=" navPanel z-[6]  dark:bg-darkPanle  opacity-0 
+            
+            absolute w-full h-40 mt-1 bg-lightPanle  flex flex-col p-1  "
+            >
+
 
                 <PanelButton>Home</PanelButton>
                 <PanelButton>Upgrade To Pro</PanelButton>
@@ -41,7 +42,8 @@ function PanelButton({ children, handleClick }) {
         <>
             <button onClick={() => {
                 handleClick ? handleClick() : null;
-            }} className=" flex flex-row w-full p-1 mb-1 mt-1 bg-darkPanle text-white rounded-sm">
+            }} className=" flex flex-row w-full p-1 mb-1 mt-1 
+            bg-darkPanle dark:bg-lightPanle dark:text-white text-black font-bold  rounded-sm">
                 {children}
             </button>
         </>

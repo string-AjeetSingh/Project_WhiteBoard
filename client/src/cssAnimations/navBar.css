@@ -1,4 +1,28 @@
 .navPanel {
-    transition: transform 1s ease;
+    top: -150px;
+
+    transition: transform 1000ms, opacity 800ms ease-in;
+
+
+}
+
+
+
+.darkbutt {
+    transition: background-color 200ms, transform 100ms ease-in;
+}
+
+.darkbutt:hover {
+    background-color: wheat;
+
+}
+
+.darkbutt:active {
+    transform: scale(0.9);
+}
+
+.theactive {
+    transform: translateY(204px);
+    opacity: 1;
 
 }

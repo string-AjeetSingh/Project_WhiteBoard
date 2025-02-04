@@ -13,7 +13,7 @@ function NavBar({ }) {
         if (got) {
             panel.current.on = got.on;
             panel.current.off = got.off;
-            console.log('the panel is : ', panel);
+
             return true;
         } else {
             return false;
@@ -24,37 +24,55 @@ function NavBar({ }) {
         panelBool === 1 ? setpanelBool(-1) : setpanelBool(1);
     }
 
+    const toggleDarkMode = () => {
+
+
+        let thebody = document.getElementById("theBody");
+        thebody.classList.toggle("dark");
+        // localStorage.setItem("theme", thebody.classList.contains("dark") ? "dark" : "light");
+        //console.log(localStorage.getItem("theme"));
+
+    };
+
     useEffect(() => {
         if (panelBool === 1) {
             panel.current.on();
         } else if (panelBool === -1) {
-
+            panel.current.off();
         }
     }, [panelBool])
 
     return (
         <>
-            <div className="mb-0 z-[5]">
 
-                <div className="p-2 rounded-tr-md rounded-tl-md
-            bg-lightPanle flex flex-row justify-between items-center ">
-                    <div>
-                        <span className="text-2xl text-black">Logo</span>
-                    </div>
-                    <div>
-                        <button onClick={handleButton}
-                            className=" w-[30px] border border-transparent
-                             rounded-sm  hover:border-darkPanle active:bg-darkPanle">
-                            <hr className="border m-[5px] border-black"></hr>
-                            <hr className="border m-[5px] border-black"></hr>
-                            <hr className="border m-[5px] border-black"></hr>
-                        </button>
-                    </div>
+            <div className="p-2 rounded-tr-md rounded-tl-md z-[7] relative 
+            bg-lightPanle dark:bg-darkPanle  flex flex-row justify-between items-center ">
+                {/*Nav Left Side Items   */}
+                <div>
+                    <span className="text-2xl font-bold text-black dark:text-white">Logo</span>
                 </div>
-                {panelBool === 1 ?
-                    <Panel func_OutNavProperties={getNavProperties} />
-                    : null}
+
+                {/*Nav Right Side Buttons   */}
+                <div className=" flex flex-row items-center">
+
+                    <button onClick={toggleDarkMode} className="darkbutt rounded-md p-2  
+                        bg-whiteBoard-one text-darkPanle">
+                        Dark Mode Toogle
+                    </button>
+
+                    <button onClick={handleButton}
+                        className=" w-[30px] border border-transparent
+                             rounded-sm  hover:border-darkPanle active:bg-darkPanle">
+                        <hr className="border m-[5px] border-black dark:border-white"></hr>
+                        <hr className="border m-[5px] border-black dark:border-white"></hr>
+                        <hr className="border m-[5px] border-black dark:border-white"></hr>
+                    </button>
+                </div>
             </div>
+
+
+            <Panel func_OutNavProperties={getNavProperties} />
+
         </>
     );
 }

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+
 
 @theme {
     --color-lightPanle: #3a7188;
@@ -6,4 +9,8 @@
     --color-whiteBoard-one: #c3daf1;
     --color-screenModeButton: #002f42;
 
+}
+
+.commonScreenColorAnimation {
+    transition: background-color 1000ms ease-in;
 }
