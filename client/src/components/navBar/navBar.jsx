@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Panel } from "./subcomponents";
 import '../../cssAnimations/navBar.css'
+import { DarkModeToogle } from "./navBar.darkModeButton";
 
 
 
@@ -24,15 +25,7 @@ function NavBar({ }) {
         panelBool === 1 ? setpanelBool(-1) : setpanelBool(1);
     }
 
-    const toggleDarkMode = () => {
 
-
-        let thebody = document.getElementById("theBody");
-        thebody.classList.toggle("dark");
-        // localStorage.setItem("theme", thebody.classList.contains("dark") ? "dark" : "light");
-        //console.log(localStorage.getItem("theme"));
-
-    };
 
     useEffect(() => {
         if (panelBool === 1) {
@@ -55,10 +48,7 @@ function NavBar({ }) {
                 {/*Nav Right Side Buttons   */}
                 <div className=" flex flex-row items-center">
 
-                    <button onClick={toggleDarkMode} className="darkbutt rounded-md p-2  
-                        bg-whiteBoard-one text-darkPanle">
-                        Dark Mode Toogle
-                    </button>
+                    <DarkModeToogle />
 
                     <button onClick={handleButton}
                         className=" w-[30px] border border-transparent

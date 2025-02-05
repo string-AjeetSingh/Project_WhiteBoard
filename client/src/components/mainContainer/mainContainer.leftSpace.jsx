@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useContext, useCallback } from "react";
 import { useInnerWidthHeight } from "../../hooks/InnerWidthHeight";
 import { FunctionContext, VariableContext } from "./localContext";
+import { sub } from "framer-motion/client";
 
 
 
@@ -22,13 +23,19 @@ function TP_Button({ theName, theSrc }) {
 
 
     useEffect(() => {
-        divimg.current.addEventListener("mouseenter", handleMouseEnter);
+        if (divimg.current) {
 
-        divimg.current.addEventListener("mouseleave", handleMouseLeave);
+            divimg.current.addEventListener("mouseenter", handleMouseEnter);
+
+            divimg.current.addEventListener("mouseleave", handleMouseLeave);
+        }
 
         return (() => {
-            divimg.current.removeEventListener("mouseenter", handleMouseEnter);
-            divimg.current.removeEventListener("mouseleave", handleMouseLeave);
+            if (divimg.current) {
+
+                divimg.current.removeEventListener("mouseenter", handleMouseEnter);
+                divimg.current.removeEventListener("mouseleave", handleMouseLeave);
+            }
         })
 
     }, [divimg])
@@ -55,6 +62,7 @@ function TP_Button({ theName, theSrc }) {
 
 function ToolPanel({ height, func_outProperties }) {
     const toolPanel = useRef(null);
+    const { getSubPanelProperties } = useContext(FunctionContext);
 
     function on() {
         toolPanel.current.classList.add('toolPanelActive');
@@ -74,14 +82,20 @@ function ToolPanel({ height, func_outProperties }) {
 
     return (
         <>
-            <div ref={toolPanel} className={`toolPanel  z-[3]
-            relative self-start grow bg-darkPanle w-[90px] mt-1 border
-             border-white flex flex-col items-center  `}>
-                <div className="flex flex-col items-center grow">
-                    <TP_Button theSrc={"/icons/shapes.png"} theName={"Shapes"} />
-                    <TP_Button theSrc={"/icons/pens.png"} theName={"Draw"} />
-                    <TP_Button theSrc={"/icons/background.png"} theName={"Back Ground"} />
+            <div className={` grow flex flex-col  self-start relative  `}>
+                <div ref={toolPanel} className="toolPanel self-start
+            relative grow bg-darkPanle w-[90px]  z-[5] rounded-tr-md
+             border-white flex flex-col items-center ">
+
+                    <div className="flex flex-col items-center grow ">
+                        <TP_Button theSrc={"/icons/shapes.png"} theName={"Shapes"} />
+                        <TP_Button theSrc={"/icons/pens.png"} theName={"Draw"} />
+                        <TP_Button theSrc={"/icons/background.png"} theName={"Back Ground"} />
+                    </div>
+
                 </div>
+
+                <ToolSubPanel func_outProperties={getSubPanelProperties} />
             </div>
         </>
     );
@@ -109,9 +123,9 @@ function ToolSubPanel({ func_outProperties }) {
         <>
             <div ref={toolSubPanel}
 
-                className=" toolSubPanel border border-amber-500 bottom-2  
-            absolute self-start grow bg-darkPanle mt-1 h-[82%] z-[2] w-[70vw]
-            min-w-[300px] max-w-[500px]
+                className=" toolSubPanel border border-amber-700 bottom-0 
+            absolute self-start grow bg-darkPanle mt-1 h-full  w-[70vw]
+            min-w-[300px] max-w-[500px] rounded-tr-md
               flex flex-col items-center  ">
 
             </div>
@@ -131,11 +145,11 @@ function LeftSpace({ }) {
         panelPropertise.current.on = got.on;
         panelPropertise.current.off = got.off;
     }
-    function getSubPanelProperties(got) {
+    const getSubPanelProperties = useCallback((got) => {
         subPanelPropertise.current.on = got.on;
         subPanelPropertise.current.off = got.off;
 
-    }
+    }, []);
     const subPanelOperation = useCallback((got) => {
         console.log("opeartion fouund : ", got);
         if (got.status) {
@@ -162,22 +176,25 @@ function LeftSpace({ }) {
 
     return (
         <>
-            <div className="basis-[10%] border min-w-[60px] max-w-[65px]
+            <div className="basis-[10%] min-w-[60px] max-w-[65px]
             flex flex-col items-center">
 
-                <button onClick={tooglePanel} ref={toolButt} className=" toolButt size-10 rounded-sm mt-2 m-1
+                <button onClick={tooglePanel} ref={toolButt} className=" toolButt 
+                size-10 rounded-sm mt-2 m-1 
                  bg-darkPanle dark:bg-lightPanle">
                 </button>
 
+
                 <VariableContext.Provider>
-                    <FunctionContext.Provider value={{ subPanelOperation }}>
+                    <FunctionContext.Provider value={{ subPanelOperation, getSubPanelProperties }}>
 
 
                         <ToolPanel func_outProperties={getPanelProperties} />
-                        <ToolSubPanel func_outProperties={getSubPanelProperties} />
+
 
                     </FunctionContext.Provider>
                 </VariableContext.Provider>
+
 
 
             </div>

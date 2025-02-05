@@ -19,7 +19,7 @@ function KeyFrameTry({ }) {
         <>
             <div className="flex flex-row justify-center m-4 p-4">
                 <div ref={buttRef} onClick={handleClick}
-                    className="nam2 absolute size-32 rounded-xl bg-pink-500 ">
+                    className="nam2 relative size-32 rounded-xl bg-pink-500 ">
 
                 </div>
             </div>

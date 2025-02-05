@@ -26,7 +26,8 @@ function Panel({ func_OutNavProperties }) {
         <>
             <div ref={panelRef} className=" navPanel z-[6]  dark:bg-darkPanle  opacity-0 
             
-            absolute w-full h-40 mt-1 bg-lightPanle  flex flex-col p-1  "
+            absolute w-full h-40 mt-1 bg-lightPanle  flex flex-col p-1 border-b-2 border-darkPanle
+            dark:border-lightPanle "
             >
 
 

@@ -1,7 +1,7 @@
 .navPanel {
     top: -150px;
 
-    transition: transform 1000ms, opacity 800ms ease-in;
+    transition: transform 700ms, opacity 300ms ease-in;
 
 
 }
@@ -22,7 +22,36 @@
 }
 
 .theactive {
-    transform: translateY(204px);
+    transform: translateY(208px);
+    opacity: 1;
+
+}
+
+.darkModeButtToogle {
+    transition: transform 500ms ease-out;
+}
+
+.darkModeButtToogleActive {
+    transform: translateX(39px);
+}
+
+.lightIcon {
+    bottom: -35px;
+    opacity: 0;
+    transition: transform 500ms, opacity 500ms ease-out;
+}
+
+.darkIcon {
+    transition: transform 500ms, opacity 500ms ease-out;
+}
+
+.darkIconActive {
+    transform: translateY(10px);
+    opacity: 0;
+}
+
+.lightIconActive {
+    transform: translateY(-35px);
     opacity: 1;
 
 }
