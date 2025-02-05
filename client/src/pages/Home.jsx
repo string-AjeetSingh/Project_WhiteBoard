@@ -8,6 +8,7 @@ function Home({ }) {
                 <NavBar />
             </header>
             <hr className="border relative dark:border-lightPanle border-darkPanle z-[5]" />
+
             <main className="grow pb-2 
             flex flex-row  bg-lightPanle dark:bg-darkPanle 
             ">
