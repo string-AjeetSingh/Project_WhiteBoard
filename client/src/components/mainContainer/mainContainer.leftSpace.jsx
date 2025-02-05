@@ -110,7 +110,7 @@ function ToolSubPanel({ func_outProperties }) {
             <div ref={toolSubPanel}
 
                 className=" toolSubPanel border border-amber-500 bottom-2  
-            absolute self-start grow bg-darkPanle mt-1 h-[82%] z-[2] w-[70vw]
+            absolute self-start grow bg-darkPanle mt-1 h-[80%] z-[2] w-[70vw]
             min-w-[300px] max-w-[500px]
               flex flex-col items-center  ">
 
