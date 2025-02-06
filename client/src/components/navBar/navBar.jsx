@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Panel } from "./subcomponents";
 import '../../cssAnimations/navBar.css'
 import { DarkModeToogle } from "./navBar.darkModeButton";
+import { CommonContext } from "../../myLib/commonContext/myContext";
+
 
 
 
 function NavBar({ }) {
-
+    const navDiv = useRef(null);
     const panel = useRef({ on: null, off: null });
     const [panelBool, setpanelBool] = useState(0);
+    const { trackEvent } = useContext(CommonContext);
 
     function getNavProperties(got) {
         if (got) {
@@ -25,6 +28,12 @@ function NavBar({ }) {
         panelBool === 1 ? setpanelBool(-1) : setpanelBool(1);
     }
 
+    function handleMouseEnter(event) {
+        event.stopPropagation();
+
+        trackEvent("NavBar", "mouseenter");
+    }
+
 
 
     useEffect(() => {
@@ -35,10 +44,21 @@ function NavBar({ }) {
         }
     }, [panelBool])
 
+    useEffect(() => {
+        if (navDiv.current) {
+            navDiv.current.addEventListener("mouseenter", handleMouseEnter);
+        }
+        return (() => {
+            if (navDiv.current) {
+                navDiv.current.removeEventListener("mouseenter", handleMouseEnter);
+            }
+        })
+    }, [navDiv])
+
     return (
         <>
 
-            <div className="p-2 rounded-tr-md rounded-tl-md z-[7] relative 
+            <div ref={navDiv} className="p-2 rounded-tr-md rounded-tl-md z-[7] relative 
             bg-lightPanle dark:bg-darkPanle  flex flex-row justify-between items-center ">
                 {/*Nav Left Side Items   */}
                 <div>

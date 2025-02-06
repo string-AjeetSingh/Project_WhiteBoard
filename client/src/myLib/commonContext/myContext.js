@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-let myContext = createContext(null);
+let CommonContext = createContext(null);
 
-export default myContext;
+export { CommonContext };
