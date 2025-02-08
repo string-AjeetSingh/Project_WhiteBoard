@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
-const useIsTouch = (theRef) => {
+const useIsTouch = () => {
     const [isTouch, setIsTouch] = useState(0);
 
-    if (!theRef) {
-        throw new Error('Please provdie a ref of elem in useIgnoreMouseAfterTouch hook');
-    }
 
     useEffect(() => {
 

@@ -192,9 +192,9 @@ function ToolSubPanel({ func_outProperties, i_am_using_context }) {
             <div ref={toolSubPanel}
 
                 className=" toolSubPanel border border-amber-700 bottom-0 
-            absolute self-start grow bg-darkPanle mt-1 h-full  w-[30vw]
-            min-w-[250px] max-w-[500px] rounded-tr-md
-              flex flex-col items-center overflow-hidden p-2 pl-3">
+            absolute self-start grow bg-lightPanle mt-1 h-full  w-[30vw]
+            min-w-[250px] max-w-[300px] rounded-tr-md dark:bg-darkPanle
+              flex flex-col items-center overflow-hidden pt-2 pb-2 ">
                 {content}
             </div>
         </>

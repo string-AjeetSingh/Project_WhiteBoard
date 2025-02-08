@@ -1,3 +1,10 @@
+:root {
+    --lightPanle: #3a7188;
+    --darkPanle: #0a445f;
+    --whiteBoard-one: #c3daf1;
+    --screenModeButton: #002f42;
+}
+
 .toolButt {
     transition: transform 200ms, background-color 200ms ease-in;
 }
@@ -58,4 +65,49 @@
 
 .backShowActive {
     transform: translateY(-10px);
+}
+
+.pen4 {
+    transition: transform 200ms ease-out;
+}
+
+.pen5 {
+    transition: transform 200ms ease-out;
+}
+
+.pen4Active {
+    transform: translateY(-20px);
+}
+
+.pen5Active {
+    transform: translateY(-20px);
+
+}
+
+.pen4TouchActiveSelect {
+    transform: translateY(-40px);
+}
+
+.pen5TouchActiveSelect {
+    transform: translateY(-45px);
+}
+
+.pen4ActiveSelect {
+    transform: translateY(-40px);
+}
+
+.pen5ActiveSelect {
+    transform: translateY(-40px);
+}
+
+.eraser {
+    transition: transform 200ms ease-out;
+}
+
+.eraserActive {
+    transform: translateY(-10px);
+}
+
+.eraserActiveSelect {
+    transform: scale(0.9);
 }
