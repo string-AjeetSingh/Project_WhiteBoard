@@ -14,3 +14,7 @@
 .commonScreenColorAnimation {
     transition: background-color 1000ms ease-in;
 }
+
+.customScrollBar::-webkit-scrollbar {
+    border-radius: 10px;
+}
