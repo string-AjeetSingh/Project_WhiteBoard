@@ -3,7 +3,7 @@ import { useInnerWidthHeight } from "../../hooks/InnerWidthHeight";
 import { FunctionContext, VariableContext } from "./localContext";
 import { CommonContext } from "../../myLib/commonContext/myContext";
 import { useIsTouch } from "../../hooks/isTouch";
-import { addEvent, removeEvent } from "../../utils/addRemoveEvent.js"
+import { addEvent, removeEvent } from "../../utilities/addRemoveEvent.js"
 import { SubPanelContent } from "./mainContainer.leftSpace.subPanelContents.jsx";
 
 
@@ -194,7 +194,7 @@ function ToolSubPanel({ func_outProperties, i_am_using_context }) {
                 className=" toolSubPanel border border-amber-700 bottom-0 
             absolute self-start grow bg-lightPanle mt-1 h-full  w-[30vw]
             min-w-[250px] max-w-[300px] rounded-tr-md dark:bg-darkPanle
-              flex flex-col items-center overflow-hidden pt-2 pb-2 ">
+              flex flex-col items-center overflow-hidden pt-2 pb-2 z-[4] ">
                 {content}
             </div>
         </>
@@ -223,7 +223,7 @@ function LeftSpace({ }) {
 
     }, []);
     const subPanelOperation = useCallback((got) => {
-        console.log("opeartion fouund : ", got);
+        //  console.log("opeartion fouund : ", got);
         if (got.status === 1) {
             subPanelPropertise.current.on();
             switch (got.name) {

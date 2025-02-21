@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { useIsTouch } from "../../hooks/isTouch";
-import { addEvent, removeEvent } from "../../utils/addRemoveEvent";
-import { isTouchOrMouse, isDarkMode } from "../../utils/mainContainer.Utilities";
+import { addEvent, removeEvent } from "../../utilities/addRemoveEvent";
+import { isTouchOrMouse, isDarkMode } from "../../utilities/mainContainer.Utilities";
+import { CommonContext } from "../../myLib/commonContext/myContext";
 
-function Shapes({ src, cssClass }) {
+function Shapes({ src, cssClass, name, index }) {
     const shapeDiv = useRef(null);
     let isTouch = useIsTouch();
+    const { selectedShape } = useContext(CommonContext);
 
     function handleMouseEnter(event) {
         event.stopPropagation();
@@ -50,7 +52,11 @@ function Shapes({ src, cssClass }) {
     }, [shapeDiv.current])
     return (
         <>
-            <img ref={shapeDiv} className={`size-24 m-2 shapeIcon ${cssClass}`} src={src}>
+            <img onClick={() => {
+                selectedShape.current = name;
+                //console.log('the shape we selected : ', selectedShapes.current);
+
+            }} ref={shapeDiv} className={`size-24 m-2 shapeIcon ${cssClass}`} src={src}>
             </img>
         </>
     );
@@ -419,11 +425,11 @@ function SubPanelContent({ index }) {
                     <div className="w-full flex flex-row flex-wrap justify-around 
                      m-2  ">
 
-                        <Shapes src="/icons/squareShapeLight.png" />
-                        <Shapes src="/icons/rectangleShapeLight.png" />
-                        <Shapes src="/icons/circleShapeLight.png" />
-                        <Shapes src="/icons/triangleShapeLight.png" />
-                        <Shapes src="/icons/ovalShapeLight.png" />
+                        <Shapes name={'square'} src="/icons/squareShapeLight.png" />
+                        <Shapes name={'rectangle'} src="/icons/rectangleShapeLight.png" />
+                        <Shapes name={'circle'} src="/icons/circleShapeLight.png" />
+                        <Shapes name={'triangle'} src="/icons/triangleShapeLight.png" />
+                        <Shapes name={'ellipse'} src="/icons/ovalShapeLight.png" />
                     </div>
                 </>
             );

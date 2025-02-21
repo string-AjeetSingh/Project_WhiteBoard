@@ -1,12 +1,20 @@
 import "../../cssAnimations/mainContainer.css";
 import { LeftSpace } from "./mainContainer.leftSpace";
 import { RightSpace } from "./mainContainer.rightSpace";
+import { CommonContext } from "../../myLib/commonContext/myContext";
+import { useRef, useContext } from "react";
+
 
 function MainContainer({ }) {
+    const selectedShape = useRef(null);
+    const { trackEvent, eventDetail } = useContext(CommonContext);
     return (
         <>
-            <LeftSpace />
-            <RightSpace />
+            <CommonContext.Provider value={{ trackEvent, eventDetail, selectedShape }}>
+                <LeftSpace />
+                <RightSpace />
+            </CommonContext.Provider>
+
         </>
     );
 }
