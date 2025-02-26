@@ -1,42 +1,42 @@
-import { Rectangle } from "../components/shapes/shapes";
+import { Rectangle, Circle, Triangle, Ellipse } from "../components/shapes/shapes";
 
 const handleScroll = (scrollControlBool, innerDiv, divelem) => {
-    if (scrollControlBool.current) {
-        let currentWidth = innerDiv.current.clientWidth
-        let currentHeight = innerDiv.current.clientHeight;
-        const parameters = {
-            scrollCheck: 0.01 * (divelem.current.scrollWidth - divelem.current.clientWidth),
-            totalScroll: (divelem.current.scrollWidth - divelem.current.clientWidth),
-            rightScroll: (divelem.current.scrollWidth - divelem.current.clientWidth) - divelem.current.scrollLeft,
-            bottomScroll: (divelem.current.scrollHeight - divelem.current.clientHeight) - divelem.current.scrollTop
-        }
-
-        const newWidth = (10 + currentWidth) + "px";   //control the value of increment
-        const newHeight = (10 + currentHeight) + "px"; //control the value of increment
-
-        if (divelem.current.scrollLeft < parameters.scrollCheck) {
-            innerDiv.current.style.width = newWidth;
-            //console.log('the new width  : ', innerDiv.current.clientWidth);
-            divelem.current.scrollTo({ left: 0.01 * (divelem.current.scrollWidth - divelem.current.clientWidth) });
-
-        }
-        if (parameters.rightScroll < parameters.scrollCheck) {
-            innerDiv.current.style.width = newWidth;
-            divelem.current.scrollTo({ left: (divelem.current.scrollWidth - divelem.current.clientWidth) - (0.01 * (divelem.current.scrollWidth - divelem.current.clientWidth)) });
-        }
-        if (divelem.current.scrollTop < parameters.scrollCheck) {
-            // console.log('top scroll conditions used');
-            innerDiv.current.style.height = newHeight;
-            //console.log('the new width  : ', innerDiv.current.clientWidth);
-            divelem.current.scrollTo({ top: 0.01 * (divelem.current.scrollHeight - divelem.current.clientHeight) });
-
-        }
-        if (parameters.bottomScroll < parameters.scrollCheck) {
-            //  console.log('bottom scroll condtions used');
-            innerDiv.current.style.height = newHeight;
-            divelem.current.scrollTo({ top: (divelem.current.scrollHeight - divelem.current.clientHeight) - (0.01 * (divelem.current.scrollHeight - divelem.current.clientHeight)) });
-        }
+    //if (scrollControlBool.current) {
+    let currentWidth = innerDiv.current.clientWidth
+    let currentHeight = innerDiv.current.clientHeight;
+    const parameters = {
+        scrollCheck: 5,
+        totalScroll: (divelem.current.scrollWidth - divelem.current.clientWidth),
+        rightScroll: (divelem.current.scrollWidth - divelem.current.clientWidth) - divelem.current.scrollLeft,
+        bottomScroll: (divelem.current.scrollHeight - divelem.current.clientHeight) - divelem.current.scrollTop
     }
+
+    const newWidth = (10 + currentWidth) + "px";   //control the value of increment
+    const newHeight = (10 + currentHeight) + "px"; //control the value of increment
+
+    if (divelem.current.scrollLeft < parameters.scrollCheck) {
+        innerDiv.current.style.width = newWidth;
+        //console.log('the new width  : ', innerDiv.current.clientWidth);
+        divelem.current.scrollTo({ left: 5 });
+
+    }
+    if (parameters.rightScroll < parameters.scrollCheck) {
+        innerDiv.current.style.width = newWidth;
+        divelem.current.scrollTo({ left: (divelem.current.scrollWidth - divelem.current.clientWidth) - 5 });
+    }
+    if (divelem.current.scrollTop < parameters.scrollCheck) {
+        // console.log('top scroll conditions used');
+        innerDiv.current.style.height = newHeight;
+        //console.log('the new width  : ', innerDiv.current.clientWidth);
+        divelem.current.scrollTo({ top: 5 });
+
+    }
+    if (parameters.bottomScroll < parameters.scrollCheck) {
+        //  console.log('bottom scroll condtions used');
+        innerDiv.current.style.height = newHeight;
+        divelem.current.scrollTo({ top: (divelem.current.scrollHeight - divelem.current.clientHeight) - 5 });
+    }
+    //}
 }
 
 const mouseEvent = {
@@ -75,7 +75,6 @@ const mouseEvent = {
 
 
         if (ctrlhold.current) {
-            console.log('the scroll is : ', prevScale.current, "%")
             if (e.deltaY > 0) {
 
                 //console.log("wheel down");
@@ -94,6 +93,7 @@ const mouseEvent = {
 
             }
         }
+        console.log('the scroll is : ', prevScale.current, "%")
 
     },
 
@@ -150,13 +150,52 @@ const otherEventHandle = {
         }
     },
     createSvgElem: (selectedShapes, setSvgArray, innerDiv, e) => {
-        if (selectedShapes.current) {
 
+        if (selectedShapes.current) {
             const position = getMouseCoordinateByElem(innerDiv, e);
             if (selectedShapes.current === 'rectangle') {
                 setSvgArray((prev) => {
                     let newOne = prev.slice();
-                    newOne.push(<Rectangle x={position.x} y={position.y} width={150} height={100} />);
+                    newOne.push(<Rectangle x={position.x} y={position.y} width={150} height={100} useAs={'rectangle'} />);
+                    return newOne;
+                });
+                selectedShapes.current = null;
+            }
+            else if (selectedShapes.current === 'circle') {
+
+                setSvgArray((prev) => {
+                    let newOne = prev.slice();
+                    newOne.push(<Circle x={position.x} y={position.y} width={200} height={200} cx={100} cy={100} radius={80} />);
+                    return newOne;
+                });
+                selectedShapes.current = null;
+            }
+
+            else if (selectedShapes.current === 'ellipse') {
+
+                setSvgArray((prev) => {
+                    let newOne = prev.slice();
+                    newOne.push(<Ellipse x={position.x} y={position.y} width={200} height={150} cx={100} cy={75} rx={80} ry={55} />);
+                    return newOne;
+                });
+                selectedShapes.current = null;
+            }
+
+            else if (selectedShapes.current === 'square') {
+
+                setSvgArray((prev) => {
+                    let newOne = prev.slice();
+                    newOne.push(<Rectangle x={position.x} y={position.y} width={150} height={150} useAs={'square'} />);
+                    return newOne;
+                });
+                selectedShapes.current = null;
+            }
+
+            else if (selectedShapes.current === 'triangle') {
+
+                setSvgArray((prev) => {
+                    let newOne = prev.slice();
+                    newOne.push(<Triangle x={position.x} y={position.y} width={150} height={150} points={'75,20 20,130 130,130'} />);
                     return newOne;
                 });
                 selectedShapes.current = null;

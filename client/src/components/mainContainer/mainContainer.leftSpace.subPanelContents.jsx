@@ -54,7 +54,6 @@ function Shapes({ src, cssClass, name, index }) {
         <>
             <img onClick={() => {
                 selectedShape.current = name;
-                //console.log('the shape we selected : ', selectedShapes.current);
 
             }} ref={shapeDiv} className={`size-24 m-2 shapeIcon ${cssClass}`} src={src}>
             </img>
@@ -440,11 +439,11 @@ function SubPanelContent({ index }) {
                     <div className="w-full flex flex-row flex-wrap justify-around 
                      m-2  ">
 
-                        <Shapes src="/icons/squareShape.png" />
-                        <Shapes src="/icons/rectangleShape.png" />
-                        <Shapes src="/icons/circleShape.png" />
-                        <Shapes src="/icons/triangleShape.png" />
-                        <Shapes src="/icons/ovalShape.png" />
+                        <Shapes name={'square'} src="/icons/squareShape.png" />
+                        <Shapes name={'rectangle'} src="/icons/rectangleShape.png" />
+                        <Shapes name={'circle'} src="/icons/circleShape.png" />
+                        <Shapes name={'triangle'} src="/icons/triangleShape.png" />
+                        <Shapes name={'ellipse'} src="/icons/ovalShape.png" />
                     </div>
                 </>
             );

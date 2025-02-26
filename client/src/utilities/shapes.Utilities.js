@@ -1,7 +1,7 @@
 const eventHandles = {
     useSelector: (selector, svgRef, svgElemRef, name) => {
 
-        selector.current.select(svgRef, svgElemRef);
+        selector.current.select(svgRef, svgElemRef, name);
 
     }
 

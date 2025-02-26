@@ -26,7 +26,8 @@ function WhiteBoard({ }) {
     const mousePoinerPostion = useRef([null, null]);
     const scrollPostion = useRef([null, null]);
     const ctrlHold = useHoldKey(innerDiv, 'Control');
-    const prevScale = useRef(100);
+    const prevScale = useRef(200);
+
     const { selectedShape, trackEvent } = useContext(CommonContext);
     const [SvgArray, setSvgArray] = useState([
         <svg width={500} height={500} className="absolute" style={{
@@ -57,6 +58,8 @@ function WhiteBoard({ }) {
         mouseDown: mouseEvent.down.bind(null, selectedShape),
         createShape: otherEventHandle.createSvgElem.bind(null, selectedShape, setSvgArray, innerDiv),
         trackInnerDivMouseUp: trackEvent.bind(null, 'innerDiv', 'mouseup', null),
+        trackInnerDivMouseDown: trackEvent.bind(null, 'innerDiv', 'mousedown', null),
+        trackInnerDivMouseLeave: trackEvent.bind(null, 'innerDiv', 'mouseleave', null),
 
     }
 
@@ -70,11 +73,13 @@ function WhiteBoard({ }) {
             >
                 <div style={{
                     transformOrigin: "top left",
+                    transform: `scale(${prevScale.current}%)`
+
                 }}
                     ref={innerDiv} className="bg-whiteBoard-one h-[1000px] 
                  text-black w-[1000px] absolute text-center "
                 >
-                    <SelectorContext.Provider value={{ theSelector, innerDiv }}>
+                    <SelectorContext.Provider value={{ theSelector, innerDiv, prevScale }}>
 
                         <Content SvgArray={SvgArray} />
                         <Selector />
@@ -83,21 +88,7 @@ function WhiteBoard({ }) {
 
                 </div>
             </div>
-            <div className="m-2 mt-5 text-[1.2rem] flex flex-row items-center "
-            >
-                <input onChange={(e) => {
-                    if (e.target.checked) {
-                        console.log("the scroll control enabled");
-                        scrollControlBool.current = true;
-                    } else {
 
-                        scrollControlBool.current = false;
-                        console.log("the scroll control disabled");
-                    }
-                }} className="size-5" type="checkbox">
-                </input>
-                <span className="ml-1">Enable Scroll Control</span>
-            </div>
 
         </>
     );

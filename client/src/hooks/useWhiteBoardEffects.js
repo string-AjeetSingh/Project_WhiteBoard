@@ -27,10 +27,12 @@ const useWhiteboardEvents = (innerDiv, divelem, bindedFunction) => {
         theEvents.setEvent(innerDiv, 'mousedown', bindedFunction.mouseMiddleDown);
         theEvents.setEvent(innerDiv, 'mousedown', bindedFunction.mouseDown);
         theEvents.setEvent(innerDiv, 'mousedown', bindedFunction.createShape);
+        theEvents.setEvent(innerDiv, 'mousedown', bindedFunction.trackInnerDivMouseDown);
         theEvents.setEvent(innerDiv, 'mousemove', bindedFunction.mouseMove);
         theEvents.setEvent(innerDiv, 'mouseup', bindedFunction.mouseMiddleUp);
         theEvents.setEvent(innerDiv, 'mouseup', bindedFunction.trackInnerDivMouseUp);
         theEvents.setEvent(innerDiv, 'mouseleave', bindedFunction.mouseLeave);
+        theEvents.setEvent(innerDiv, 'mouseleave', bindedFunction.trackInnerDivMouseLeave);
         theEvents.setEvent(innerDiv, 'wheel', bindedFunction.wheelZoom);
 
 
