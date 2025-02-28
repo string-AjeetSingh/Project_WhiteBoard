@@ -103,6 +103,10 @@ function ToolPanel({ height, func_outProperties, i_am_using_context }) {
         event.stopPropagation();
         trackEvent('ToolPanel', 'mouseenter');
     }
+    function handleMouseClickTrack(event) {
+        // event.stopPropagation();
+        trackEvent('ToolPanel', 'click');
+    }
 
     useEffect(() => {
         if (func_outProperties) {
@@ -115,10 +119,12 @@ function ToolPanel({ height, func_outProperties, i_am_using_context }) {
     useEffect(() => {
         if (toolPanelDiv.current) {
             toolPanelDiv.current.addEventListener('mouseenter', handleMouseEnterTrack);
+            toolPanelDiv.current.addEventListener('click', handleMouseClickTrack);
         }
         return () => {
             if (toolPanelDiv.current) {
                 toolPanelDiv.current.removeEventListener('mouseenter', handleMouseEnterTrack);
+                toolPanelDiv.current.removeEventListener('click', handleMouseClickTrack);
             }
         }
 

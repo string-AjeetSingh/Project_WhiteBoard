@@ -53,6 +53,8 @@ function Shapes({ src, cssClass, name, index }) {
     return (
         <>
             <img onClick={() => {
+
+
                 selectedShape.current = name;
 
             }} ref={shapeDiv} className={`size-24 m-2 shapeIcon ${cssClass}`} src={src}>

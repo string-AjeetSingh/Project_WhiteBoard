@@ -14,7 +14,7 @@ function Selector({ }) {
     const selectedElem = useRef(null);
     const boolActiveIncrement = useRef(null);
     const { theSelector, innerDiv, prevScale } = useContext(SelectorContext);
-    const { eventDetail } = useContext(CommonContext);
+    const { eventDetail, trackEvent } = useContext(CommonContext);
     const [mousePointer, mousePointerRef, normalizeScale] = useMouseMovement(prevScale);
 
 
@@ -26,6 +26,10 @@ function Selector({ }) {
         activeDotIncrement: selectorWork.activeDotIncrement.bind(null, selectedElem, innerDiv, dotRef, mousePointerRef, boolActiveIncrement),
         deActivateIncrement: selectorWork.deActivateIncrement.bind(null, boolActiveIncrement),
         boundingDataRespectToZoom: otherFunctions.getBoundingClientRectRespectToZoomScale.bind(null, normalizeScale),
+        trackWidthRefDownEvent: trackEvent.bind(null, 'widthRef', 'mousedown', null),
+        trackHeightRefDownEvent: trackEvent.bind(null, 'heightRef', 'mousedown', null),
+        trackDotRefDownEvent: trackEvent.bind(null, 'dotRef', 'mousedown', null),
+        trackMoveRefDownEvent: trackEvent.bind(null, 'moveRef', 'mousedown', null),
     }
 
     useEffect(() => {
@@ -44,24 +48,30 @@ function Selector({ }) {
 
     useEffect(() => {
 
-        if (eventDetail.name === 'innerDiv', eventDetail.type === 'mouseup') {
+        if (eventDetail.name === 'innerDiv' && eventDetail.type === 'mouseup') {
             selectorWork.deActivateIncrement(boolActiveIncrement);
         }
-        if (eventDetail.name === 'innerDiv', eventDetail.type === 'mousedown') {
+        if (eventDetail.name === 'ToolPanel' && eventDetail.type === 'click') {
+            otherFunctions.unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef);
+        }
+        if (eventDetail.name === 'RightSide' && eventDetail.type === 'mouseleave') {
             selectorWork.deActivateIncrement(boolActiveIncrement);
         }
-        if (eventDetail.name === 'RightSide', eventDetail.type === 'mouseleave') {
-            selectorWork.deActivateIncrement(boolActiveIncrement);
-        }
+        //console.log('TRACK EVENT S : ', eventDetail);
+
 
     }, [eventDetail])
 
     useEffect(() => {
         const theEvent = new effectEventClass();
         theEvent.setEvent(widthRef, "mousedown", bindedFunction.activeWidthIncrement);
+        theEvent.setEvent(widthRef, "mousedown", bindedFunction.trackWidthRefDownEvent);
         theEvent.setEvent(heightRef, 'mousedown', bindedFunction.activeHeightIncrement);
+        theEvent.setEvent(heightRef, 'mousedown', bindedFunction.trackHeightRefDownEvent);
         theEvent.setEvent(dotRef, 'mousedown', bindedFunction.activeDotIncrement);
+        theEvent.setEvent(dotRef, 'mousedown', bindedFunction.trackDotRefDownEvent);
         theEvent.setEvent(moveRef, 'mousedown', bindedFunction.activeMovement);
+        theEvent.setEvent(moveRef, 'mousedown', bindedFunction.trackMoveRefDownEvent);
         theEvent.setEvent(widthRef, "mouseup", bindedFunction.deActivateIncrement);
 
         return (() => {
@@ -70,7 +80,11 @@ function Selector({ }) {
     }, [])
 
     useEffect(() => {
+        //console.log('the boolRef to run the increment is : ', boolActiveIncrement);
+
         if (boolActiveIncrement.current === 'width') {
+            console.log('the width increment to be done');
+
             selectorWork.performWidthIncrement(selectedElem, mousePointerRef, widthRef, innerDiv);
             otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true, height: true });
 
@@ -80,6 +94,7 @@ function Selector({ }) {
             otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true, width: true });
         }
         if (boolActiveIncrement.current === 'dot') {
+
 
             selectorWork.performDotIncrement(selectedElem, mousePointerRef, dotRef, innerDiv);
 
@@ -105,7 +120,6 @@ function Selector({ }) {
         if (boolActiveIncrement.current === 'move') {
             selectorWork.performMovement(selectedElem, innerDiv, moveRef, mousePointerRef);
 
-            //otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { width: true, height: true, dot: true });
             if (selectedElem.type === 'circle') {
                 otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true });
             }
@@ -128,14 +142,17 @@ function Selector({ }) {
     return (
         <>
             <div ref={widthRef}
+
                 style={{                        //width
                     left: '10px',
-                    top: '10px'
+                    top: '10px',
+
                 }}
                 className="w-[3px] h-[200px] bg-amber-900 absolute">
 
             </div>
             <div ref={heightRef}
+
                 style={{                        //height
                     left: '20px',
                     top: '10px'
@@ -144,6 +161,7 @@ function Selector({ }) {
 
             </div>
             <div ref={dotRef}
+
                 style={{                        //dot
                     left: '20px',
                     top: '30px'
@@ -152,6 +170,7 @@ function Selector({ }) {
 
             </div>
             <div ref={moveRef}                 //move
+
                 style={{
                     left: '40px',
                     top: '40px'

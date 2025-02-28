@@ -21,6 +21,7 @@ const selectorWork = {
     },
     activeIncrement: (subjectRef, parentRef, theRef, boolRef, type) => {
 
+
         setRefParametersRecords(subjectRef.current.svgRef);
         setRefParametersRecords(parentRef);
 
@@ -48,11 +49,14 @@ const selectorWork = {
 
     activeDotIncrement: (subjectRef, parentRef, dotRef, mousePointerRef, boolRef) => {
 
+
         setRefParametersRecords(subjectRef.current.svgRef);
         setRefParametersRecords(parentRef);
         setRefParametersRecords(dotRef);
         mousePointerRef.records = { x: mousePointerRef.current.x, y: mousePointerRef.current.y };
         boolRef.current = "dot";
+
+
 
         if (subjectRef.type === 'triangle') {
             subjectRef.current.svgElemRef.records = { points: subjectRef.current.svgElemRef.current.getAttribute('points').split(" ") };
@@ -76,8 +80,11 @@ const selectorWork = {
 
 
     deActivateIncrement: (boolRef) => {
+        console.log('from deactivate');
+
         boolRef.current = null;
     },
+
 
     performWidthIncrement: (subjectRef, mousePointerRef, widthRef, parentRef) => {
 
@@ -312,6 +319,7 @@ const selectorWork = {
 
 const otherFunctions = {
     setSelectorBodyToSubject,
+    unsetSelectorBodyToSubject,
     getBoundingClientRectRespectToZoomScale: (normalizedScale, theRef) => {
         const boundingData = theRef.current.getBoundingClientRect();
         const scaleFactor = normalizedScale.current;
@@ -425,6 +433,16 @@ function setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectR
     }
 
 
+
+}
+
+function unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef) {
+
+    const removeCoord = -10
+    setLeftTop(removeCoord, removeCoord, widthRef);
+    setLeftTop(removeCoord, removeCoord, heightRef);
+    setLeftTop(removeCoord, removeCoord, dotRef);
+    setLeftTop(removeCoord, removeCoord, moveRef);
 
 }
 

@@ -63,17 +63,24 @@ function Circle({ index, x, y, cx, cy, width, height, radius }) {
                 left: x
             }}
                 width={width} height={height} className="absolute border border-slate-500" >
-                <circle ref={shapeRef} cx={cx} cy={cy} r={radius} fill="none" stroke="black" strokeWidth="2" />
+                <circle ref={shapeRef} cx={width / 2} cy={width / 2} r={width / 2 - 20} fill="none" stroke="black" strokeWidth="2" />
             </svg>
         </>
     );
 }
 
-function Triangle({ index, x, y, width, height, points }) {
+function Triangle({ index, x, y, width, height }) {
 
     const svgRef = useRef(null);
     const shapeRef = useRef(null);
     const { theSelector } = useContext(SelectorContext);
+
+    const thePoints = {
+        p1: `${width / 2},${10 / 100 * height}`,
+        p2: `${10 / 100 * width},${height - (10 / 100 * height)}`,
+        p3: `${width - (10 / 100 * width)},${height - (10 / 100 * height)}`,
+
+    }
 
     const bindedFunction = {
         provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'triangle'),
@@ -95,13 +102,13 @@ function Triangle({ index, x, y, width, height, points }) {
                 left: x
             }}
                 width={width} height={height} className="absolute " >
-                <polygon ref={shapeRef} points={points} fill="none" stroke="black" strokeWidth="2" />
+                <polygon ref={shapeRef} points={`${thePoints.p1} ${thePoints.p2} ${thePoints.p3}`} fill="none" stroke="black" strokeWidth="2" />
             </svg >
         </>
     );
 }
 
-function Ellipse({ index, x, y, cx, cy, width, height, rx, ry }) {
+function Ellipse({ index, x, y, width, height }) {
 
     const svgRef = useRef(null);
     const shapeRef = useRef(null);
@@ -127,7 +134,7 @@ function Ellipse({ index, x, y, cx, cy, width, height, rx, ry }) {
                 left: x
             }}
                 width={width} height={height} className="absolute border border-slate-500" >
-                <ellipse ref={shapeRef} cx={cx} cy={cy} rx={rx} ry={ry} fill="none" stroke="black" strokeWidth="2" />
+                <ellipse ref={shapeRef} cx={width / 2} cy={height / 2} rx={width / 2 - 20} ry={height / 2 - 20} fill="none" stroke="black" strokeWidth="2" />
             </svg>
         </>
     );

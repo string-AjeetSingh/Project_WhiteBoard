@@ -27,6 +27,7 @@ function WhiteBoard({ }) {
     const scrollPostion = useRef([null, null]);
     const ctrlHold = useHoldKey(innerDiv, 'Control');
     const prevScale = useRef(200);
+    const defaultScaleValue = useRef(100)
 
     const { selectedShape, trackEvent } = useContext(CommonContext);
     const [SvgArray, setSvgArray] = useState([
@@ -56,7 +57,7 @@ function WhiteBoard({ }) {
         resumeMouseZoom: otherEventHandle.resumeZoomOnCtrl.bind(null, innerDiv),
         wheelZoom: mouseEvent.wheelZoom.bind(null, ctrlHold, prevScale, innerDiv, totalScrollPossible),
         mouseDown: mouseEvent.down.bind(null, selectedShape),
-        createShape: otherEventHandle.createSvgElem.bind(null, selectedShape, setSvgArray, innerDiv),
+        createShape: otherEventHandle.createSvgElem.bind(null, selectedShape, setSvgArray, innerDiv, prevScale, defaultScaleValue),
         trackInnerDivMouseUp: trackEvent.bind(null, 'innerDiv', 'mouseup', null),
         trackInnerDivMouseDown: trackEvent.bind(null, 'innerDiv', 'mousedown', null),
         trackInnerDivMouseLeave: trackEvent.bind(null, 'innerDiv', 'mouseleave', null),

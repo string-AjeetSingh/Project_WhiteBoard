@@ -149,14 +149,16 @@ const otherEventHandle = {
             }
         }
     },
-    createSvgElem: (selectedShapes, setSvgArray, innerDiv, e) => {
+    createSvgElem: (selectedShapes, setSvgArray, innerDiv, prevScale, defaultScale, e) => {
+
 
         if (selectedShapes.current) {
-            const position = getMouseCoordinateByElem(innerDiv, e);
+            const normalizeScale = prevScale.current / defaultScale.current;
+            const position = getMouseCoordinateByElem(innerDiv, e, prevScale.current, defaultScale.current);
             if (selectedShapes.current === 'rectangle') {
                 setSvgArray((prev) => {
                     let newOne = prev.slice();
-                    newOne.push(<Rectangle x={position.x} y={position.y} width={150} height={100} useAs={'rectangle'} />);
+                    newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={100 / normalizeScale} useAs={'rectangle'} />);
                     return newOne;
                 });
                 selectedShapes.current = null;
@@ -165,7 +167,7 @@ const otherEventHandle = {
 
                 setSvgArray((prev) => {
                     let newOne = prev.slice();
-                    newOne.push(<Circle x={position.x} y={position.y} width={200} height={200} cx={100} cy={100} radius={80} />);
+                    newOne.push(<Circle x={position.x} y={position.y} width={200 / normalizeScale} height={200 / normalizeScale} />);
                     return newOne;
                 });
                 selectedShapes.current = null;
@@ -175,7 +177,7 @@ const otherEventHandle = {
 
                 setSvgArray((prev) => {
                     let newOne = prev.slice();
-                    newOne.push(<Ellipse x={position.x} y={position.y} width={200} height={150} cx={100} cy={75} rx={80} ry={55} />);
+                    newOne.push(<Ellipse x={position.x} y={position.y} width={200 / normalizeScale} height={150 / normalizeScale} />);
                     return newOne;
                 });
                 selectedShapes.current = null;
@@ -185,7 +187,7 @@ const otherEventHandle = {
 
                 setSvgArray((prev) => {
                     let newOne = prev.slice();
-                    newOne.push(<Rectangle x={position.x} y={position.y} width={150} height={150} useAs={'square'} />);
+                    newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} useAs={'square'} />);
                     return newOne;
                 });
                 selectedShapes.current = null;
@@ -195,7 +197,7 @@ const otherEventHandle = {
 
                 setSvgArray((prev) => {
                     let newOne = prev.slice();
-                    newOne.push(<Triangle x={position.x} y={position.y} width={150} height={150} points={'75,20 20,130 130,130'} />);
+                    newOne.push(<Triangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} />);
                     return newOne;
                 });
                 selectedShapes.current = null;
@@ -209,11 +211,12 @@ function preventDefault(e) {
     e.preventDefault();
 }
 
-function getMouseCoordinateByElem(elemRef, event) {
+function getMouseCoordinateByElem(elemRef, event, prevScale, defaultScale) {
+    const normalizeScale = prevScale / defaultScale;
     const currentPosition = elemRef.current.getBoundingClientRect();
     return {
-        x: event.clientX - currentPosition.left,
-        y: event.clientY - currentPosition.top
+        x: (event.clientX - currentPosition.left) / normalizeScale,
+        y: (event.clientY - currentPosition.top) / normalizeScale
     }
 }
 
