@@ -5,6 +5,8 @@ import { CommonContext } from "../../myLib/commonContext/myContext";
 import { useIsTouch } from "../../hooks/isTouch";
 import { addEvent, removeEvent } from "../../utilities/addRemoveEvent.js"
 import { SubPanelContent } from "./mainContainer.leftSpace.subPanelContents.jsx";
+import { PropertiesPanel } from "../propertiePanel/propertiePanle.jsx";
+import { panelOnOffControl } from "../../utilities/mainContainer.Utilities.js";
 
 
 
@@ -89,7 +91,7 @@ function TP_Button({ theName, theSrc, index, i_am_using_context }) {
 function ToolPanel({ height, func_outProperties, i_am_using_context }) {
     const toolPanel = useRef(null);
     const { trackEvent } = useContext(CommonContext);
-    const { getSubPanelProperties } = useContext(FunctionContext);
+    const { getSubPanelProperties, getPPanelProperties } = useContext(FunctionContext);
     const toolPanelDiv = useRef(null);
 
     function on() {
@@ -146,6 +148,8 @@ function ToolPanel({ height, func_outProperties, i_am_using_context }) {
                 </div>
 
                 <ToolSubPanel func_outProperties={getSubPanelProperties} />
+                <PropertiesPanel out_Functionality={getPPanelProperties} />
+
             </div>
         </>
     );
@@ -214,6 +218,7 @@ function LeftSpace({ }) {
     const toolButt = useRef(null);
     const panelPropertise = useRef({ on: null, off: null });
     const subPanelPropertise = useRef({ on: null, off: null });
+    const pPanelPropertise = useRef({ on: null, off: null });
     const { trackEvent, eventDetail } = useContext(CommonContext);
     const leftSpaceElem = useRef(null);
 
@@ -228,6 +233,11 @@ function LeftSpace({ }) {
         subPanelPropertise.current.setContent = got.setContent;
 
     }, []);
+    const getPPanelProperties = useCallback((got) => {
+        pPanelPropertise.current.on = got.on;
+        pPanelPropertise.current.off = got.off;
+    }, []);
+
     const subPanelOperation = useCallback((got) => {
         //  console.log("opeartion fouund : ", got);
         if (got.status === 1) {
@@ -312,6 +322,7 @@ function LeftSpace({ }) {
         if (panelBool === 1) {
             panelPropertise.current.on();
 
+
         } else if (panelBool === -1) {
             panelPropertise.current.off();
         }
@@ -348,7 +359,7 @@ function LeftSpace({ }) {
 
 
                 <VariableContext.Provider value={{ subPanelIsOn }}>
-                    <FunctionContext.Provider value={{ subPanelOperation, getSubPanelProperties }}>
+                    <FunctionContext.Provider value={{ subPanelOperation, getSubPanelProperties, getPPanelProperties }}>
 
 
                         <ToolPanel func_outProperties={getPanelProperties} />

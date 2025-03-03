@@ -1,0 +1,10 @@
+.pPanle {
+
+    left: -500px;
+    transition: transform 300ms ease-out;
+
+}
+
+.pPanleActive {
+    transform: translateX(500px);
+}

@@ -7,10 +7,11 @@ import { useRef, useContext } from "react";
 
 function MainContainer({ }) {
     const selectedShape = useRef(null);
+    const aCommunication = useRef({});
     const { trackEvent, eventDetail } = useContext(CommonContext);
     return (
         <>
-            <CommonContext.Provider value={{ trackEvent, eventDetail, selectedShape }}>
+            <CommonContext.Provider value={{ trackEvent, eventDetail, selectedShape, aCommunication }}>
                 <LeftSpace />
                 <RightSpace />
             </CommonContext.Provider>

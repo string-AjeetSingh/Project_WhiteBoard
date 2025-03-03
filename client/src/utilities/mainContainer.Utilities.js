@@ -16,6 +16,20 @@ function isDarkMode() {
     }
 }
 
+function panelOnOffControl(condition = 1, panels = {
+    toolPanelFuncs: null, toolSubPanelFuncs: null, pPanelFuncs: null
+}) {
+    if (condition === 1) {
+        panels.toolPanelFuncs.on();
+        panels.toolSubPanelFuncs.on();
+        panels.pPanelFuncs.off();
+    } else if (condition === 2) {
+        panels.toolSubPanelFuncs.off();
+        panels.toolPanelFuncs.off();
+        panels.pPanelFuncs.oon();
+    }
+}
 
 
-export { isTouchOrMouse, isDarkMode }
+
+export { isTouchOrMouse, isDarkMode, panelOnOffControl }
