@@ -19,7 +19,7 @@ const selectorWork = {
         }
 
     },
-    activeIncrement: (subjectRef, parentRef, theRef, boolRef, type) => {
+    activeIncrement: (subjectRef, parentRef, theRef, boolRef, type, directDataIncrement = { enable: false }) => {
 
 
         setRefParametersRecords(subjectRef.current.svgRef);
@@ -27,7 +27,9 @@ const selectorWork = {
 
         if (type === 'width') {
             setRefParametersRecords(theRef);
-            boolRef.current = "width";
+
+            if (!directDataIncrement.enable)
+                boolRef.current = "width";
 
             if (subjectRef.type === 'triangle') {
                 subjectRef.current.svgElemRef.records = { points: subjectRef.current.svgElemRef.current.getAttribute('points').split(" ") };
@@ -36,7 +38,9 @@ const selectorWork = {
         }
         else if (type === 'height') {
             setRefParametersRecords(theRef);
-            boolRef.current = "height";
+
+            if (!directDataIncrement.enable)
+                boolRef.current = "height";
 
             if (subjectRef.type === 'triangle') {
                 subjectRef.current.svgElemRef.records = { points: subjectRef.current.svgElemRef.current.getAttribute('points').split(" ") };
@@ -86,25 +90,29 @@ const selectorWork = {
     },
 
 
-    performWidthIncrement: (subjectRef, mousePointerRef, widthRef, parentRef) => {
+    performWidthIncrement: (subjectRef, mousePointerRef, widthRef, parentRef, directDataIncrement = { enable: false, width: null }) => {
 
+        let relativeCursorPosition = null;
+        let relativeWidthPosition = null;
 
-        //widthSelector movement
-        const relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
-        const relativeWidthPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: widthRef.records.x, y: widthRef.records.y });
+        if (!directDataIncrement.enable) {       //for directData like width = 100 
+            relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
+            relativeWidthPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: widthRef.records.x, y: widthRef.records.y });
+        }
 
-        //console.log('difference new width to increase : ', relativeCursorPosition.x - relativeWidthPosition.x);
 
         const newParameters = {
-            width: subjectRef.current.svgRef.records.width + relativeCursorPosition.x - relativeWidthPosition.x,
+            width: directDataIncrement.enable ? directDataIncrement.width : subjectRef.current.svgRef.records.width + relativeCursorPosition.x - relativeWidthPosition.x,
         }
+
         if (newParameters.width > 1) {
 
+            if (!directDataIncrement.enable)
+                setLeftTop(relativeCursorPosition.x, null, widthRef);
 
-            setLeftTop(relativeCursorPosition.x, null, widthRef);
-            subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
 
             if (subjectRef.type === 'rectangle') {
+                subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
                 subjectRef.current.svgElemRef.current.style.width = newParameters.width + 'px';
 
             }
@@ -115,26 +123,51 @@ const selectorWork = {
                     p3: subjectRef.current.svgElemRef.records.points[2].split(','),
                 }
 
-                newParameters.points = {
-                    p1: {
+                if (directDataIncrement.enable) {         //parametes for directData
+                    newParameters.points = {};
+                    newParameters.width = parseFloat(oldPoints.p2[0]) + directDataIncrement.width + 5;
+
+                    newParameters.points.p1 = {
                         x: newParameters.width / 2,
                         y: parseFloat(oldPoints.p1[1])
                     },
-                    p2: {
-                        x: parseFloat(oldPoints.p2[0]),
-                        y: parseFloat(oldPoints.p2[1])
-                    },
-                    p3: {
-                        x: parseFloat(oldPoints.p3[0]) + relativeCursorPosition.x - relativeWidthPosition.x,
-                        y: parseFloat(oldPoints.p3[1])
-                    },
+                        newParameters.points.p2 = {
+                            x: parseFloat(oldPoints.p2[0]),
+                            y: parseFloat(oldPoints.p2[1])
+                        },
+                        newParameters.points.p3 = {
+                            x: newParameters.width - 5,
+                            y: parseFloat(oldPoints.p3[1])
+                        }
 
+                } else {
+                    newParameters.points = {                 //parametes for intractiveData
+                        p1: {
+                            x: newParameters.width / 2,
+                            y: parseFloat(oldPoints.p1[1])
+                        },
+                        p2: {
+                            x: parseFloat(oldPoints.p2[0]),
+                            y: parseFloat(oldPoints.p2[1])
+                        },
+                        p3: {
+                            x: parseFloat(oldPoints.p3[0]) + relativeCursorPosition.x - relativeWidthPosition.x,
+                            y: parseFloat(oldPoints.p3[1])
+                        },
+
+                    }
                 }
 
+                console.log('the points of triangle : ', newParameters.points);
+                console.log('it must be : ', typeof (directDataIncrement.width))
+
+                //subjectRef.current.svgRef.current.style.width = (newParameters.points.p3.x + 0.1 * newParameters.points.p3.x) + 'px';
+                subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
                 subjectRef.current.svgElemRef.current.setAttribute('points', `${newParameters.points.p1.x},${newParameters.points.p1.y} ${newParameters.points.p2.x},${newParameters.points.p2.y} ${newParameters.points.p3.x},${newParameters.points.p3.y}`);
 
             }
             else if (subjectRef.type === 'ellipse') {
+                subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
                 newParameters.rx = newParameters.width / 2 - 20;
                 newParameters.cx = newParameters.width / 2;
                 subjectRef.current.svgElemRef.current.setAttribute('rx', newParameters.rx);
@@ -142,25 +175,28 @@ const selectorWork = {
             }
         }
     },
-    performHeightIncrement: (subjectRef, mousePointerRef, heightRef, parentRef) => {
+    performHeightIncrement: (subjectRef, mousePointerRef, heightRef, parentRef, directDataIncrement = { enable: false, height: null }) => {
         //console.log('parentRecords : ', parentRef);
+        let relativeCursorPosition = null;
+        let relativeHeightPosition = null;
 
-
-        const relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
-        const relativeHeightPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: heightRef.records.x, y: heightRef.records.y });
-
-        const newParameters = {
-            height: subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeHeightPosition.y,
-
+        if (!directDataIncrement.enable) {
+            relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
+            relativeHeightPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: heightRef.records.x, y: heightRef.records.y });
         }
 
-        subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
+        const newParameters = {
+            height: directDataIncrement.enable ? directDataIncrement.height : subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeHeightPosition.y,
+        }
 
         if (newParameters.height > 1) {
-            setLeftTop(null, relativeCursorPosition.y, heightRef);
+
+            if (!directDataIncrement.enable)
+                setLeftTop(null, relativeCursorPosition.y, heightRef);
 
             if (subjectRef.type === 'rectangle') {
                 subjectRef.current.svgElemRef.current.style.height = newParameters.height + 'px';
+                subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
 
             }
             if (subjectRef.type === 'triangle') {
@@ -170,27 +206,47 @@ const selectorWork = {
                     p3: subjectRef.current.svgElemRef.records.points[2].split(','),
                 }
 
+                if (directDataIncrement.enable) {         //parametes for directData
+                    newParameters.points = {};
+                    newParameters.height = parseFloat(oldPoints.p1[1]) + directDataIncrement.height + 5;
 
-                newParameters.points = {
-                    p1: {
+                    newParameters.points.p1 = {
                         x: parseFloat(oldPoints.p1[0]),
                         y: parseFloat(oldPoints.p1[1])
                     },
-                    p2: {
-                        x: parseFloat(oldPoints.p2[0]),
-                        y: parseFloat(oldPoints.p2[1]) + relativeCursorPosition.y - relativeHeightPosition.y,
-                    },
-                    p3: {
-                        x: parseFloat(oldPoints.p3[0]),
-                        y: parseFloat(oldPoints.p3[1]) + relativeCursorPosition.y - relativeHeightPosition.y,
-                    },
+                        newParameters.points.p2 = {
+                            x: parseFloat(oldPoints.p2[0]),
+                            y: newParameters.height - 5
+                        },
+                        newParameters.points.p3 = {
+                            x: parseFloat(oldPoints.p3[0]),
+                            y: newParameters.height - 5
+                        }
 
+                } else {
+                    newParameters.points = {
+                        p1: {
+                            x: parseFloat(oldPoints.p1[0]),
+                            y: parseFloat(oldPoints.p1[1])
+                        },
+                        p2: {
+                            x: parseFloat(oldPoints.p2[0]),
+                            y: parseFloat(oldPoints.p2[1]) + relativeCursorPosition.y - relativeHeightPosition.y,
+                        },
+                        p3: {
+                            x: parseFloat(oldPoints.p3[0]),
+                            y: parseFloat(oldPoints.p3[1]) + relativeCursorPosition.y - relativeHeightPosition.y,
+                        },
+
+                    }
                 }
 
+                subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
                 subjectRef.current.svgElemRef.current.setAttribute('points', `${newParameters.points.p1.x},${newParameters.points.p1.y} ${newParameters.points.p2.x},${newParameters.points.p2.y} ${newParameters.points.p3.x},${newParameters.points.p3.y}`);
 
             }
             else if (subjectRef.type === 'ellipse') {
+                subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
                 newParameters.ry = newParameters.height / 2 - 20;
                 newParameters.cy = newParameters.height / 2;
                 subjectRef.current.svgElemRef.current.setAttribute('ry', newParameters.ry);
@@ -349,7 +405,8 @@ const otherFunctions = {
         else if (selectedElem.type === 'square') {
             otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true });
         }
-    }
+    },
+
 
 
 

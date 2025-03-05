@@ -1,0 +1,10 @@
+.removeArrow::-webkit-inner-spin-button,
+.removeArrow::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.removeArrow {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}

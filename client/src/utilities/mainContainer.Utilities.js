@@ -26,7 +26,7 @@ function panelOnOffControl(condition = 1, panels = {
     } else if (condition === 2) {
         panels.toolSubPanelFuncs.off();
         panels.toolPanelFuncs.off();
-        panels.pPanelFuncs.oon();
+        panels.pPanelFuncs.on();
     }
 }
 

@@ -75,10 +75,19 @@ function Triangle({ index, x, y, width, height }) {
     const shapeRef = useRef(null);
     const { theSelector } = useContext(SelectorContext);
 
+    /* 
+    
     const thePoints = {
         p1: `${width / 2},${10 / 100 * height}`,
         p2: `${10 / 100 * width},${height - (10 / 100 * height)}`,
         p3: `${width - (10 / 100 * width)},${height - (10 / 100 * height)}`,
+        
+    }
+    */
+    const thePoints = {
+        p1: `${width / 2},${5}`,
+        p2: `${5},${height - 5}`,
+        p3: `${width - 5},${height - 5}`,
 
     }
 

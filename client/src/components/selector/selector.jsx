@@ -14,7 +14,7 @@ function Selector({ }) {
     const selectedElem = useRef(null);
     const boolActiveIncrement = useRef(null);
     const { theSelector, innerDiv, prevScale } = useContext(SelectorContext);
-    const { eventDetail, trackEvent } = useContext(CommonContext);
+    const { eventDetail, trackEvent, aCommunication } = useContext(CommonContext);
     const [mousePointer, mousePointerRef, normalizeScale] = useMouseMovement(prevScale);
 
 
@@ -36,8 +36,40 @@ function Selector({ }) {
         theSelector.current.select = (svgRef, svgElemRef, type) => {
             selectedElem.current = { svgRef: svgRef, svgElemRef: svgElemRef };
             selectedElem.type = type;
-            console.log('the selectedElem : ', selectedElem);
+            //console.log('the selectedElem : ', selectedElem);
             selectorWork.select(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv);
+
+            aCommunication.current.setFromSelector((prev) => {
+
+                let newOne = { ...prev };
+                newOne.type = type;
+                //console.log('attemp to set the type for pPanel : ', newOne);
+                return newOne;
+            });
+
+            aCommunication.current.theSelector = {
+                widthModification: (width) => {
+                    selectorWork.activeIncrement(selectedElem, innerDiv, widthRef, null, 'width', { enable: true });
+                    selectorWork.performWidthIncrement(selectedElem, null, widthRef, null, { enable: true, width: width });
+                    otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                },
+                heightModification: (height) => {
+                    selectorWork.activeIncrement(selectedElem, innerDiv, widthRef, null, 'height', { enable: true });
+                    selectorWork.performHeightIncrement(selectedElem, null, heightRef, null, { enable: true, height: height });
+                    otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                },
+
+
+            }
+            console.log('the communication : ', aCommunication);
+
+            if (aCommunication.current.leftSpace.subPanelPropertise.contains()) {
+                aCommunication.current.leftSpace.subPanelPropertise.off();
+            }
+            if (aCommunication.current.leftSpace.panelPropertise.contains()) {
+                aCommunication.current.leftSpace.panelPropertise.off();
+            }
+            aCommunication.current.pPanel.on();
 
         };
 
@@ -52,7 +84,8 @@ function Selector({ }) {
             selectorWork.deActivateIncrement(boolActiveIncrement);
         }
         if (eventDetail.name === 'ToolPanel' && eventDetail.type === 'click') {
-            otherFunctions.unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef);
+            // otherFunctions.unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef);
+
         }
         if (eventDetail.name === 'RightSide' && eventDetail.type === 'mouseleave') {
             selectorWork.deActivateIncrement(boolActiveIncrement);

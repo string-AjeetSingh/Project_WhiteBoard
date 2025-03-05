@@ -101,6 +101,14 @@ function ToolPanel({ height, func_outProperties, i_am_using_context }) {
         toolPanel.current.classList.remove('toolPanelActive');
 
     }
+    function contains() {
+        if (toolPanel.current.classList.contains('toolPanelActive')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function handleMouseEnterTrack(event) {
         event.stopPropagation();
         trackEvent('ToolPanel', 'mouseenter');
@@ -113,7 +121,7 @@ function ToolPanel({ height, func_outProperties, i_am_using_context }) {
     useEffect(() => {
         if (func_outProperties) {
             if (toolPanel.current) {
-                func_outProperties({ on: on, off: off });
+                func_outProperties({ on: on, off: off, contains: contains });
             }
         }
     }, [func_outProperties, toolPanel.current])
@@ -170,6 +178,13 @@ function ToolSubPanel({ func_outProperties, i_am_using_context }) {
         subPanelIsOn.current = false;
 
     }
+    function contains() {
+        if (toolSubPanel.current.classList.contains('toolSubPanelActive')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     function handleMouseEnter(event) {
         event.stopImmediatePropagation();
@@ -179,7 +194,7 @@ function ToolSubPanel({ func_outProperties, i_am_using_context }) {
     useEffect(() => {
         if (func_outProperties) {
             if (toolSubPanel.current) {
-                func_outProperties({ on: on, off: off, setContent: setContent });
+                func_outProperties({ on: on, off: off, setContent: setContent, contains: contains });
             }
         }
     }, [func_outProperties, toolSubPanel.current])
@@ -219,23 +234,26 @@ function LeftSpace({ }) {
     const panelPropertise = useRef({ on: null, off: null });
     const subPanelPropertise = useRef({ on: null, off: null });
     const pPanelPropertise = useRef({ on: null, off: null });
-    const { trackEvent, eventDetail } = useContext(CommonContext);
+    const { trackEvent, eventDetail, aCommunication } = useContext(CommonContext);
     const leftSpaceElem = useRef(null);
 
 
     function getPanelProperties(got) {
         panelPropertise.current.on = got.on;
         panelPropertise.current.off = got.off;
+        panelPropertise.current.contains = got.contains;
     }
     const getSubPanelProperties = useCallback((got) => {
         subPanelPropertise.current.on = got.on;
         subPanelPropertise.current.off = got.off;
         subPanelPropertise.current.setContent = got.setContent;
+        subPanelPropertise.current.contains = got.contains;
 
     }, []);
     const getPPanelProperties = useCallback((got) => {
         pPanelPropertise.current.on = got.on;
         pPanelPropertise.current.off = got.off;
+        pPanelPropertise.current.contains = got.contains;
     }, []);
 
     const subPanelOperation = useCallback((got) => {
@@ -322,9 +340,18 @@ function LeftSpace({ }) {
         if (panelBool === 1) {
             panelPropertise.current.on();
 
+            if (pPanelPropertise.current.contains()) {
+                pPanelPropertise.current.off();
+            }
+
 
         } else if (panelBool === -1) {
-            panelPropertise.current.off();
+
+            if (panelPropertise.current.contains()) {
+                panelPropertise.current.off();
+            } else {
+                setPanelBool(1);
+            }
         }
     }, [panelBool])
 
@@ -346,6 +373,13 @@ function LeftSpace({ }) {
         }
 
     }, [eventDetail])
+
+    useEffect(() => {
+        aCommunication.current.leftSpace = {
+            subPanelPropertise: subPanelPropertise.current,
+            panelPropertise: panelPropertise.current,
+        }
+    }, [])
 
     return (
         <>
