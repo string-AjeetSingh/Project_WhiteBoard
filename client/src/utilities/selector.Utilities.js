@@ -51,16 +51,17 @@ const selectorWork = {
 
     },
 
-    activeDotIncrement: (subjectRef, parentRef, dotRef, mousePointerRef, boolRef) => {
+    activeDotIncrement: (subjectRef, parentRef, dotRef, mousePointerRef, boolRef, directDataIncrement = { enable: false }) => {
 
 
         setRefParametersRecords(subjectRef.current.svgRef);
         setRefParametersRecords(parentRef);
         setRefParametersRecords(dotRef);
-        mousePointerRef.records = { x: mousePointerRef.current.x, y: mousePointerRef.current.y };
-        boolRef.current = "dot";
 
-
+        if (!directDataIncrement.enable) {
+            mousePointerRef.records = { x: mousePointerRef.current.x, y: mousePointerRef.current.y };
+            boolRef.current = "dot";
+        }
 
         if (subjectRef.type === 'triangle') {
             subjectRef.current.svgElemRef.records = { points: subjectRef.current.svgElemRef.current.getAttribute('points').split(" ") };
@@ -105,18 +106,26 @@ const selectorWork = {
             width: directDataIncrement.enable ? directDataIncrement.width : subjectRef.current.svgRef.records.width + relativeCursorPosition.x - relativeWidthPosition.x,
         }
 
-        if (newParameters.width > 1) {
+        //console.log('the width use to the in increment is : ', newParameters.width);
+        if (newParameters.width >= 1 || newParameters.width === 'zero') {
 
             if (!directDataIncrement.enable)
                 setLeftTop(relativeCursorPosition.x, null, widthRef);
 
 
             if (subjectRef.type === 'rectangle') {
+
+                if (directDataIncrement.enable) {
+                    newParameters.width = directDataIncrement.width === 'zero' ? 5 : directDataIncrement.width + 5;
+
+
+                }
+                console.log('the width use to the rectangle is : ', newParameters.width);
                 subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
-                subjectRef.current.svgElemRef.current.style.width = newParameters.width + 'px';
+                subjectRef.current.svgElemRef.current.style.width = (newParameters.width - 5) + 'px';
 
             }
-            if (subjectRef.type === 'triangle') {
+            else if (subjectRef.type === 'triangle') {
                 let oldPoints = {
                     p1: subjectRef.current.svgElemRef.records.points[0].split(','),
                     p2: subjectRef.current.svgElemRef.records.points[1].split(','),
@@ -167,9 +176,18 @@ const selectorWork = {
 
             }
             else if (subjectRef.type === 'ellipse') {
+
+                if (directDataIncrement.enable) {
+                    newParameters.width = directDataIncrement.width === 'zero' ? 5 : directDataIncrement.width * 2 + 5;
+
+                    newParameters.rx = directDataIncrement.width === 'zero' ? 0 : directDataIncrement.width;
+                    newParameters.cx = newParameters.width / 2;
+                } else {
+                    newParameters.rx = newParameters.width / 2 - 5;
+                    newParameters.cx = newParameters.width / 2;
+                }
+
                 subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
-                newParameters.rx = newParameters.width / 2 - 20;
-                newParameters.cx = newParameters.width / 2;
                 subjectRef.current.svgElemRef.current.setAttribute('rx', newParameters.rx);
                 subjectRef.current.svgElemRef.current.setAttribute('cx', newParameters.cx);
             }
@@ -188,18 +206,22 @@ const selectorWork = {
         const newParameters = {
             height: directDataIncrement.enable ? directDataIncrement.height : subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeHeightPosition.y,
         }
+        //console.log('the height use to the in increment is : ', newParameters.height);
 
-        if (newParameters.height > 1) {
+        if (newParameters.height >= 1 || newParameters.height === 'zero') {
 
             if (!directDataIncrement.enable)
                 setLeftTop(null, relativeCursorPosition.y, heightRef);
 
             if (subjectRef.type === 'rectangle') {
-                subjectRef.current.svgElemRef.current.style.height = newParameters.height + 'px';
+                if (directDataIncrement.enable) {
+                    newParameters.height = directDataIncrement.height === 'zero' ? 5 : directDataIncrement.height + 5
+                }
+                subjectRef.current.svgElemRef.current.style.height = (newParameters.height - 5) + 'px';
                 subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
 
             }
-            if (subjectRef.type === 'triangle') {
+            else if (subjectRef.type === 'triangle') {
                 let oldPoints = {
                     p1: subjectRef.current.svgElemRef.records.points[0].split(','),
                     p2: subjectRef.current.svgElemRef.records.points[1].split(','),
@@ -246,26 +268,45 @@ const selectorWork = {
 
             }
             else if (subjectRef.type === 'ellipse') {
+
+
+                if (directDataIncrement.enable) {
+                    /* 
+                    
+                    newParameters.height = directDataIncrement.height * 2 + 5;
+                    newParameters.ry = newParameters.height / 2 - 5;
+                    newParameters.cy = newParameters.height / 2;
+                    */
+                    newParameters.height = directDataIncrement.height === 'zero' ? 5 : directDataIncrement.height * 2 + 5;
+
+                    newParameters.ry = directDataIncrement.height === 'zero' ? 0 : directDataIncrement.height;
+                    newParameters.cy = newParameters.height / 2;
+
+                } else {
+                    newParameters.ry = newParameters.height / 2 - 5;
+                    newParameters.cy = newParameters.height / 2;
+                }
+
                 subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
-                newParameters.ry = newParameters.height / 2 - 20;
-                newParameters.cy = newParameters.height / 2;
                 subjectRef.current.svgElemRef.current.setAttribute('ry', newParameters.ry);
                 subjectRef.current.svgElemRef.current.setAttribute('cy', newParameters.cy);
             }
         }
     },
-    performDotIncrement: (subjectRef, mousePointerRef, dotRef, parentRef) => {
-        //console.log('parentRecords : ', parentRef);
-        const relativeCursorRecordedPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.records);
-        const relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
-        const relativeDotPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: dotRef.records.x, y: dotRef.records.y });
+    performDotIncrement: (subjectRef, mousePointerRef, dotRef, parentRef, directDataIncrement = { enable: false, length: null }) => {
+
+        let relativeCursorPosition = null;
+        let relativeCursorRecordedPosition = null;
+        let relativeDotPosition = null;
+
+        if (!directDataIncrement.enable) {
+            relativeCursorRecordedPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.records);
+            relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
+            relativeDotPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: dotRef.records.x, y: dotRef.records.y });
+        }
 
         const newParameters = {};
 
-        newParameters.left = relativeDotPosition.x + relativeCursorPosition.x - relativeCursorRecordedPosition.x;
-        newParameters.top = relativeDotPosition.y + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
-
-        //  setLeftTop(newParameters.left, newParameters.top, dotRef);
         if (subjectRef.type === 'rectangle') {
             newParameters.height = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
             newParameters.width = subjectRef.current.svgRef.records.width + relativeCursorPosition.x - relativeCursorRecordedPosition.x;
@@ -273,28 +314,41 @@ const selectorWork = {
             subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
             subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
 
-            subjectRef.current.svgElemRef.current.style.width = newParameters.width + 'px';
-            subjectRef.current.svgElemRef.current.style.height = newParameters.height + 'px';
+            subjectRef.current.svgElemRef.current.style.width = (newParameters.width - 5) + 'px';
+            subjectRef.current.svgElemRef.current.style.height = (newParameters.height - 5) + 'px';
         }
         else if (subjectRef.type === 'circle') {
-            newParameters.height = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
 
-            subjectRef.current.svgRef.current.style.width = newParameters.height + 'px';
-            subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
+            if (directDataIncrement.enable) {
+                newParameters.length = directDataIncrement.length === 'zero' ? 5 : directDataIncrement.length * 2 + 5;
+                newParameters.r = directDataIncrement.length === 'zero' ? 0 : directDataIncrement.length;
 
-            newParameters.r = newParameters.height / 2 - 20;
+            } else {
+                newParameters.length = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
+                newParameters.r = newParameters.length / 2 - 5;
+            }
+            subjectRef.current.svgRef.current.style.width = newParameters.length + 'px';
+            subjectRef.current.svgRef.current.style.height = newParameters.length + 'px';
+
             subjectRef.current.svgElemRef.current.style.r = newParameters.r + 'px';
-            subjectRef.current.svgElemRef.current.style.cx = newParameters.height / 2 + 'px';
-            subjectRef.current.svgElemRef.current.style.cy = newParameters.height / 2 + 'px';
+            subjectRef.current.svgElemRef.current.style.cx = newParameters.length / 2 + 'px';
+            subjectRef.current.svgElemRef.current.style.cy = newParameters.length / 2 + 'px';
         }
         else if (subjectRef.type === 'square') {
-            newParameters.height = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
+            // newParameters.length = directDataIncrement.enable ? directDataIncrement.length + 5 : subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
+            if (directDataIncrement.enable) {
+                newParameters.length = directDataIncrement.length === 'zero' ? 5 : directDataIncrement.length + 5;
+                newParameters.side = directDataIncrement.length === 'zero' ? 0 : directDataIncrement.length;
 
-            subjectRef.current.svgRef.current.style.width = newParameters.height + 'px';
-            subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
+            } else {
+                newParameters.length = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
+                newParameters.side = newParameters.length - 5;
+            }
+            subjectRef.current.svgRef.current.style.width = newParameters.length + 'px';
+            subjectRef.current.svgRef.current.style.height = newParameters.length + 'px';
 
-            subjectRef.current.svgElemRef.current.style.width = newParameters.height + 'px';
-            subjectRef.current.svgElemRef.current.style.height = newParameters.height + 'px';
+            subjectRef.current.svgElemRef.current.style.width = newParameters.side + 'px';
+            subjectRef.current.svgElemRef.current.style.height = newParameters.side + 'px';
         }
         else if (subjectRef.type === 'triangle') {
             newParameters.height = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
@@ -304,7 +358,6 @@ const selectorWork = {
                 p2: subjectRef.current.svgElemRef.records.points[1].split(','),
                 p3: subjectRef.current.svgElemRef.records.points[2].split(','),
             }
-
 
             newParameters.points = {
                 p1: {
@@ -330,9 +383,9 @@ const selectorWork = {
         else if (subjectRef.type === 'ellipse') {
             newParameters.height = subjectRef.current.svgRef.records.height + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
             newParameters.width = subjectRef.current.svgRef.records.width + relativeCursorPosition.y - relativeCursorRecordedPosition.y;
-            newParameters.ry = newParameters.height / 2 - 20;
+            newParameters.ry = newParameters.height / 2 - 5;
             newParameters.cy = newParameters.height / 2;
-            newParameters.rx = newParameters.width / 2 - 20;
+            newParameters.rx = newParameters.width / 2 - 5;
             newParameters.cx = newParameters.width / 2;
 
             subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
@@ -367,7 +420,44 @@ const selectorWork = {
 
         setLeftTop(newParameters.move.left, newParameters.move.top, moveRef);
         setLeftTop(newParameters.subject.left, newParameters.subject.top, subjectRef.current.svgRef);
+    },
+
+    performBorderModification: (selectedElem, modification = { type: null, strokeWidth: null, radius: null }) => {
+        console.log('going to perform the border modification with this data : ', modification);
+
+        if (modification.type === 'strokeWidth') {
+            if (modification.strokeWidth === 'zero') {
+                selectedElem.current.svgElemRef.current.style.strokeWidth = 0;
+            } else {
+                selectedElem.current.svgElemRef.current.style.strokeWidth = modification.strokeWidth;
+            }
+        } else if (modification.type === 'radius') {
+
+            if (modification.radius === 'zero') {
+                selectedElem.current.svgElemRef.current.style.rx = 0;
+            } else {
+                selectedElem.current.svgElemRef.current.style.rx = modification.radius;
+            }
+
+
+        }
+    },
+    performColorModification: (selectedElem, modification = { type: null, hexColor: null }) => {
+        console.log('going to perform the border modification with this data : ', modification);
+
+        if (modification.type === 'borderColor') {
+
+            selectedElem.current.svgElemRef.current.style.stroke = modification.hexColor;
+
+        } else if (modification.type === 'bodyColor') {
+
+            selectedElem.current.svgElemRef.current.style.fill = modification.hexColor;
+
+
+
+        }
     }
+
 
 
 

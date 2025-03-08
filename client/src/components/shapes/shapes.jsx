@@ -31,7 +31,7 @@ function Rectangle({ index, x, y, width, height, useAs }) {
                 left: x
             }}
                 width={width} height={height} className="absolute " >
-                <rect ref={shapeRef} width={width} height={height} fill="none" stroke="black" strokeWidth="2" />
+                <rect ref={shapeRef} width={width - 5} height={height - 5} fill="none" stroke="black" strokeWidth="2" />
             </svg >
         </>
     );
@@ -63,7 +63,7 @@ function Circle({ index, x, y, cx, cy, width, height, radius }) {
                 left: x
             }}
                 width={width} height={height} className="absolute border border-slate-500" >
-                <circle ref={shapeRef} cx={width / 2} cy={width / 2} r={width / 2 - 20} fill="none" stroke="black" strokeWidth="2" />
+                <circle ref={shapeRef} cx={width / 2} cy={width / 2} r={width / 2 - 5} fill="none" stroke="black" strokeWidth="2" />
             </svg>
         </>
     );
@@ -143,7 +143,7 @@ function Ellipse({ index, x, y, width, height }) {
                 left: x
             }}
                 width={width} height={height} className="absolute border border-slate-500" >
-                <ellipse ref={shapeRef} cx={width / 2} cy={height / 2} rx={width / 2 - 20} ry={height / 2 - 20} fill="none" stroke="black" strokeWidth="2" />
+                <ellipse ref={shapeRef} cx={width / 2} cy={height / 2} rx={width / 2 - 5} ry={height / 2 - 5} fill="none" stroke="black" strokeWidth="2" />
             </svg>
         </>
     );

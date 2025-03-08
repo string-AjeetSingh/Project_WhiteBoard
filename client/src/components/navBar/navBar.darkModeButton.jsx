@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext, useState } from "react";
+import { CommonContext } from "../../myLib/commonContext/myContext";
 
 function DarkModeToogle() {
     const toogleBool = useRef(localStorage.getItem('screenMode') === "dark" ? true : false);
@@ -6,6 +7,7 @@ function DarkModeToogle() {
     const transitionDark = useRef(null);
     const transitionLight = useRef(null);
     const outResult = useRef(null);
+    const { aCommunication } = useContext(CommonContext);
 
 
     function toogle(event) {
@@ -39,7 +41,6 @@ function DarkModeToogle() {
     }
 
     function transitionendEvent(event) {
-
         localStorage.setItem('screenMode', outResult.current);
         toggleDarkMode();
 
@@ -68,12 +69,17 @@ function DarkModeToogle() {
                 }
             }
         }
+
+        if (aCommunication.current?.sendTo_pPanel) {
+            aCommunication.current.sendTo_pPanel(localStorage.getItem('screenMode'));
+        }
         // localStorage.setItem("theme", thebody.classList.contains("dark") ? "dark" : "light");
         //console.log(localStorage.getItem("theme"));
 
     };
 
     useEffect(() => {
+
 
         if (!localStorage.getItem('screenMode')) {
             localStorage.setItem('screenMode', 'light');

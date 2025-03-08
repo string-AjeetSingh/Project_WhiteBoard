@@ -2,13 +2,15 @@ import { NavBar } from "../components/navBar/navBar";
 import { MainContainer } from "../components/mainContainer/mainContainer";
 import { CommonContext } from "../myLib/commonContext/myContext.js"
 import { useEventTracker } from "../hooks/eventTraker.js";
+import { useRef } from 'react'
 
 
 function Home({ }) {
     const [trackEvent, eventDetail] = useEventTracker();
+    const aCommunication = useRef({});
     return (
         <>
-            <CommonContext.Provider value={{ trackEvent, eventDetail }}>
+            <CommonContext.Provider value={{ trackEvent, eventDetail, aCommunication }}>
                 <header>
                     <NavBar />
                 </header>

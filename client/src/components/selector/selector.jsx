@@ -4,6 +4,7 @@ import { SelectorContext } from "../whiteBoard/selectorContext";
 import { selectorWork, otherFunctions, bindedToUseInThisModule } from "../../utilities/selector.Utilities";
 import { effectEventClass } from "../../myLib/effectEventClass";
 import { CommonContext } from '../../myLib/commonContext/myContext';
+import ElementTracker from '../../myLib/trackElemProperties';
 
 
 function Selector({ }) {
@@ -16,6 +17,7 @@ function Selector({ }) {
     const { theSelector, innerDiv, prevScale } = useContext(SelectorContext);
     const { eventDetail, trackEvent, aCommunication } = useContext(CommonContext);
     const [mousePointer, mousePointerRef, normalizeScale] = useMouseMovement(prevScale);
+    const elemTracker = useRef(null);
 
 
 
@@ -58,6 +60,26 @@ function Selector({ }) {
                     selectorWork.performHeightIncrement(selectedElem, null, heightRef, null, { enable: true, height: height });
                     otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
                 },
+                dotModification: (length) => {
+                    selectorWork.activeDotIncrement(selectedElem, innerDiv, dotRef, null, null, { enable: true });
+                    selectorWork.performDotIncrement(selectedElem, null, dotRef, null, { enable: true, length: length });
+                    if (selectedElem.type === 'circle' || selectedElem.type === 'square') {
+                        otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true, move: true });
+                    }
+                    else if (selectedElem.type === 'rectangle' || selectedElem.type === 'triangle' || selectedElem.type === 'ellipse') {
+                        otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+
+                    }
+
+                },
+                borderModification: (type, param = { strokeWidth: null, radius: null }) => {
+                    selectorWork.performBorderModification(selectedElem, { type: type, ...param });
+                },
+                colorModification: (hex, type) => {
+                    selectorWork.performColorModification(selectedElem, { type: type, hexColor: hex });
+                }
+
+
 
 
             }
@@ -71,9 +93,18 @@ function Selector({ }) {
             }
             aCommunication.current.pPanel.on();
 
+            if (!elemTracker.current) {
+                elemTracker.current = new ElementTracker(aCommunication.current.pPanel.setProperties, prevScale);  //tracke the elem propeties for a state function
+            }
+            elemTracker.current.trackElement(svgElemRef.current, type);  //update new elem to track
+
         };
 
         bindedToUseInThisModule.boundingDataRespectToZoom = bindedFunction.boundingDataRespectToZoom;
+
+        return (() => {
+
+        })
 
     }, [])
 
