@@ -453,8 +453,6 @@ const selectorWork = {
 
             selectedElem.current.svgElemRef.current.style.fill = modification.hexColor;
 
-
-
         }
     }
 
