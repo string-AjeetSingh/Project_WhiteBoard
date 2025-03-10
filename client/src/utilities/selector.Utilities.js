@@ -1,4 +1,4 @@
-import { sub } from "framer-motion/client";
+
 
 const selectorWork = {
     select: (widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef) => {
@@ -20,14 +20,11 @@ const selectorWork = {
 
     },
     activeIncrement: (subjectRef, parentRef, theRef, boolRef, type, directDataIncrement = { enable: false }) => {
-
-
         setRefParametersRecords(subjectRef.current.svgRef);
         setRefParametersRecords(parentRef);
 
         if (type === 'width') {
             setRefParametersRecords(theRef);
-
             if (!directDataIncrement.enable)
                 boolRef.current = "width";
 
@@ -46,14 +43,11 @@ const selectorWork = {
                 subjectRef.current.svgElemRef.records = { points: subjectRef.current.svgElemRef.current.getAttribute('points').split(" ") };
             }
             // no record require for ellipse
-
         }
 
     },
 
     activeDotIncrement: (subjectRef, parentRef, dotRef, mousePointerRef, boolRef, directDataIncrement = { enable: false }) => {
-
-
         setRefParametersRecords(subjectRef.current.svgRef);
         setRefParametersRecords(parentRef);
         setRefParametersRecords(dotRef);
@@ -68,7 +62,6 @@ const selectorWork = {
         }
         // no record require for circle
         // no record require for ellipse
-
     },
 
     activeMovement: (subjectRef, parentRef, theRef, mousePointerRef, boolRef) => {
@@ -77,19 +70,12 @@ const selectorWork = {
         setRefParametersRecords(theRef);
         mousePointerRef.records = { x: mousePointerRef.current.x, y: mousePointerRef.current.y };
         boolRef.current = "move";
-
-
     },
-
-
-
 
     deActivateIncrement: (boolRef) => {
         console.log('from deactivate');
-
         boolRef.current = null;
     },
-
 
     performWidthIncrement: (subjectRef, mousePointerRef, widthRef, parentRef, directDataIncrement = { enable: false, width: null }) => {
 
@@ -100,12 +86,9 @@ const selectorWork = {
             relativeCursorPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, mousePointerRef.current);
             relativeWidthPosition = positionResToParent({ x: parentRef.records.x, y: parentRef.records.y }, { x: widthRef.records.x, y: widthRef.records.y });
         }
-
-
         const newParameters = {
             width: directDataIncrement.enable ? directDataIncrement.width : subjectRef.current.svgRef.records.width + relativeCursorPosition.x - relativeWidthPosition.x,
         }
-
         //console.log('the width use to the in increment is : ', newParameters.width);
         if (newParameters.width >= 1 || newParameters.width === 'zero') {
 
@@ -186,7 +169,6 @@ const selectorWork = {
                     newParameters.rx = newParameters.width / 2 - 5;
                     newParameters.cx = newParameters.width / 2;
                 }
-
                 subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
                 subjectRef.current.svgElemRef.current.setAttribute('rx', newParameters.rx);
                 subjectRef.current.svgElemRef.current.setAttribute('cx', newParameters.cx);
@@ -271,12 +253,7 @@ const selectorWork = {
 
 
                 if (directDataIncrement.enable) {
-                    /* 
-                    
-                    newParameters.height = directDataIncrement.height * 2 + 5;
-                    newParameters.ry = newParameters.height / 2 - 5;
-                    newParameters.cy = newParameters.height / 2;
-                    */
+
                     newParameters.height = directDataIncrement.height === 'zero' ? 5 : directDataIncrement.height * 2 + 5;
 
                     newParameters.ry = directDataIncrement.height === 'zero' ? 0 : directDataIncrement.height;
@@ -397,7 +374,6 @@ const selectorWork = {
 
         }
 
-
     },
 
     performMovement: (subjectRef, parentRef, moveRef, mousePointerRef) => {
@@ -446,17 +422,11 @@ const selectorWork = {
         console.log('going to perform the border modification with this data : ', modification);
 
         if (modification.type === 'borderColor') {
-
             selectedElem.current.svgElemRef.current.style.stroke = modification.hexColor;
-
         } else if (modification.type === 'bodyColor') {
-
             selectedElem.current.svgElemRef.current.style.fill = modification.hexColor;
-
         }
     }
-
-
 
 
 }
@@ -495,48 +465,15 @@ const otherFunctions = {
         }
     },
 
-
-
-
 }
 
-const bindedToUseInThisModule = {
-
-}
+const bindedToUseInThisModule = {};
 
 
 function setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef, toEffect = { all: true, width: null, height: null, dot: null, move: null }) {
-    //const parentPos = parentRef.current.getBoundingClientRect();
-    //const subjectPos = subjectRef.current.svgRef.current.getBoundingClientRect();
     const parentPos = bindedToUseInThisModule.boundingDataRespectToZoom(parentRef);
     const subjectPos = bindedToUseInThisModule.boundingDataRespectToZoom(subjectRef.current.svgRef);
     const newParameteres = {};
-
-
-
-    /* 
-    
-    const newParameteres = {
-        forWidthRef: {
-            left: subjectPos.x - parentPos.x + subjectPos.width,
-            top: subjectPos.y - parentPos.y
-        },
-        forHeightRef: {
-            left: subjectPos.x - parentPos.x,
-            top: subjectPos.y - parentPos.y + subjectPos.height
-        },
-        forDotRef: {
-            left: subjectPos.x - parentPos.x + subjectPos.width,
-            top: subjectPos.y - parentPos.y + subjectPos.height
-        },
-        forMoveRef: {
-            left: subjectPos.x - parentPos.x + subjectPos.width / 2,
-            top: subjectPos.y - parentPos.y + subjectPos.height + 10
-        }
-    }
-    */
-
-    //if (subjectRef.type === 'rectangle') {
 
     newParameteres.forWidthRef = {
         left: subjectPos.x - parentPos.x + subjectPos.width,
@@ -555,9 +492,6 @@ function setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectR
         setLeftTop(newParameteres.forHeightRef.left, newParameteres.forHeightRef.top, heightRef);
         heightRef.current.style.width = subjectPos.width + "px";
     }
-    //}
-
-    //if (subjectRef.type === 'circle' || subjectRef.type === 'rectangle') {
 
     newParameteres.forDotRef = {
         left: subjectPos.x - parentPos.x + subjectPos.width,
@@ -567,7 +501,6 @@ function setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectR
     if (toEffect.all || toEffect.dot) {
         setLeftTop(newParameteres.forDotRef.left, newParameteres.forDotRef.top, dotRef);
     }
-    // }
 
     newParameteres.forMoveRef = {
         left: subjectPos.x - parentPos.x + subjectPos.width / 2,
@@ -576,9 +509,6 @@ function setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectR
     if (toEffect.all || toEffect.move) {
         setLeftTop(newParameteres.forMoveRef.left, newParameteres.forMoveRef.top, moveRef);
     }
-
-
-
 }
 
 function unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef) {
@@ -588,7 +518,6 @@ function unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef) {
     setLeftTop(removeCoord, removeCoord, heightRef);
     setLeftTop(removeCoord, removeCoord, dotRef);
     setLeftTop(removeCoord, removeCoord, moveRef);
-
 }
 
 function setLeftTop(left, top, ref) {

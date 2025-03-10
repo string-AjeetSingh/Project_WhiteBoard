@@ -253,6 +253,7 @@ function Sticks({ }) {
     const pen5Butt = useRef(null);
     let isTouch = useIsTouch();
     const buttOnBool = useRef(0);
+    const { aCommunication } = useContext(CommonContext);
 
     //common : 
     function pen4Active(event) {
@@ -341,12 +342,20 @@ function Sticks({ }) {
     function pen5TouchDeactiveSelect() {
         pen5Butt.current.classList.remove('pen5TouchActiveSelect');
     }
+    function selectPen1() {
+        alert('pen1');
+    }
+
+    function selectPen2() {
+        alert('pen2');
+    }
 
     useEffect(() => {
         if (isTouchOrMouse(isTouch, pen4Butt) === 'mouse') {
             addEvent(pen4Butt, "mouseenter", pen4Active);
             addEvent(pen4Butt, "mouseleave", pen4Deactive);
             addEvent(pen4Butt, "click", pen4ActiveSelect);
+            addEvent(pen4Butt, "click", selectPen1);
         }
         else if (isTouchOrMouse(isTouch, pen4Butt) === 'touch') {
             addEvent(pen4Butt, "touchstart", pen4TouchActiveSelect);
@@ -358,6 +367,7 @@ function Sticks({ }) {
                 removeEvent(pen4Butt, "mouseenter", pen4Active);
                 removeEvent(pen4Butt, "mouseleave", pen4Deactive);
                 removeEvent(pen4Butt, "click", pen4ActiveSelect);
+                removeEvent(pen4Butt, "click", selectPen1);
             }
             else if (isTouchOrMouse(isTouch, pen4Butt) === 'touch') {
                 removeEvent(pen4Butt, "touchstart", pen4TouchActiveSelect);
@@ -372,6 +382,7 @@ function Sticks({ }) {
             addEvent(pen5Butt, "mouseenter", pen5Active);
             addEvent(pen5Butt, "mouseleave", pen5Deactive);
             addEvent(pen5Butt, "click", pen5ActiveSelect);
+            addEvent(pen5Butt, "click", selectPen2);
         }
         else if (isTouchOrMouse(isTouch, pen5Butt) === 'touch') {
             addEvent(pen5Butt, "touchstart", pen5TouchActiveSelect);
@@ -382,6 +393,7 @@ function Sticks({ }) {
                 removeEvent(pen5Butt, "mouseenter", pen5Active);
                 removeEvent(pen5Butt, "mouseleave", pen5Deactive);
                 removeEvent(pen5Butt, "click", pen5ActiveSelect);
+                removeEvent(pen5Butt, "click", selectPen2);
             }
             else if (isTouchOrMouse(isTouch, pen5Butt) === 'touch') {
                 removeEvent(pen5Butt, "touchstart", pen5TouchActiveSelect);

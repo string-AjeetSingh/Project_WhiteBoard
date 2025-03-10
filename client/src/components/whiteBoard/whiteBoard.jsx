@@ -6,14 +6,14 @@ import { useWhiteboardEvents } from "../../hooks/useWhiteBoardEffects";
 import { CommonContext } from "../../myLib/commonContext/myContext";
 import { SelectorContext } from "./selectorContext";
 import { Selector } from "../selector/selector";
+import { useDraw } from "../../hooks/draw";
 
-function Content({ SvgArray }) {
+
+function Content({ SvgArray, canvasArray }) {
     return (
         <>
-
             {SvgArray}
-
-
+            {canvasArray}
         </>
     );
 }
@@ -43,6 +43,7 @@ function WhiteBoard({ }) {
         </svg>
 
     ]);
+    const [canvasArray, setCanvasArray] = useState([]);
     const theSelector = useRef({});
 
     const totalScrollPossible = [300, 100];
@@ -64,6 +65,7 @@ function WhiteBoard({ }) {
 
     }
 
+    useDraw(innerDiv, setCanvasArray, prevScale);
     useWhiteboardEvents(innerDiv, divelem, bindedFunction);
 
     return (
@@ -82,7 +84,7 @@ function WhiteBoard({ }) {
                 >
                     <SelectorContext.Provider value={{ theSelector, innerDiv, prevScale }}>
 
-                        <Content SvgArray={SvgArray} />
+                        <Content SvgArray={SvgArray} canvasArray={canvasArray} />
                         <Selector />
 
                     </SelectorContext.Provider>

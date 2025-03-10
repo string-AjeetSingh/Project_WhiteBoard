@@ -188,7 +188,7 @@ function Border({ type, functionToPerform, currentProperties }) {
     }
 
     useEffect(() => {
-        console.log('the input data : ', inputData);
+        //console.log('the input data : ', inputData);
     }, [inputData]);
 
     return (

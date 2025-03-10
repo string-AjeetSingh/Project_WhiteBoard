@@ -42,7 +42,6 @@ function Selector({ }) {
             selectorWork.select(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv);
 
             aCommunication.current.setFromSelector((prev) => {
-
                 let newOne = { ...prev };
                 newOne.type = type;
                 //console.log('attemp to set the type for pPanel : ', newOne);
@@ -79,9 +78,6 @@ function Selector({ }) {
                     selectorWork.performColorModification(selectedElem, { type: type, hexColor: hex });
                 }
 
-
-
-
             }
             console.log('the communication : ', aCommunication);
 
@@ -116,7 +112,6 @@ function Selector({ }) {
         }
         if (eventDetail.name === 'ToolPanel' && eventDetail.type === 'click') {
             // otherFunctions.unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef);
-
         }
         if (eventDetail.name === 'RightSide' && eventDetail.type === 'mouseleave') {
             selectorWork.deActivateIncrement(boolActiveIncrement);
