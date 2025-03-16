@@ -73,7 +73,7 @@ const selectorWork = {
     },
 
     deActivateIncrement: (boolRef) => {
-        console.log('from deactivate');
+        // console.log('from deactivate');
         boolRef.current = null;
     },
 

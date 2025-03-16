@@ -121,7 +121,7 @@ const mouseEvent = {
 
     },
 
-    down: (selectedShapes) => {
+    down: (selectedItem) => {
         //  console.log('shape Requested on Sheet : ', selectedShapes);
 
     }
@@ -149,60 +149,68 @@ const otherEventHandle = {
             }
         }
     },
-    createSvgElem: (selectedShapes, setSvgArray, innerDiv, prevScale, defaultScale, e) => {
+    engageItem: (selectedItem, innerDiv, prevScale, defaultScale, setItemTools = { setSvgArray: null, setPen: null, penStyle }, e) => {
 
+        if (selectedItem.type === 'shapes') {
 
-        if (selectedShapes.current) {
-            const normalizeScale = prevScale.current / defaultScale.current;
-            const position = getMouseCoordinateByElem(innerDiv, e, prevScale.current, defaultScale.current);
-            if (selectedShapes.current === 'rectangle') {
-                setSvgArray((prev) => {
-                    let newOne = prev.slice();
-                    newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={100 / normalizeScale} useAs={'rectangle'} />);
-                    return newOne;
-                });
-                selectedShapes.current = null;
+            if (selectedItem.current) {
+                const normalizeScale = prevScale.current / defaultScale.current;
+                const position = getMouseCoordinateByElem(innerDiv, e, prevScale.current, defaultScale.current);
+
+                if (selectedItem.current === 'rectangle') {
+                    setItemTools.setSvgArray((prev) => {
+                        let newOne = prev.slice();
+                        newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={100 / normalizeScale} useAs={'rectangle'} />);
+                        return newOne;
+                    });
+                    selectedItem.current = null;
+                }
+                else if (selectedItem.current === 'circle') {
+
+                    setItemTools.setSvgArray((prev) => {
+                        let newOne = prev.slice();
+                        newOne.push(<Circle x={position.x} y={position.y} width={200 / normalizeScale} height={200 / normalizeScale} />);
+                        return newOne;
+                    });
+                    selectedItem.current = null;
+                }
+
+                else if (selectedItem.current === 'ellipse') {
+
+                    setItemTools.setSvgArray((prev) => {
+                        let newOne = prev.slice();
+                        newOne.push(<Ellipse x={position.x} y={position.y} width={200 / normalizeScale} height={150 / normalizeScale} />);
+                        return newOne;
+                    });
+                    selectedItem.current = null;
+                }
+
+                else if (selectedItem.current === 'square') {
+
+                    setItemTools.setSvgArray((prev) => {
+                        let newOne = prev.slice();
+                        newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} useAs={'square'} />);
+                        return newOne;
+                    });
+                    selectedItem.current = null;
+                }
+
+                else if (selectedItem.current === 'triangle') {
+
+                    setItemTools.setSvgArray((prev) => {
+                        let newOne = prev.slice();
+                        newOne.push(<Triangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} />);
+                        return newOne;
+                    });
+                    selectedItem.current = null;
+                }
             }
-            else if (selectedShapes.current === 'circle') {
 
-                setSvgArray((prev) => {
-                    let newOne = prev.slice();
-                    newOne.push(<Circle x={position.x} y={position.y} width={200 / normalizeScale} height={200 / normalizeScale} />);
-                    return newOne;
-                });
-                selectedShapes.current = null;
-            }
 
-            else if (selectedShapes.current === 'ellipse') {
-
-                setSvgArray((prev) => {
-                    let newOne = prev.slice();
-                    newOne.push(<Ellipse x={position.x} y={position.y} width={200 / normalizeScale} height={150 / normalizeScale} />);
-                    return newOne;
-                });
-                selectedShapes.current = null;
-            }
-
-            else if (selectedShapes.current === 'square') {
-
-                setSvgArray((prev) => {
-                    let newOne = prev.slice();
-                    newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} useAs={'square'} />);
-                    return newOne;
-                });
-                selectedShapes.current = null;
-            }
-
-            else if (selectedShapes.current === 'triangle') {
-
-                setSvgArray((prev) => {
-                    let newOne = prev.slice();
-                    newOne.push(<Triangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} />);
-                    return newOne;
-                });
-                selectedShapes.current = null;
-            }
-
+        }
+        else if (selectedItem.type === 'pens') {
+            console.log("a pen is selected, we should create it now for : ", selectedItem.current);
+            setItemTools.setPen();
         }
     }
 }

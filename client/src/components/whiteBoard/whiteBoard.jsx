@@ -9,11 +9,12 @@ import { Selector } from "../selector/selector";
 import { useDraw } from "../../hooks/draw";
 
 
-function Content({ SvgArray, canvasArray }) {
+function Content({ SvgArray, canvasArray, roughCanvas }) {
     return (
         <>
             {SvgArray}
             {canvasArray}
+            {roughCanvas}
         </>
     );
 }
@@ -29,7 +30,7 @@ function WhiteBoard({ }) {
     const prevScale = useRef(200);
     const defaultScaleValue = useRef(100)
 
-    const { selectedShape, trackEvent } = useContext(CommonContext);
+    const { selectedItem, trackEvent } = useContext(CommonContext);
     const [SvgArray, setSvgArray] = useState([
         <svg width={500} height={500} className="absolute" style={{
             border: '1px solid black'
@@ -44,9 +45,13 @@ function WhiteBoard({ }) {
 
     ]);
     const [canvasArray, setCanvasArray] = useState([]);
+    const [roughCanvas, setRoughCanvas] = useState(null);
     const theSelector = useRef({});
 
     const totalScrollPossible = [300, 100];
+
+    //Control Draw Working Of Pens 
+    const { provideCanvas, selectPenStyle, getPenStyle, setPenStyleCallback } = useDraw(innerDiv, setCanvasArray, setRoughCanvas, prevScale);
 
     const bindedFunction = {
         handleScroll: handleScroll.bind(null, scrollControlBool, innerDiv, divelem),
@@ -57,17 +62,18 @@ function WhiteBoard({ }) {
         preventMouseZoom: otherEventHandle.preventZoomOnCtrl.bind(null, innerDiv),
         resumeMouseZoom: otherEventHandle.resumeZoomOnCtrl.bind(null, innerDiv),
         wheelZoom: mouseEvent.wheelZoom.bind(null, ctrlHold, prevScale, innerDiv, totalScrollPossible),
-        mouseDown: mouseEvent.down.bind(null, selectedShape),
-        createShape: otherEventHandle.createSvgElem.bind(null, selectedShape, setSvgArray, innerDiv, prevScale, defaultScaleValue),
+        mouseDown: mouseEvent.down.bind(null, selectedItem),
+        createShape: otherEventHandle.engageItem.bind(null, selectedItem, innerDiv, prevScale, defaultScaleValue, { setSvgArray: setSvgArray, setPen: provideCanvas }),
         trackInnerDivMouseUp: trackEvent.bind(null, 'innerDiv', 'mouseup', null),
         trackInnerDivMouseDown: trackEvent.bind(null, 'innerDiv', 'mousedown', null),
         trackInnerDivMouseLeave: trackEvent.bind(null, 'innerDiv', 'mouseleave', null),
 
     }
 
-    useDraw(innerDiv, setCanvasArray, prevScale);
     useWhiteboardEvents(innerDiv, divelem, bindedFunction);
-
+    useEffect(() => {
+        selectedItem.pen = { penStyle: selectPenStyle, setPenStyleCallback };
+    }, [])
     return (
         <>
             <div ref={divelem} className="  h-full overflow-scroll 
@@ -84,7 +90,7 @@ function WhiteBoard({ }) {
                 >
                     <SelectorContext.Provider value={{ theSelector, innerDiv, prevScale }}>
 
-                        <Content SvgArray={SvgArray} canvasArray={canvasArray} />
+                        <Content SvgArray={SvgArray} canvasArray={canvasArray} roughCanvas={roughCanvas} />
                         <Selector />
 
                     </SelectorContext.Provider>

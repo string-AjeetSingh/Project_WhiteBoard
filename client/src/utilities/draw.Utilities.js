@@ -1,8 +1,8 @@
-import { a } from "framer-motion/client";
+
 import { addEvent, removeEvent } from "./addRemoveEvent";
 
 class drawLogic {
-    constructor(parentRef, canvasRef, finalCanvasRef, setCanvas, mousePositionRef, normalizedScale) {
+    constructor(parentRef, canvasRef, finalCanvasRef, setCanvas, setRoughCanvas, mousePositionRef, normalizedScale) {
         this.parentRef = parentRef;
         this.canvasRef = canvasRef;
         this.mousePositionRef = mousePositionRef;
@@ -12,13 +12,89 @@ class drawLogic {
             x: 'undefined', y: 'undefined', minX: null, maxX: null, minY: null, maxY: null
         }
         this.setCanvas = setCanvas;
+        this.setRoughCanvas = setRoughCanvas;
         this.finalCanvasRef = finalCanvasRef;
         this.newCanvasDimentions = {};
         this.isDrawing = false;
+        this.penStyle = {
+            stroke: 'black',
+            width: 1,
+            shadowColor: "rgba(0, 0, 0, 0)",
+            shadowBlue: 0,
+            lineCap: 'butt',
+            lineJoin: 'miter',
+
+        }
+        /* 
+        ctx.globalCompositeOperation = "source-over"; // Default mode (draw normally)
+ctx.lineCap = "round"; // Smooth stroke endings
+ctx.lineJoin = "round"; // Smooth connection between strokes
+ctx.lineWidth = 2; // Pen thickness (adjust as needed)
+ctx.strokeStyle = "#000000"; // Pen color (black, change as needed)
+ctx.shadowColor = "rgba(0, 0, 0, 0.2)"; // Soft shadow for depth
+ctx.shadowBlur = 1; // Slight blur for smoothness
+
+        */
+        this.penProfil = {
+            selected: 2,
+            profile: [null,
+                {
+                    shadowColor: "rgba(0, 0, 0, 0)",
+                    shadowBlur: 0,
+                    lineCap: "butt",
+                    lineJoin: "miter",
+
+                },
+                {
+                    shadowColor: "rgba(80, 120, 90, 0.5)",
+                    shadowBlur: 3,
+                    lineCap: "round",
+                    lineJoin: "round",
+
+                },
+            ]
+        }
+
+        //Bind methods for out of scope sharing
         this.startDrawing = this.startDrawing.bind(this);
         this.draw = this.draw.bind(this);
         this.stopDrawing = this.stopDrawing.bind(this);
         this.calculateMinMaxPoints = this.calculateMinMaxPoints.bind(this);
+        this.engagePenStyle = this.engagePenStyle.bind(this);
+        this.selectPenStyle = this.selectPenStyle.bind(this);
+    }
+
+    engagePenStyle() {
+
+        if (this.context) {
+            this.context.lineWidth = this.penStyle.width;
+            this.context.strokeStyle = this.penStyle.stroke;
+
+
+            //select pen propeties per penProfile selected.
+            if (this.penProfil.selected > 0 && this.penProfil.selected < 3) {        //available pen selecte number 
+                this.context.lineCap = this.penProfil.profile[this.penProfil.selected].lineCap;
+                this.context.lineJoin = this.penProfil.profile[this.penProfil.selected].lineJoin;
+                this.context.shadowColor = this.penProfil.profile[this.penProfil.selected].shadowColor;
+                this.context.shadowBlur = this.penProfil.profile[this.penProfil.selected].shadowBlur;
+            }
+
+
+        }
+    }
+
+
+    selectPenStyle(lineWidth, strokeColor, profileNumber) {
+        if (lineWidth) this.penStyle.width = lineWidth;
+        if (strokeColor) this.penStyle.stroke = strokeColor;
+
+        if (profileNumber > 0 && profileNumber < 3 && typeof profileNumber === 'number') {
+
+            this.penProfil.selected = profileNumber;
+        } else {
+            console.warn("please provide number less than 3 and more than 0 pen profile number to get effect");
+        }
+
     }
 
     startDrawing() {
@@ -27,9 +103,10 @@ class drawLogic {
 
         let drawPos = otherFunctions.positionResToParent(parentPos, { x: this.mousePositionRef.current.x, y: this.mousePositionRef.current.y });
 
-        console.log('the drawStarts from the position : ', drawPos);
+        // console.log('the drawStarts from the position : ', drawPos);
 
         this.context.beginPath();
+        this.engagePenStyle();
         this.context.moveTo(drawPos.x, drawPos.y);
         this.isDrawing = true;
 
@@ -103,21 +180,17 @@ class drawLogic {
 
         //insert new canvas
         this.setCanvas(this.finalCanvasRef, dimentions.contentRectCoord.p1.x, dimentions.contentRectCoord.p1.y, dimentions.contentWidth + 10, dimentions.contentHeight + 10, false);
+
         otherFunctions.checkAndRun(this.finalCanvasRef, 'ready', true, () => {
+
             const finalContext = this.finalCanvasRef.current.getContext('2d');
             finalContext.drawImage(this.canvasRef.current, dimentions.contentRectCoord.p1.x, dimentions.contentRectCoord.p1.y, dimentions.contentWidth + 10, dimentions.contentHeight + 10, 0, 0, dimentions.contentWidth + 10, dimentions.contentHeight + 10);
+
+            //Remove Rough Canvas
+            this.setRoughCanvas(null);
+
         });
 
-        /* 
-        
-        console.log('prevDimentions : ', this.prevCoor);
-        console.log('dimentions calcuated : ', dimentions);
-        */
-
-    }
-
-    pushCanvas(callback) {
-        this.setCanvas = callback;
     }
 
 

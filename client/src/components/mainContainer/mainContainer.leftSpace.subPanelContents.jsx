@@ -3,11 +3,13 @@ import { useIsTouch } from "../../hooks/isTouch";
 import { addEvent, removeEvent } from "../../utilities/addRemoveEvent";
 import { isTouchOrMouse, isDarkMode } from "../../utilities/mainContainer.Utilities";
 import { CommonContext } from "../../myLib/commonContext/myContext";
+import defaultDraw from '../../myJSON/draw.default.json';
+
 
 function Shapes({ src, cssClass, name, index }) {
     const shapeDiv = useRef(null);
     let isTouch = useIsTouch();
-    const { selectedShape } = useContext(CommonContext);
+    const { selectedItem } = useContext(CommonContext);
 
     function handleMouseEnter(event) {
         event.stopPropagation();
@@ -53,12 +55,49 @@ function Shapes({ src, cssClass, name, index }) {
     return (
         <>
             <img onClick={() => {
-
-
-                selectedShape.current = name;
+                selectedItem.type = 'shapes';
+                selectedItem.current = name;
 
             }} ref={shapeDiv} className={`size-24 m-2 shapeIcon ${cssClass}`} src={src}>
             </img>
+        </>
+    );
+}
+
+function ColorButton({ hex, setColor, transparent, heighLight, atClick, index }) {
+    return (
+        <>
+            {transparent ?
+                <button
+                    style={{
+                        border: '2px solid',
+                        borderColor: heighLight ? 'whitesmoke' : 'transparent'
+                    }}
+                    className="size-9  rounded-full m-1 overflow-hidden"
+                    onClick={() => {
+                        if (atClick) {
+                            atClick('transparent', index);
+                        }
+                        //console.log("the color selected is : ", 'transparent');
+                    }}>
+                    <img className="w-full scale-[250%]" src="./icons/transparent.jpg"></img>
+                </button>
+                :
+                <button style={{
+                    backgroundColor: hex,
+                    border: '2px solid',
+                    borderColor: heighLight ? 'whitesmoke' : 'transparent'
+                }}
+                    className="size-9 rounded-full m-1"
+                    onClick={() => {
+                        if (atClick) {
+                            atClick(hex, index);
+                        }
+                        //console.log("the color selected is : ", hex);
+                    }}>
+
+                </button>
+            }
         </>
     );
 }
@@ -109,10 +148,8 @@ function BackGroundShow({ mode }) {
         return (
             <>
                 <div className="m-5 text-center">
-
                     <div
                         ref={backDiv} className={`backShow size-30 bg-whiteBoard-one m-1 rounded-xl`}>
-
                     </div>
                     <span className="text-[1.2rem] font-bold dark:text-white">White Blue</span>
                 </div>
@@ -122,32 +159,107 @@ function BackGroundShow({ mode }) {
 }
 
 function Button_DrawWidth({ }) {
+    const { selectedItem } = useContext(CommonContext);
+    const [penProperties, setPenProperties] = useState({ lineWidth: defaultDraw.pen.lineWidth });
+    const { aCommunication } = useContext(CommonContext);
+
+    useEffect(() => {
+        if (aCommunication.current) {
+            aCommunication.current.fromLineWidthInput = { setLineWidth: setPenProperties };
+        }
+        if (selectedItem.pen) {
+            //update the given state , on function here penStyle changes. Must be in Draw.jsx hook
+            selectedItem.pen.setPenStyleCallback(setPenProperties);
+        }
+    }, [])
+
+    /* 
+    
+    
+    useEffect(() => {
+         console.log('the pen properties : ', penProperties);
+    }, [penProperties])
+    */
+
     return (
         <>
 
-            <button
-                className=" size-14 rounded-md flex flex-col items-center justify-around
-             dark:bg-lightPanle bg-darkPanle mb-2 
-             p-2">
-                <hr className="h-[2px] w-full bg-whiteBoard-one"></hr>
-                <hr className="h-[5px] w-full bg-whiteBoard-one"></hr>
-                <hr className="h-[7px] w-full bg-whiteBoard-one"></hr>
-                <hr className="h-[10px] w-full bg-whiteBoard-one"></hr>
-
-            </button>
+            <div className="  m-1 border-amber-400 item-center text-screenModeButton  dark:text-whiteBoard-one ">
+                <span className="font-bold ">Pen Width </span><br></br>
+                <input
+                    type="number"
+                    value={penProperties.lineWidth}
+                    onChange={(e) => {
+                        let value = e.target.value;
+                        if (value === '') {
+                            value = "zero";
+                        }
+                        else if (value.startsWith('0')) {
+                            console.log("contain leading zero");
+                            value = value.replace(/^0+/, "");
+                        }
+                        else {
+                            value = parseFloat(value);
+                        }
+                        console.log('the new line width is  : ', value);
+                        selectedItem.pen.penStyle(value, null);
+                    }} className="w-16 p-1 rounded-md bg-slate-400"></input>
+            </div>
 
         </>
     );
 }
 
-function Button_DrawColor({ }) {
+
+function Button_DrawColor({ handleColor, giveLight }) {
+
+
+    // const [giveLight, setLight] = useState([true]);
+    //const { selectedItem } = useContext(CommonContext);
+
+    /* 
+    
+    function handleColor(val, index) {
+        console.log('color for pen selected is  : ', val);
+        let newOne = giveLight.slice();
+        
+        if (heighLight.current.previousHeighLight >= 0) {       //check if previous heightLight, if then remove , set to false.
+        console.log('the previous HeighLight is : ', heighLight.current.previousHeighLight);
+        newOne[heighLight.current.previousHeighLight] = false;
+    }
+    newOne[index] = true;
+    
+    setLight(newOne);
+    
+    heighLight.current.previousHeighLight = index;  //set previous index for heightLight
+    selectedItem.pen.penStyle(null, val);
+}
+
+*/
+
+
     return (
         <>
-            <button>
-                <div className="size-14 mb-2  rounded-full dark:bg-lightPanle bg-darkPanle">
-
+            <div>
+                <span className="text-1xl ml-1 font-bold dark:text-whiteBoard-one text-screenModeButton self-start">
+                    Default Colors
+                </span>
+                <div className="flex flex-row flex-wrap ">
+                    <ColorButton index={0} heighLight={giveLight[9]} hex={'#000000'} atClick={handleColor} />
+                    <ColorButton index={1} heighLight={giveLight[1]} hex={'#ff66c4'} atClick={handleColor} />
+                    <ColorButton index={2} heighLight={giveLight[2]} hex={'#cb6ce6'} atClick={handleColor} />
+                    <ColorButton index={3} heighLight={giveLight[3]} hex={'#5e17eb'} atClick={handleColor} />
+                    <ColorButton index={4} heighLight={giveLight[4]} hex={'#0097b2'} atClick={handleColor} />
+                    <ColorButton index={5} heighLight={giveLight[5]} hex={'#0cc0df'} atClick={handleColor} />
+                    <ColorButton index={6} heighLight={giveLight[6]} hex={'#7ed957'} atClick={handleColor} />
+                    <ColorButton index={7} heighLight={giveLight[7]} hex={'#ffbd59'} atClick={handleColor} />
+                    <ColorButton index={8} heighLight={giveLight[8]} hex={'#ff914d'} atClick={handleColor} />
+                    <ColorButton index={9} heighLight={giveLight[0]} hex={'#ff5757'} atClick={handleColor} />
+                    <ColorButton index={10} heighLight={giveLight[10]} hex={'#545454'} atClick={handleColor} />
+                    <ColorButton index={11} heighLight={giveLight[11]} hex={'#a6a6a6'} atClick={handleColor} />
+                    <ColorButton index={12} heighLight={giveLight[12]} hex={'#d9d9d9'} atClick={handleColor} />
                 </div>
-            </button>
+            </div>
         </>
     );
 }
@@ -248,12 +360,18 @@ function Button_Eraser({ }) {
 
 
 
-function Sticks({ }) {
+function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
+    /* 
+    
     const pen4Butt = useRef(null);
     const pen5Butt = useRef(null);
-    let isTouch = useIsTouch();
     const buttOnBool = useRef(0);
-    const { aCommunication } = useContext(CommonContext);
+    */
+    const [defaultAnimationClass1, setAnimationClass1] = useState(null);
+    const [defaultAnimationClass2, setAnimationClass2] = useState(null);
+    let isTouch = useIsTouch();
+
+    const { selectedItem } = useContext(CommonContext);
 
     //common : 
     function pen4Active(event) {
@@ -274,7 +392,7 @@ function Sticks({ }) {
 
     // Mouse : 
     function pen4ActiveSelect(event) {
-        event.stopPropagation();
+        if (event) event.stopPropagation();
         if (buttOnBool.current === 2) {
             pen5Deactive();
             pen5DeactiveSelect();
@@ -287,10 +405,13 @@ function Sticks({ }) {
             return;
         }
         buttOnBool.current = 1;
+
         pen4Butt.current.classList.add('pen4ActiveSelect');
+        prevClass.current = { pen4Class: 'pen4ActiveSelect' };
     }
     function pen4DeactiveSelect() {
         pen4Butt.current.classList.remove('pen4ActiveSelect');
+        prevClass.current = { pen4Class: null };
     }
     function pen5ActiveSelect(event) {
         event.stopPropagation();
@@ -304,10 +425,13 @@ function Sticks({ }) {
             return;
         }
         buttOnBool.current = 2;
+
         pen5Butt.current.classList.add('pen5ActiveSelect');
+        prevClass.current = { pen5Class: "pen5ActiveSelect" };
     }
     function pen5DeactiveSelect() {
         pen5Butt.current.classList.remove('pen5ActiveSelect');
+        prevClass.current = { pen5Class: null };
     }
 
     //Touch :
@@ -343,11 +467,17 @@ function Sticks({ }) {
         pen5Butt.current.classList.remove('pen5TouchActiveSelect');
     }
     function selectPen1() {
-        alert('pen1');
+        // alert('pen1');
+        selectedItem.type = 'pens';
+        selectedItem.current = 'pen1';
+        selectedItem.pen.penStyle(null, null, 1);
     }
 
     function selectPen2() {
-        alert('pen2');
+        //alert('pen2');
+        selectedItem.type = 'pens';
+        selectedItem.current = 'pen2';
+        selectedItem.pen.penStyle(null, null, 2);
     }
 
     useEffect(() => {
@@ -402,19 +532,28 @@ function Sticks({ }) {
 
     }, [pen5Butt, isTouch]);
 
+    useEffect(() => {
+
+        if (prevClass.current?.pen4Class) {
+            setAnimationClass1(prevClass.current.pen4Class);
+        } else if (prevClass.current?.pen5Class) {
+            setAnimationClass2(prevClass.current.pen5Class);
+        }
+    }, [])
+
     return (
         <>
             <div className="rounded-3xl relative w-[85px] self-start mb-2 
                          h-[250px] bg-whiteBoard-one flex flex-col">
 
-                <button ref={pen4Butt} className=" pen4
-                            relative w-fit h-fit  rotate-90 top-1 right-4 ">
+                <button ref={pen4Butt} className={`pen4
+                            relative w-fit h-fit  rotate-90 top-1 right-4 ${prevClass.current?.pen4Class ? prevClass.current?.pen4Class : null}`}>
                     <img className="  w-16  " src={isDarkMode() === "light" ? '/icons/pen4f.png' :
                         isDarkMode() === "dark" ? '/icons/pen4fLight.png' : null}></img>
                 </button>
-                <button ref={pen5Butt} className="pen5 relative w-fit h-fit  rotate-90 
+                <button ref={pen5Butt} className={`pen5 relative w-fit h-fit  rotate-90 
                             right-5
-                            bottom-20 ">
+                            bottom-20 ${prevClass.current?.pen5Class ? prevClass.current?.pen5Class : null}`}>
                     <img className="  w-16  " src={isDarkMode() === "light" ? "/icons/pen5f.png" :
                         isDarkMode() === "dark" ? '/icons/pen5fLight.png' : null
                     }></img>
@@ -429,6 +568,31 @@ function Sticks({ }) {
 
 
 function SubPanelContent({ index }) {
+    const heighLight = useRef({ previousHeighLight: 0 })
+    const [giveLight, setLight] = useState([true]);
+    const { selectedItem } = useContext(CommonContext);
+
+    const prevClass = useRef(null);
+
+    const pen4Butt = useRef(null);
+    const pen5Butt = useRef(null);
+    const buttOnBool = useRef(0);
+
+    function handleColor(val, index) {
+        console.log('color for pen selected is  : ', val);
+        let newOne = giveLight.slice();
+
+        if (heighLight.current.previousHeighLight >= 0) {       //check if previous heightLight, if then remove , set to false.
+            console.log('the previous HeighLight is : ', heighLight.current.previousHeighLight);
+            newOne[heighLight.current.previousHeighLight] = false;
+        }
+        newOne[index] = true;
+
+        setLight(newOne);
+
+        heighLight.current.previousHeighLight = index;  //set previous index for heightLight
+        selectedItem.pen.penStyle(null, val);
+    }
 
     if (index === 1) {
 
@@ -471,17 +635,17 @@ function SubPanelContent({ index }) {
             <>
 
                 <div className="w-full grow  flex flex-row
-                border border-amber-800 self-start   ">
+                border border-amber-800 self-start overflow-y-auto   ">
                     <div className=" w-3 z-[1]  bg-lightPanle dark:bg-darkPanle">
 
                     </div>
                     <div className=" w-full grow mt-2 mb-2  flex flex-col items-between max-w-[250px]
                  self-start  h-[500px]">
 
-                        <Sticks />
+                        <Sticks pen4Butt={pen4Butt} pen5Butt={pen5Butt} buttOnBool={buttOnBool} prevClass={prevClass} />
                         <Button_Eraser />
                         <Button_DrawWidth />
-                        <Button_DrawColor />
+                        <Button_DrawColor giveLight={giveLight} handleColor={handleColor} />
                     </div>
                 </div>
             </>
