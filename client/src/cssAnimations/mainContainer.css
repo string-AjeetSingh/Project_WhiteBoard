@@ -76,28 +76,28 @@
 }
 
 .pen4Active {
-    transform: translateY(-20px);
+    transform: translateX(20px);
 }
 
 .pen5Active {
-    transform: translateY(-20px);
+    transform: translateX(20px);
 
 }
 
 .pen4TouchActiveSelect {
-    transform: translateY(-40px);
+    transform: translateX(40px);
 }
 
 .pen5TouchActiveSelect {
-    transform: translateY(-45px);
+    transform: translateX(45px);
 }
 
 .pen4ActiveSelect {
-    transform: translateY(-40px);
+    transform: translateX(40px);
 }
 
 .pen5ActiveSelect {
-    transform: translateY(-40px);
+    transform: translateX(40px);
 }
 
 .eraser {

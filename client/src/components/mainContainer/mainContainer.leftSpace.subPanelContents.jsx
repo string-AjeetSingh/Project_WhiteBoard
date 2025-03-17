@@ -105,6 +105,7 @@ function ColorButton({ hex, setColor, transparent, heighLight, atClick, index })
 function BackGroundShow({ mode }) {
 
     const backDiv = useRef(null);
+    const { aCommunication } = useContext(CommonContext);
 
     function handleMouseEnter(event) {
         event.stopPropagation();
@@ -135,10 +136,14 @@ function BackGroundShow({ mode }) {
             <>
                 <div className="m-5 text-center">
 
-                    <div
+                    <button onClick={() => {
+                        if (aCommunication.current?.whiteBoard) {
+                            aCommunication.current.whiteBoard.setColor('white');
+                        }
+                    }}
                         ref={backDiv} className={`backShow size-30 bg-white m-1  rounded-xl`}>
 
-                    </div>
+                    </button><br />
                     <span className="text-[1.2rem] font-bold dark:text-white">White</span>
                 </div>
             </>
@@ -148,9 +153,13 @@ function BackGroundShow({ mode }) {
         return (
             <>
                 <div className="m-5 text-center">
-                    <div
+                    <button onClick={() => {
+                        if (aCommunication.current?.whiteBoard) {
+                            aCommunication.current.whiteBoard.setColor('whiteBlue');
+                        }
+                    }}
                         ref={backDiv} className={`backShow size-30 bg-whiteBoard-one m-1 rounded-xl`}>
-                    </div>
+                    </button><br />
                     <span className="text-[1.2rem] font-bold dark:text-white">White Blue</span>
                 </div>
             </>
@@ -361,11 +370,7 @@ function Button_Eraser({ }) {
 
 
 function Sticks({ pen4Butt, pen5Butt, eraserButt, buttOnBool, prevClass }) {
-    /* 
-    const pen4Butt = useRef(null);
-    const pen5Butt = useRef(null);
-    const buttOnBool = useRef(0);
-    */
+
     const [defaultAnimationClass1, setAnimationClass1] = useState(null);
     const [defaultAnimationClass2, setAnimationClass2] = useState(null);
     let isTouch = useIsTouch();
@@ -501,22 +506,19 @@ function Sticks({ pen4Butt, pen5Butt, eraserButt, buttOnBool, prevClass }) {
     function pen5TouchDeactiveSelect() {
         pen5Butt.current.classList.remove('pen5TouchActiveSelect');
     }
+
+    //Functions for selectPen
     function selectPen1() {
         // alert('pen1');
         selectedItem.type = 'pens';
         selectedItem.current = 'pen1';
         selectedItem.pen.penStyle(null, null, 1);
-    }
-
-    function selectPen2() {
+    } function selectPen2() {
         //alert('pen2');
         selectedItem.type = 'pens';
         selectedItem.current = 'pen2';
         selectedItem.pen.penStyle(null, null, 2);
-    }
-
-    function selectEraser() {
-
+    } function selectEraser() {
         selectedItem.type = 'pens';
         selectedItem.current = 'eraser';
     }
@@ -613,26 +615,29 @@ function Sticks({ pen4Butt, pen5Butt, eraserButt, buttOnBool, prevClass }) {
             <div className="rounded-3xl relative w-[85px] self-start mb-2  border border-black 
                          h-[250px] bg-whiteBoard-one flex flex-col">
 
-                <button ref={pen4Butt} className={`pen4 border
-                            relative w-fit h-fit  rotate-90 top-1 right-4 ${prevClass.current?.pen4Class ? prevClass.current?.pen4Class : null}`}>
-                    <img className="  w-16  " src={isDarkMode() === "light" ? '/icons/pen4f.png' :
-                        isDarkMode() === "dark" ? '/icons/pen4fLight.png' : null}></img>
-                </button>
-                <button ref={pen5Butt} className={`pen5 border relative w-fit h-fit  rotate-90 
-                            right-5
-                            bottom-20 ${prevClass.current?.pen5Class ? prevClass.current?.pen5Class : null}`}>
-                    <img className="  w-16  " src={isDarkMode() === "light" ? "/icons/pen5f.png" :
-                        isDarkMode() === "dark" ? '/icons/pen5fLight.png' : null
-                    }></img>
-                </button>
-                <button ref={eraserButt} className={`eraser border absolute w-[130px] h-fit 
-                            right-5
-                            bottom-16 ${prevClass.current?.eraserClass ? prevClass.current?.eraserClass : null}`}>
-                    <img className="w-[130px]  " src={isDarkMode() === "light" ? "/icons/newEraserDark.png" :
-                        isDarkMode() === "dark" ? '/icons/newEraserLight.png' : null
-                    }></img>
-                </button>
+                {//new Logic to differ the alignment of the place according to the screen mode
+                }
 
+                <button ref={pen4Butt} className={`pen4 
+                            relative w-32 h-fit  top-5 right-12 ${prevClass.current?.pen4Class ? prevClass.current?.pen4Class : null}`}>
+                    <img className="  w-full  " src={isDarkMode() === 'light' ? '/icons/pen4f.png' :
+                        isDarkMode() === 'dark' ? '/icons/pen4fLight.png' : null
+                    }></img>
+                </button>
+                <button ref={pen5Butt} className={`pen5  relative w-32 h-fit
+                            right-12
+                            top-6  ${prevClass.current?.pen5Class ? prevClass.current?.pen5Class : null}`}>
+                    <img className="  w-32  " src={isDarkMode() === 'light' ? "/icons/pen5f.png" :
+                        isDarkMode() === 'dark' ? '/icons/pen5fLight.png' : null
+                    }></img>
+                </button>
+                <button ref={eraserButt} className={`eraser  absolute w-[130px] h-fit 
+                        right-5
+                        bottom-25 ${prevClass.current?.eraserClass ? prevClass.current?.eraserClass : null}`}>
+                    <img className="w-[130px]  " src={isDarkMode() === 'light' ? "/icons/newEraserDark.png" :
+                        isDarkMode() === 'dark' ? '/icons/newEraserLight.png' : null
+                    }></img>
+                </button>
 
             </div>
         </>
@@ -711,7 +716,7 @@ function SubPanelContent({ index }) {
             <>
 
                 <div className="w-full grow  flex flex-row
-                border border-amber-800 self-start overflow-y-auto   ">
+                self-start overflow-y-auto   ">
                     <div className=" w-3 z-[1]  bg-lightPanle dark:bg-darkPanle">
 
                     </div>
@@ -719,7 +724,6 @@ function SubPanelContent({ index }) {
                  self-start  h-[500px]">
 
                         <Sticks pen4Butt={pen4Butt} pen5Butt={pen5Butt} eraserButt={eraserButt} buttOnBool={buttOnBool} prevClass={prevClass} />
-                        <Button_Eraser />
                         <Button_DrawWidth />
                         <Button_DrawColor giveLight={giveLight} handleColor={handleColor} />
                     </div>

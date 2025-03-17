@@ -99,13 +99,15 @@ const selectorWork = {
             if (subjectRef.type === 'rectangle') {
 
                 if (directDataIncrement.enable) {
-                    newParameters.width = directDataIncrement.width === 'zero' ? 5 : directDataIncrement.width + 5;
+                    newParameters.width = directDataIncrement.width === 'zero' ? 10 : directDataIncrement.width + 5;
 
 
                 }
                 console.log('the width use to the rectangle is : ', newParameters.width);
                 subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
-                subjectRef.current.svgElemRef.current.style.width = (newParameters.width - 5) + 'px';
+                subjectRef.current.svgElemRef.current.style.x = '5px';
+                subjectRef.current.svgElemRef.current.style.y = '5px';
+                subjectRef.current.svgElemRef.current.style.width = (newParameters.width - 10) + 'px';
 
             }
             else if (subjectRef.type === 'triangle') {
@@ -197,11 +199,12 @@ const selectorWork = {
 
             if (subjectRef.type === 'rectangle') {
                 if (directDataIncrement.enable) {
-                    newParameters.height = directDataIncrement.height === 'zero' ? 5 : directDataIncrement.height + 5
+                    newParameters.height = directDataIncrement.height === 'zero' ? 10 : directDataIncrement.height + 5
                 }
-                subjectRef.current.svgElemRef.current.style.height = (newParameters.height - 5) + 'px';
                 subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
-
+                subjectRef.current.svgElemRef.current.style.height = (newParameters.height - 10) + 'px';
+                subjectRef.current.svgElemRef.current.style.x = '5px';
+                subjectRef.current.svgElemRef.current.style.y = '5px';
             }
             else if (subjectRef.type === 'triangle') {
                 let oldPoints = {
@@ -291,8 +294,10 @@ const selectorWork = {
             subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
             subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
 
-            subjectRef.current.svgElemRef.current.style.width = (newParameters.width - 5) + 'px';
-            subjectRef.current.svgElemRef.current.style.height = (newParameters.height - 5) + 'px';
+            subjectRef.current.svgElemRef.current.style.x = '5px';
+            subjectRef.current.svgElemRef.current.style.y = '5px';
+            subjectRef.current.svgElemRef.current.style.width = (newParameters.width - 10) + 'px';
+            subjectRef.current.svgElemRef.current.style.height = (newParameters.height - 10) + 'px';
         }
         else if (subjectRef.type === 'circle') {
 

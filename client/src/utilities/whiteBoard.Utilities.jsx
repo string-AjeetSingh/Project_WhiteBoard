@@ -215,6 +215,17 @@ const otherEventHandle = {
             //start pen working
             setItemTools.setPen();
         }
+    },
+    setWhiteBoardColor: (colorName, setstateColor) => {
+
+
+        if (colorName === 'white') {
+            setstateColor('white')
+        } else if (colorName === 'whiteBlue') {
+            setstateColor('var(--whiteBoard-one)')
+        } else {
+            console.error('please provide allowed color name to function');
+        }
     }
 }
 

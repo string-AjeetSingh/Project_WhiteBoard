@@ -7,6 +7,7 @@ import { CommonContext } from "../../myLib/commonContext/myContext";
 import { SelectorContext } from "./selectorContext";
 import { Selector } from "../selector/selector";
 import { useDraw } from "../../hooks/draw";
+import { otherFunctions } from "../../utilities/draw.Utilities";
 
 
 function Content({ SvgArray, canvasArray, roughCanvas }) {
@@ -29,8 +30,9 @@ function WhiteBoard({ }) {
     const ctrlHold = useHoldKey(innerDiv, 'Control');
     const prevScale = useRef(200);
     const defaultScaleValue = useRef(100)
+    const [whiteBoardColor, setWhiteBoardColor] = useState('var(--whiteBoard-one)');
 
-    const { selectedItem, trackEvent } = useContext(CommonContext);
+    const { selectedItem, aCommunication, trackEvent } = useContext(CommonContext);
     const [SvgArray, setSvgArray] = useState([
         <svg width={500} height={500} className="absolute" style={{
             border: '1px solid black'
@@ -72,7 +74,15 @@ function WhiteBoard({ }) {
 
     useWhiteboardEvents(innerDiv, divelem, bindedFunction);
     useEffect(() => {
+
+        //Provide Functionalities to communication
         selectedItem.pen = { penStyle: selectPenStyle, setPenStyleCallback };
+
+        aCommunication.current.whiteBoard = {
+            setColor: (name) => {
+                otherEventHandle.setWhiteBoardColor(name, setWhiteBoardColor);
+            }
+        }
     }, [])
     return (
         <>
@@ -82,10 +92,11 @@ function WhiteBoard({ }) {
             >
                 <div style={{
                     transformOrigin: "top left",
-                    transform: `scale(${prevScale.current}%)`
+                    transform: `scale(${prevScale.current}%)`,
+                    backgroundColor: whiteBoardColor
 
                 }}
-                    ref={innerDiv} className="bg-whiteBoard-one h-[1000px] 
+                    ref={innerDiv} className=" h-[1000px] 
                  text-black w-[1000px] absolute text-center "
                 >
                     <SelectorContext.Provider value={{ theSelector, innerDiv, prevScale }}>

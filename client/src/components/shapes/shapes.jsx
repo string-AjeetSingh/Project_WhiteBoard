@@ -31,7 +31,7 @@ function Rectangle({ index, x, y, width, height, useAs }) {
                 left: x
             }}
                 width={width} height={height} className="absolute " >
-                <rect ref={shapeRef} width={width - 5} height={height - 5} fill="none" stroke="black" strokeWidth="2" />
+                <rect x={5} y={5} ref={shapeRef} width={width - 10} height={height - 10} fill="none" stroke="black" strokeWidth="2" />
             </svg >
         </>
     );
