@@ -16,25 +16,11 @@ class drawLogic {
         this.finalCanvasRef = finalCanvasRef;
         this.newCanvasDimentions = {};
         this.isDrawing = false;
+        this.workingEraser = false;
         this.penStyle = {
             stroke: 'black',
             width: 1,
-            shadowColor: "rgba(0, 0, 0, 0)",
-            shadowBlue: 0,
-            lineCap: 'butt',
-            lineJoin: 'miter',
-
         }
-        /* 
-        ctx.globalCompositeOperation = "source-over"; // Default mode (draw normally)
-ctx.lineCap = "round"; // Smooth stroke endings
-ctx.lineJoin = "round"; // Smooth connection between strokes
-ctx.lineWidth = 2; // Pen thickness (adjust as needed)
-ctx.strokeStyle = "#000000"; // Pen color (black, change as needed)
-ctx.shadowColor = "rgba(0, 0, 0, 0.2)"; // Soft shadow for depth
-ctx.shadowBlur = 1; // Slight blur for smoothness
-
-        */
         this.penProfil = {
             selected: 2,
             profile: [null,
@@ -43,6 +29,7 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
                     shadowBlur: 0,
                     lineCap: "butt",
                     lineJoin: "miter",
+                    globalCompositeOperation: 'source-over'
 
                 },
                 {
@@ -50,6 +37,15 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
                     shadowBlur: 3,
                     lineCap: "round",
                     lineJoin: "round",
+                    globalCompositeOperation: 'source-over'
+
+                },
+                {
+                    shadowColor: "rgba(0, 0, 0, 0)",
+                    shadowBlur: 0,
+                    lineCap: "round",
+                    lineJoin: "round",
+                    globalCompositeOperation: 'destination-out'
 
                 },
             ]
@@ -62,6 +58,7 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
         this.calculateMinMaxPoints = this.calculateMinMaxPoints.bind(this);
         this.engagePenStyle = this.engagePenStyle.bind(this);
         this.selectPenStyle = this.selectPenStyle.bind(this);
+
     }
 
     engagePenStyle() {
@@ -72,11 +69,12 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
 
 
             //select pen propeties per penProfile selected.
-            if (this.penProfil.selected > 0 && this.penProfil.selected < 3) {        //available pen selecte number 
+            if (this.penProfil.selected > 0 && this.penProfil.selected < 4) {        //available pen selecte number 
                 this.context.lineCap = this.penProfil.profile[this.penProfil.selected].lineCap;
                 this.context.lineJoin = this.penProfil.profile[this.penProfil.selected].lineJoin;
                 this.context.shadowColor = this.penProfil.profile[this.penProfil.selected].shadowColor;
                 this.context.shadowBlur = this.penProfil.profile[this.penProfil.selected].shadowBlur;
+                this.context.globalCompositeOperation = this.penProfil.profile[this.penProfil.selected].globalCompositeOperation;
             }
 
 
@@ -88,7 +86,7 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
         if (lineWidth) this.penStyle.width = lineWidth;
         if (strokeColor) this.penStyle.stroke = strokeColor;
 
-        if (profileNumber > 0 && profileNumber < 3 && typeof profileNumber === 'number') {
+        if (profileNumber > 0 && profileNumber < 4 && typeof profileNumber === 'number') {
 
             this.penProfil.selected = profileNumber;
         } else {
@@ -97,21 +95,33 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
 
     }
 
-    startDrawing() {
+    startDrawing(forEraser = false) {
+
+        //set variable to know if working with eraser 
+        if (forEraser) {
+            this.workingEraser = true;
+
+        } else {
+            this.workingEraser = false;
+        }
+
         this.context = this.canvasRef.current.getContext('2d');
         let parentPos = otherFunctions.getBoundingClientRectRespectToZoomScale(this.normalizedScale, this.canvasRef);
-
         let drawPos = otherFunctions.positionResToParent(parentPos, { x: this.mousePositionRef.current.x, y: this.mousePositionRef.current.y });
 
-        // console.log('the drawStarts from the position : ', drawPos);
+        //console.log('the drawStarts from the position : ', drawPos);
 
         this.context.beginPath();
+
         this.engagePenStyle();
         this.context.moveTo(drawPos.x, drawPos.y);
         this.isDrawing = true;
 
         addEvent(this.canvasRef, 'mousemove', this.draw);
         addEvent(this.canvasRef, 'mouseup', this.stopDrawing);
+        if (forEraser)
+            addEvent(this.parentRef, 'mouseup', this.stopDrawing);
+
 
     }
     draw(e) {
@@ -126,14 +136,14 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
     stopDrawing(e) {
         if (this.isDrawing) {
             this.isDrawing = false;
-            this.calibrateDimentionsForNewCanvas();
+            if (!this.workingEraser) this.calibrateDimentionsForNewCanvas();
             removeEvent(this.canvasRef, 'mousemove', this.draw);
             removeEvent(this.canvasRef, 'mouseup', this.stopDrawing);
         } else {
             setTimeout(() => {
                 if (this.isDrawing) {
                     this.isDrawing = false;
-                    this.calibrateDimentionsForNewCanvas();
+                    if (!this.workingEraser) this.calibrateDimentionsForNewCanvas();
                     removeEvent(this.canvasRef, 'mousemove', this.draw);
                     removeEvent(this.canvasRef, 'mouseup', this.stopDrawing);
                 }
@@ -193,6 +203,19 @@ ctx.shadowBlur = 1; // Slight blur for smoothness
 
     }
 
+
+}
+
+const eraserFunctions = {
+    startErasing: () => {
+
+    },
+    stopErasing: () => {
+
+    },
+    erasing: () => {
+
+    }
 
 }
 

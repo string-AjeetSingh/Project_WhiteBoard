@@ -209,7 +209,10 @@ const otherEventHandle = {
 
         }
         else if (selectedItem.type === 'pens') {
-            console.log("a pen is selected, we should create it now for : ", selectedItem.current);
+            if (e.button === 1) return;
+            if (selectedItem.current === 'eraser') return;
+
+            //start pen working
             setItemTools.setPen();
         }
     }

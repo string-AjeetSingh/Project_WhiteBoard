@@ -7,11 +7,33 @@ import { useMouseMovement } from "./mousePointerMove";
 import { CommonContext } from "../myLib/commonContext/myContext";
 
 function Canvas({ width, height, theRef, heighlight, x, y }) {
+    const { aCommunication, selectedItem } = useContext(CommonContext);
+    const localRef = useRef(null);
+
+    function startErasing() {
+        if (aCommunication.current?.draw) {
+            if (selectedItem.current === 'eraser') {
+
+                aCommunication.current.draw.selectPenStyle(null, 'rgba(0, 0, 0, 1)', 3);
+                aCommunication.current.draw.readyToErase(localRef);
+            }
+        }
+    }
 
     useEffect(() => {
+
         if (theRef.current) {
             theRef.ready = true;
+            localRef.current = theRef.current;
         }
+        const theEvents = new effectEventClass();
+
+        theEvents.setEvent(localRef, 'mousedown', startErasing);
+
+        return (() => {
+            theEvents.returnEvents();
+        })
+
     }, [])
 
     return (
@@ -48,7 +70,15 @@ function useDraw(parentRef, setCanvas, setRoughCanvas, preScale) {
         let parentProp = otherFunctions.getBoundingClientRectRespectToZoomScale(normalizeScale, parentRef);
         setRoughCanvas(<Canvas width={parentProp.width} height={parentProp.height} theRef={canvasRef} />)
 
-        otherFunctions.checkAndRun(canvasRef, 'ready', true, theLogic.current.startDrawing);
+        otherFunctions.checkAndRun(canvasRef, 'ready', true, theLogic.current.startDrawing); //start drawing if the component is ready.
+    }
+
+    function readyToErase(theRef) {
+        //Get canvas ref to work with
+        canvasRef.current = theRef.current;
+        theLogic.current = new drawLogic(parentRef, canvasRef, null, null, null, mousePositionRef, normalizeScale);
+        theLogic.current.selectPenStyle(penStyle.current.lineWidth, penStyle.current.strokeColor, penStyle.current.penProfileNumber);
+        theLogic.current.startDrawing(true);
     }
 
     function pushCanvas(theRef, x, y, width, height, heighlight) {
@@ -61,7 +91,7 @@ function useDraw(parentRef, setCanvas, setRoughCanvas, preScale) {
     }
 
 
-    function setPenStyleCallback(callback) {
+    function setPenStyleCallback(callback) {          //We are not using this, we can remove, its references from the code
         if (callback) {
             functionArrayProvideStateUpdate.current.push(callback);
         } else {
@@ -87,6 +117,14 @@ function useDraw(parentRef, setCanvas, setRoughCanvas, preScale) {
     }
 
     useEffect(() => {
+        //Provide draw api to Communication 
+        if (aCommunication.current) {
+            aCommunication.current.draw = {
+                selectPenStyle,
+                readyToErase
+            }
+        }
+
         //set run array of state function to have current value of penStyle
         if (functionArrayProvideStateUpdate.current) {
             functionArrayProvideStateUpdate.current.forEach((item) => {

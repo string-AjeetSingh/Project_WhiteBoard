@@ -27,3 +27,17 @@
     transform: translateY(50px);
     opacity: 0.20;
 }
+
+
+.raghuSpan {
+
+    animation: fadeIn 500ms ease-in;
+    transition: transform 10000ms, background-color 5000ms, opacity 5000ms ease-in;
+}
+
+.raghuSpan:hover {
+    background-color: orange;
+    opacity: 0;
+    transform: translateY(-1000px) scale(1) rotate(12000deg);
+
+}

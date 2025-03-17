@@ -4,12 +4,15 @@ import "../../cssAnimations/rough.css";
 import { DarkModeToogle } from "../navBar/navBar.darkModeButton";
 import { SubPanelContent } from "../mainContainer/mainContainer.leftSpace.subPanelContents";
 import { addEvent, removeEvent } from "../../utilities/addRemoveEvent";
+import { q } from "framer-motion/client";
 
 
 
 
 
 function Rough({ }) {
+
+    const raghuSpan = useRef(null);
     const canvasRef = useRef(null);
     const inputRef = useRef({ x: null, y: null, xl: null, yl: null });
     function handleLineDraw() {
@@ -48,6 +51,13 @@ function Rough({ }) {
         }
     }
 
+    function raghuEnter() {
+        raghuSpan.current.classList.add('raghuActive');
+    }
+    function raghuLeave() {
+        raghuSpan.current.classList.remove('raghuActive');
+    }
+
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -66,6 +76,23 @@ function Rough({ }) {
                 removeEvent(canvasRef, 'mouseup', stopDrawing)
             }
 
+        })
+    }, [])
+
+
+
+    useEffect(() => {
+        if (raghuSpan.current) {
+            addEvent(raghuSpan, 'mouseenter', raghuEnter);
+            addEvent(raghuSpan, 'mouseleave', raghuLeave);
+        }
+
+        return (() => {
+            if (raghuSpan.current) {
+                removeEvent(raghuSpan, 'mouseenter', raghuEnter);
+                removeEvent(raghuSpan, 'mouseleave', raghuLeave);
+
+            }
         })
     }, [])
     return (
@@ -123,6 +150,14 @@ function Rough({ }) {
                 Draw
             </button>
 
+            <hr>
+            </hr>
+
+            {/* Rahu work :  */}
+            <div className="m-1 p-10 flex flex-row justify-center">
+                <span ref={raghuSpan} className="relative raghuSpan text-6xl font-bold hover:bg-blue-300 active:scale-90
+                 text-pink-500 rounded-2xl p-3 border-2 border-pink-800 hover:text-orange-600">Mansi Bhatia</span>
+            </div>
         </>
     );
 }

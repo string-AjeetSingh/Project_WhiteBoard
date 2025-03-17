@@ -105,9 +105,10 @@
 }
 
 .eraserActive {
-    transform: translateY(-10px);
+    transform: translateX(20px);
 }
 
 .eraserActiveSelect {
-    transform: scale(0.9);
+    transform: translateX(40px);
+
 }

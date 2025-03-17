@@ -360,9 +360,8 @@ function Button_Eraser({ }) {
 
 
 
-function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
+function Sticks({ pen4Butt, pen5Butt, eraserButt, buttOnBool, prevClass }) {
     /* 
-    
     const pen4Butt = useRef(null);
     const pen5Butt = useRef(null);
     const buttOnBool = useRef(0);
@@ -389,6 +388,13 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
     function pen5Deactive() {
         pen5Butt.current.classList.remove('pen5Active');
     }
+    function eraserActive(event) {
+        event.stopPropagation();
+        eraserButt.current.classList.add('eraserActive');
+    }
+    function eraserDeactive() {
+        eraserButt.current.classList.remove('eraserActive');
+    }
 
     // Mouse : 
     function pen4ActiveSelect(event) {
@@ -403,6 +409,9 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
 
             buttOnBool.current = 0;
             return;
+        } else if (buttOnBool.current === 3) {
+            eraserDeactive();
+            eraserDeactiveSelect();
         }
         buttOnBool.current = 1;
 
@@ -423,6 +432,9 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
             pen5DeactiveSelect();
             buttOnBool.current = 0;
             return;
+        } else if (buttOnBool.current === 3) {
+            eraserDeactive();
+            eraserDeactiveSelect();
         }
         buttOnBool.current = 2;
 
@@ -432,6 +444,29 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
     function pen5DeactiveSelect() {
         pen5Butt.current.classList.remove('pen5ActiveSelect');
         prevClass.current = { pen5Class: null };
+    }
+    function eraserActiveSelect(event) {
+        event.stopPropagation();
+        if (buttOnBool.current === 1) {
+            pen4Deactive();
+            pen4DeactiveSelect();
+        } else if (buttOnBool.current === 3) {
+            eraserDeactive();
+            eraserDeactiveSelect();
+            buttOnBool.current = 0;
+            return;
+        } else if (buttOnBool.current === 2) {
+            pen5Deactive();
+            pen5DeactiveSelect();
+        }
+        buttOnBool.current = 3;
+
+        eraserButt.current.classList.add('eraserActiveSelect');
+        prevClass.current = { eraserClass: "eraserActiveSelect" };
+    }
+    function eraserDeactiveSelect() {
+        eraserButt.current.classList.remove('eraserActiveSelect');
+        prevClass.current = { eraserClass: null };
     }
 
     //Touch :
@@ -480,6 +515,12 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
         selectedItem.pen.penStyle(null, null, 2);
     }
 
+    function selectEraser() {
+
+        selectedItem.type = 'pens';
+        selectedItem.current = 'eraser';
+    }
+
     useEffect(() => {
         if (isTouchOrMouse(isTouch, pen4Butt) === 'mouse') {
             addEvent(pen4Butt, "mouseenter", pen4Active);
@@ -505,6 +546,32 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
         }
 
     }, [pen4Butt, isTouch]);
+
+    useEffect(() => {
+        if (isTouchOrMouse(isTouch, eraserButt) === 'mouse') {
+            addEvent(eraserButt, "mouseenter", eraserActive);
+            addEvent(eraserButt, "mouseleave", eraserDeactive);
+            addEvent(eraserButt, "click", eraserActiveSelect);
+            addEvent(eraserButt, "click", selectEraser);
+        }
+        else if (isTouchOrMouse(isTouch, eraserButt) === 'touch') {
+            // addEvent(pen4Butt, "touchstart", pen4TouchActiveSelect);
+        }
+
+        return () => {
+
+            if (isTouchOrMouse(isTouch, eraserButt) === 'mouse') {
+                removeEvent(eraserButt, "mouseenter", eraserActive);
+                removeEvent(eraserButt, "mouseleave", eraserDeactive);
+                removeEvent(eraserButt, "click", eraserActiveSelect);
+                removeEvent(eraserButt, "click", selectEraser);
+            }
+            else if (isTouchOrMouse(isTouch, eraserButt) === 'touch') {
+                // removeEvent(pen4Butt, "touchstart", pen4TouchActiveSelect);
+            }
+        }
+
+    }, [eraserButt, isTouch]);
 
     useEffect(() => {
         if (isTouchOrMouse(isTouch, pen5Butt) === 'mouse') {
@@ -543,21 +610,29 @@ function Sticks({ pen4Butt, pen5Butt, buttOnBool, prevClass }) {
 
     return (
         <>
-            <div className="rounded-3xl relative w-[85px] self-start mb-2 
+            <div className="rounded-3xl relative w-[85px] self-start mb-2  border border-black 
                          h-[250px] bg-whiteBoard-one flex flex-col">
 
-                <button ref={pen4Butt} className={`pen4
+                <button ref={pen4Butt} className={`pen4 border
                             relative w-fit h-fit  rotate-90 top-1 right-4 ${prevClass.current?.pen4Class ? prevClass.current?.pen4Class : null}`}>
                     <img className="  w-16  " src={isDarkMode() === "light" ? '/icons/pen4f.png' :
                         isDarkMode() === "dark" ? '/icons/pen4fLight.png' : null}></img>
                 </button>
-                <button ref={pen5Butt} className={`pen5 relative w-fit h-fit  rotate-90 
+                <button ref={pen5Butt} className={`pen5 border relative w-fit h-fit  rotate-90 
                             right-5
                             bottom-20 ${prevClass.current?.pen5Class ? prevClass.current?.pen5Class : null}`}>
                     <img className="  w-16  " src={isDarkMode() === "light" ? "/icons/pen5f.png" :
                         isDarkMode() === "dark" ? '/icons/pen5fLight.png' : null
                     }></img>
                 </button>
+                <button ref={eraserButt} className={`eraser border absolute w-[130px] h-fit 
+                            right-5
+                            bottom-16 ${prevClass.current?.eraserClass ? prevClass.current?.eraserClass : null}`}>
+                    <img className="w-[130px]  " src={isDarkMode() === "light" ? "/icons/newEraserDark.png" :
+                        isDarkMode() === "dark" ? '/icons/newEraserLight.png' : null
+                    }></img>
+                </button>
+
 
             </div>
         </>
@@ -576,6 +651,7 @@ function SubPanelContent({ index }) {
 
     const pen4Butt = useRef(null);
     const pen5Butt = useRef(null);
+    const eraserButt = useRef(null);
     const buttOnBool = useRef(0);
 
     function handleColor(val, index) {
@@ -642,7 +718,7 @@ function SubPanelContent({ index }) {
                     <div className=" w-full grow mt-2 mb-2  flex flex-col items-between max-w-[250px]
                  self-start  h-[500px]">
 
-                        <Sticks pen4Butt={pen4Butt} pen5Butt={pen5Butt} buttOnBool={buttOnBool} prevClass={prevClass} />
+                        <Sticks pen4Butt={pen4Butt} pen5Butt={pen5Butt} eraserButt={eraserButt} buttOnBool={buttOnBool} prevClass={prevClass} />
                         <Button_Eraser />
                         <Button_DrawWidth />
                         <Button_DrawColor giveLight={giveLight} handleColor={handleColor} />
