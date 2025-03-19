@@ -1,10 +1,3 @@
-:root {
-    --lightPanle: #3a7188;
-    --darkPanle: #0a445f;
-    --whiteBoard-one: #c3daf1;
-    --screenModeButton: #002f42;
-}
-
 .toolButt {
     transition: transform 200ms, background-color 200ms ease-in;
 }

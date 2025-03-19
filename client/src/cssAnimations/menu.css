@@ -1,0 +1,29 @@
+.menu-button {
+    transition: transform 100ms ease-in, background-color 500ms ease-in-out;
+}
+
+.menu-part {
+    transition: transform 600ms ease-in-out;
+}
+
+
+.menu-button-mouseenter {
+    background-color: rgb(6, 128, 222);
+    transform: scale(1.1);
+}
+
+.menu-button-mousedown {
+    transform: scale(1);
+}
+
+.menu-button-touchstart {
+    transform: scale(.9);
+}
+
+.menu-part1-active {
+    transform: translateX(20px);
+}
+
+.menu-part2-active {
+    transform: translateX(-20px);
+}
