@@ -73,6 +73,9 @@ function DarkModeToogle() {
         if (aCommunication.current?.sendTo_pPanel) {
             aCommunication.current.sendTo_pPanel(localStorage.getItem('screenMode'));
         }
+        if (aCommunication.current?.sendTo_Home) {
+            aCommunication.current.sendTo_Home(localStorage.getItem('screenMode'));
+        }
         // localStorage.setItem("theme", thebody.classList.contains("dark") ? "dark" : "light");
         //console.log(localStorage.getItem("theme"));
 
