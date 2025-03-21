@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 
-function Panel({ func_OutNavProperties }) {
+function Panel({ func_OutNavProperties, buttonHandles, isAuthenticated }) {
 
     const panelRef = useRef(null);
 
@@ -33,6 +33,9 @@ function Panel({ func_OutNavProperties }) {
 
                 <PanelButton>Home</PanelButton>
                 <PanelButton>Upgrade To Pro</PanelButton>
+                {isAuthenticated ?
+                    <PanelButton handleClick={buttonHandles.logout}>Logout</PanelButton>
+                    : null}
             </div>
         </>
     );

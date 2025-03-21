@@ -3,6 +3,8 @@ import { Panel } from "./subcomponents";
 import '../../cssAnimations/navBar.css'
 import { DarkModeToogle } from "./navBar.darkModeButton";
 import { CommonContext } from "../../myLib/commonContext/myContext";
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 
 
@@ -12,6 +14,12 @@ function NavBar({ }) {
     const panel = useRef({ on: null, off: null });
     const [panelBool, setpanelBool] = useState(0);
     const { trackEvent } = useContext(CommonContext);
+
+    const { logout, isAuthenticated } = useAuth0();
+
+    function letsLogout() {
+        logout({ logoutParams: { returnTo: window.location.origin } });
+    }
 
     function getNavProperties(got) {
         if (got) {
@@ -81,7 +89,9 @@ function NavBar({ }) {
             </div>
 
 
-            <Panel func_OutNavProperties={getNavProperties} />
+            <Panel func_OutNavProperties={getNavProperties} buttonHandles={{
+                logout: letsLogout
+            }} isAuthenticated={isAuthenticated} />
 
         </>
     );

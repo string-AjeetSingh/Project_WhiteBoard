@@ -8,7 +8,7 @@ const menuWork = {
         deActiveHoverStyle(theRef) {
             modifyClass(theRef.current, 'remove', { current: 'menu-button-mouseenter' });
         },
-        clickStyle(theRef, mode, callback) {
+        clickStyle(theRef, mode, callback, type) {
             if (mode === 'start') {
                 if (containClass(theRef.current, 'menu-button.mouseenter')) {
                     modifyClass(theRef.current, 'replace', { current: 'menu-button-mousedown', old: 'menu-button-mouseenter' });
@@ -21,9 +21,13 @@ const menuWork = {
                 if (containClass(theRef.current, 'menu-button-mousedown')) {
                     modifyClass(theRef.current, 'replace', { current: 'menu-button-mouseenter', old: 'menu-button-mousedown' })
                 }
-                setTimeout(() => {
-                    callback();
-                }, 100)
+                if (callback) {
+                    setTimeout(() => {
+                        callback(type);
+                    }, 100)
+                } else {
+                    console.error('provide callback to run on menubutton');
+                }
 
             } else {
                 console.error('please provide valid mode to the clickstyle');
@@ -31,7 +35,7 @@ const menuWork = {
             }
 
         },
-        touchStyle(theRef, part1Ref, part2Ref, mode, callback, e) {
+        touchStyle(theRef, part1Ref, part2Ref, mode, callback, type, e) {
 
             if (mode === 'start') {
                 modifyClass(theRef.current, 'add', { current: 'menu-button-touchstart' });
@@ -43,9 +47,13 @@ const menuWork = {
                 modifyClass(theRef.current, 'remove', { current: 'menu-button-touchstart' });
                 modifyClass(part1Ref.current, 'remove', { current: 'menu-part1-active' });
                 modifyClass(part2Ref.current, 'remove', { current: 'menu-part2-active' });
-                setTimeout(() => {
-                    callback();
-                }, 100)
+                if (callback) {
+                    setTimeout(() => {
+                        callback(type);
+                    }, 100)
+                } else {
+                    console.error('provide callback to run on menubutton');
+                }
             }
 
         },

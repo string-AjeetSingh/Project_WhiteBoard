@@ -3,7 +3,7 @@ body {
 }
 
 :root {
-    --lightPanle: #3A7188;
+    --lightPanle: #3a7188;
     --darkPanle: #0a445f;
     --transLightPanel: rgba(58, 113, 136, 0.75);
     --transDarkPanel: rgba(10, 68, 95, 0.75);

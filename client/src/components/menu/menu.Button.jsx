@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { effectEventClass } from "../../myLib/effectEventClass";
 
 
-function MenuButton({ firstWord, otherFollowingWord, src, specialOne, onClick }) {
+function MenuButton({ firstWord, otherFollowingWord, src, specialOne, onClick, type }) {
 
     const button = useRef(null);
     const part1 = useRef(null);
@@ -13,9 +13,9 @@ function MenuButton({ firstWord, otherFollowingWord, src, specialOne, onClick })
         hoverActive: menuWork.handle.activeHoverStyle.bind(null, button),
         hoverDeActive: menuWork.handle.deActiveHoverStyle.bind(null, button),
         clickStyleStart: menuWork.handle.clickStyle.bind(null, button, 'start'),
-        clickStyleOver: menuWork.handle.clickStyle.bind(null, button, 'over', onClick),
+        clickStyleOver: menuWork.handle.clickStyle.bind(null, button, 'over', onClick, type),
         touchStyleStart: menuWork.handle.touchStyle.bind(null, button, part1, part2, 'start'),
-        touchStyleEnd: menuWork.handle.touchStyle.bind(null, button, part1, part2, 'end', onClick),
+        touchStyleEnd: menuWork.handle.touchStyle.bind(null, button, part1, part2, 'end', onClick, type),
     }
 
     useEffect(() => {

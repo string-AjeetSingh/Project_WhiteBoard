@@ -7,7 +7,7 @@ function NewProject({ cancel }) {
         <>
             <div onClick={(e) => {
                 e.stopPropagation();
-            }} className=" p-3 flex  flex-col border border-blue-300 bg-blue-300 dark:bg-darkPanle
+            }} className=" relative bottom-4 p-3 flex  flex-col border border-blue-300 bg-blue-300 dark:bg-darkPanle
             text-darkPanle dark:text-blue-300 text-[1.5rem] rounded-md">
 
                 <span className="">
