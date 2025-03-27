@@ -1,26 +1,40 @@
+
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
 import path from "path";
-import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { fileURLToPath } from 'url';
+import pracRouter from "./src/functionalities/practise/practise.routes.js";
 
-// Load environment variables from .env file
-dotenv.config();
+
+import loginRouter from "./src/functionalities/Login/login.routes.js";
+import config from "./config.js";
+
+
+
+
 
 const app = express();
 const server = createServer(app);
+
 
 // Middleware to serve React build files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'clientBuild')));
+app.use(cookieParser(config.COOKIE_SECRET));
+
+
+app.use('/api', pracRouter);
+app.use('/api', loginRouter);
 
 
 // Catch-all route to serve the React app for all unknown routes (SPA)
 app.get("*", (req, res) => {
+  //res.cookie('theJwt', jwt.provideToken(process.env.COOKIE_SECRET));
   res.sendFile(path.join(__dirname, "clientBuild", "index.html"));
 });
+
 
 app.use((req, res) => {
   res.json({

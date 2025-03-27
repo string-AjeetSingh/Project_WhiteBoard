@@ -7,13 +7,22 @@
   "type": "module",
   "main": "main.server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "dev": "nodemon main.server.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "path": "^0.12.7",
     "socket.io": "^4.8.1",
     "websocket": "^1.0.35"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.1.0"
   }
 }

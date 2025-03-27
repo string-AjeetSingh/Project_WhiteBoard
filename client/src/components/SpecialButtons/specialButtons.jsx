@@ -17,7 +17,8 @@ const SpecialButton = ({ theName, onClick }) => {
 
     return (
         <motion.button
-            className="relative z-20 border-2 px-14 py-3 h-fit text-screenModeButton dark:text-blue-300  text-3xl rounded-xl overflow-hidden m-3
+            className="relative z-20 border-4 px-20 py-3 h-fit text-screenModeButton
+             dark:text-blue-300  text-5xl rounded-xl overflow-hidden m-3
              transition-colors duration-500 "
             style={{
                 borderColor: borderColors[colorIndex],

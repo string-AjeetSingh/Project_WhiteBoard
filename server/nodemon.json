@@ -1,0 +1,12 @@
+{
+    "watch": [
+        "src",
+        "config"
+    ],
+    "ext": "js,json",
+    "ignore": [
+        "tests/",
+        "node_modules/"
+    ],
+    "exec": "node main.server.js"
+}

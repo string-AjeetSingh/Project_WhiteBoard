@@ -7,13 +7,13 @@ import { effectEventClass } from "../../myLib/effectEventClass";
 import { NewProject } from "./menu.NewProject";
 import { OpenProject } from "./menu.OpenProject";
 import { useInnerWidthHeight } from "../../hooks/InnerWidthHeight";
-import { useAuth0 } from "@auth0/auth0-react";
+import useLogin from "../../hooks/login";
 
 
 function Menu({ }) {
     const [boolBlurPanel, setBlurPanel] = useState(0);
     const [width, height] = useInnerWidthHeight();
-    const { user } = useAuth0();
+    const { user } = useLogin();
 
 
     useEffect(() => {
