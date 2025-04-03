@@ -6,7 +6,7 @@ import { useIsTouch } from "../../hooks/isTouch";
 import { addEvent, removeEvent } from "../../utilities/addRemoveEvent.js"
 import { SubPanelContent } from "./mainContainer.leftSpace.subPanelContents.jsx";
 import { PropertiesPanel } from "../propertiePanel/propertiePanle.jsx";
-import { panelOnOffControl } from "../../utilities/mainContainer.Utilities.js";
+
 
 
 
@@ -389,6 +389,18 @@ function LeftSpace({ }) {
                 <button onClick={tooglePanel} ref={toolButt} className=" toolButt 
                 size-10 rounded-sm mt-2 m-1 
                  bg-darkPanle dark:bg-lightPanle">
+                </button>
+
+                {/* Button to test the whiteboard data recovey  */}
+
+                <button onClick={() => {
+                    aCommunication.current.whiteboardData.resetWhiteboard();
+                    aCommunication.current.whiteboardData.recoverWhiteboard();
+
+                }} ref={toolButt} className=" toolButt 
+                size-10 rounded-sm mt-2 m-1 
+                 bg-darkPanle dark:bg-lightPanle">
+                    <span className="text-2xl text-white">R</span>
                 </button>
 
 

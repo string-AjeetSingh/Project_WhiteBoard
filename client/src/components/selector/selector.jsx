@@ -35,9 +35,10 @@ function Selector({ }) {
     }
 
     useEffect(() => {
-        theSelector.current.select = (svgRef, svgElemRef, type) => {
+        theSelector.current.select = (svgRef, svgElemRef, type, index) => {
             selectedElem.current = { svgRef: svgRef, svgElemRef: svgElemRef };
             selectedElem.type = type;
+            selectedElem.index = index;
             //console.log('the selectedElem : ', selectedElem);
             selectorWork.select(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv);
 
@@ -79,7 +80,7 @@ function Selector({ }) {
                 }
 
             }
-            console.log('the communication : ', aCommunication);
+            //console.log('the communication : ', aCommunication);
 
             if (aCommunication.current.leftSpace.subPanelPropertise.contains()) {
                 aCommunication.current.leftSpace.subPanelPropertise.off();

@@ -1,15 +1,6 @@
-import controlData from "./controlData";
-
-const eventHandles = {
-    useSelector: (selector, svgRef, svgElemRef, name, index) => {
-
-        selector.current.select(svgRef, svgElemRef, name, index);
-
-    }
-
-}
-
-const otherFunctions = {
+const controlData = {
+    getLatestData,
+    getLatestAttributeData,
     saveData: (index, svgRef, shapeRef, aCommunication, svgStyleArray, shapeStyleArray, svgAttributeArray, shapeAttributeArray) => {
 
         //Example of a very beautifull coding, where we thing of use computer processing or conditional exicution of code.
@@ -21,30 +12,30 @@ const otherFunctions = {
         let conditionArray = [svgStyleArray, shapeStyleArray, svgAttributeArray, shapeAttributeArray];
         let conditionFunctionalities = [
             () => {           // index 1 - work for svgStyleArray
-                const svgStyle = controlData.getLatestData(svgStyleArray, svgRef);
+                const svgStyle = getLatestData(svgStyleArray, svgRef);
                 newStyle.svgElem = { ...svgStyle };
                 newStyle.empty = false;
 
             },
             () => {           // index 2 - work for shapeStyleArray
-                const shapeStyle = controlData.getLatestData(shapeStyleArray, shapeRef);
+                const shapeStyle = getLatestData(shapeStyleArray, shapeRef);
                 newStyle.shapeElem = { ...shapeStyle };
                 newStyle.empty = false;
             },
             () => {           // index 3 - work for svgAttributeArray
-                const svgAttribute = controlData.getLatestAttributeData(svgAttributeArray, svgRef);
+                const svgAttribute = getLatestAttributeData(svgAttributeArray, svgRef);
                 newAttrib.svgElem = { ...svgAttribute };
                 newAttrib.empty = false;
             },
             () => {           // index 4 - work for shapeAttributeArray
-                const shapeAttribute = controlData.getLatestAttributeData(shapeAttributeArray, shapeRef);
+                const shapeAttribute = getLatestAttributeData(shapeAttributeArray, shapeRef);
                 newAttrib.shapeElem = { ...shapeAttribute };
                 newAttrib.empty = false;
             }
         ]
 
         conditionArray.forEach((item, index) => {
-            if (item.length > 0) {
+            if (item && item.length > 0) {
                 conditionFunctionalities[index]();
             }
         })
@@ -54,27 +45,28 @@ const otherFunctions = {
 
         if (!newAttrib.empty)
             aCommunication.current.whiteboardData.data[index].attribute = { ...newAttrib };
-    },
-    checkIfStyleParameterDoesNotExists: (theObject, inStyleKey, keyArray) => {
-
-        keyArray.forEach((item) => {
-            if (!theObject.style[inStyleKey][item]) {
-                throw new Error(`prevData of shapes , missing the values, key : ${inStyleKey}.${item}`);
-            }
-        })
-
     }
-
-
 
 }
 
+function getLatestData(arrayToWant, elemRef) {
 
+    const computedStyle = { ...getComputedStyle(elemRef.current) };
+    const out = {};
 
+    arrayToWant.forEach((item) => {
+        out[item] = computedStyle[item];
+    })
 
+    return out;
+}
 
+function getLatestAttributeData(arrayToWant, elemRef) {
+    const attributeData = {};
+    arrayToWant.forEach((item) => {
+        attributeData[item] = elemRef.current.getAttribute(item);
+    })
+    return attributeData;
+}
 
-
-
-
-export { eventHandles, otherFunctions }
+export default controlData;

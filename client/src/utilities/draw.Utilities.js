@@ -8,6 +8,7 @@ class drawLogic {
         this.mousePositionRef = mousePositionRef;
         this.normalizedScale = normalizedScale;
         this.context = null;
+        this.storedPenPoints = [];   //Stored pen points - [{x : no, y : no}, {...}]
         this.prevCoor = {
             x: 'undefined', y: 'undefined', minX: null, maxX: null, minY: null, maxY: null
         }
@@ -24,7 +25,7 @@ class drawLogic {
         this.penProfil = {
             selected: 2,
             profile: [null,
-                {
+                {   //Pen1
                     shadowColor: "rgba(0, 0, 0, 0)",
                     shadowBlur: 0,
                     lineCap: "butt",
@@ -32,7 +33,7 @@ class drawLogic {
                     globalCompositeOperation: 'source-over'
 
                 },
-                {
+                {   //Pen2
                     shadowColor: "rgba(80, 120, 90, 0.5)",
                     shadowBlur: 3,
                     lineCap: "round",
@@ -40,7 +41,7 @@ class drawLogic {
                     globalCompositeOperation: 'source-over'
 
                 },
-                {
+                {   //Eraser
                     shadowColor: "rgba(0, 0, 0, 0)",
                     shadowBlur: 0,
                     lineCap: "round",
@@ -58,7 +59,12 @@ class drawLogic {
         this.calculateMinMaxPoints = this.calculateMinMaxPoints.bind(this);
         this.engagePenStyle = this.engagePenStyle.bind(this);
         this.selectPenStyle = this.selectPenStyle.bind(this);
-
+        this.outPenProfileFor_aCommunication = this.outPenProfileFor_aCommunication.bind(this);
+        this.stopStoredDrawing = this.stopStoredDrawing.bind(this);
+        this.startStoredPointDraw = this.startStoredPointDraw.bind(this);
+        this.drawStoredPoints = this.drawStoredPoints.bind(this);
+        this.convertStoredPointsRawDataToPercentages = this.convertStoredPointsRawDataToPercentages.bind(this);
+        this.convertStoredPointsPercentagesToRawData = this.convertStoredPointsPercentagesToRawData.bind(this);
     }
 
     engagePenStyle() {
@@ -115,6 +121,7 @@ class drawLogic {
 
         this.engagePenStyle();
         this.context.moveTo(drawPos.x, drawPos.y);
+        this.storedPenPoints.push({ x: drawPos.x, y: drawPos.y });  //Store first point in pen
         this.isDrawing = true;
 
         addEvent(this.canvasRef, 'mousemove', this.draw);
@@ -124,14 +131,69 @@ class drawLogic {
 
 
     }
+    setStoredPenPoints(data) {
+        this.storedPenPoints = data;
+
+    }
+    setCanvasRef(theRef) {
+        this.canvasRef = theRef;
+    }
+    setNormalizedScale(normalizedValue) {
+        this.normalizedScale = normalizedValue;
+    }
+    startStoredPointDraw() {
+
+        this.context = this.canvasRef.current.getContext('2d');
+        //et parentPos = otherFunctions.getBoundingClientRectRespectToZoomScale(this.normalizedScale, this.canvasRef);
+        //  let drawPos = otherFunctions.positionResToParent(parentPos, { x: this.mousePositionRef.current.x, y: this.mousePositionRef.current.y });
+        this.convertStoredPointsPercentagesToRawData();
+        let drawPos = { x: this.storedPenPoints[0].x, y: this.storedPenPoints[0].y };
+        //console.log('the drawStarts from the position : ', drawPos);
+
+        this.context.beginPath();
+
+        this.engagePenStyle();
+        this.context.moveTo(drawPos.x, drawPos.y);
+        this.isDrawing = true;
+
+        this.drawStoredPoints();
+
+    }
+    drawStoredPoints() {
+        if (!this.isDrawing) return;
+
+        //console.log("drawing at : ", e.offsetX, e.offsetY);
+        this.storedPenPoints.forEach((item, index) => {
+            if (index !== 0) {
+                this.context.lineTo(item.x, item.y);
+                // console.log("the prevCoords", this.prevCoor);
+                this.context.stroke();
+            }
+        })
+
+        this.stopStoredDrawing();
+
+    }
     draw(e) {
         if (!this.isDrawing) return;
 
         //console.log("drawing at : ", e.offsetX, e.offsetY);
         this.context.lineTo(e.offsetX, e.offsetY);
+        this.storedPenPoints.push({ x: e.offsetX, y: e.offsetY });
         this.calculateMinMaxPoints(e.offsetX, e.offsetY);
         // console.log("the prevCoords", this.prevCoor);
         this.context.stroke();
+    }
+    stopStoredDrawing() {
+        if (this.isDrawing) {
+            this.isDrawing = false;
+        } else {
+            setTimeout(() => {
+                if (this.isDrawing) {
+                    this.isDrawing = false;
+                }
+            }, 3)
+        }
     }
     stopDrawing(e) {
         if (this.isDrawing) {
@@ -188,8 +250,9 @@ class drawLogic {
             p4: { x: this.prevCoor.maxX + 5, y: this.prevCoor.maxY + 5 },
         }
 
+        this.convertStoredPointsRawDataToPercentages();
         //insert new canvas
-        this.setCanvas(this.finalCanvasRef, dimentions.contentRectCoord.p1.x, dimentions.contentRectCoord.p1.y, dimentions.contentWidth + 10, dimentions.contentHeight + 10, false);
+        this.setCanvas(this.finalCanvasRef, dimentions.contentRectCoord.p1.x, dimentions.contentRectCoord.p1.y, dimentions.contentWidth + 10, dimentions.contentHeight + 10, false, this.outPenProfileFor_aCommunication());
 
         otherFunctions.checkAndRun(this.finalCanvasRef, 'ready', true, () => {
 
@@ -201,6 +264,27 @@ class drawLogic {
 
         });
 
+    }
+
+    outPenProfileFor_aCommunication() {
+
+        return {
+            penPoints: [...this.storedPenPoints],
+            penStyle: { ...this.penStyle },
+            profile: { selectedProfile: this.penProfil.selected, profile: { ...this.penProfil.profile[this.penProfil.selected] } }
+        };
+    }
+    convertStoredPointsRawDataToPercentages() {
+        this.storedPenPoints = this.storedPenPoints.map(item => ({
+            x: (item.x / this.canvasRef.current.width) * 100,
+            y: (item.y / this.canvasRef.current.height) * 100
+        }));
+    }
+    convertStoredPointsPercentagesToRawData() {
+        this.storedPenPoints = this.storedPenPoints.map(item => ({
+            x: (item.x / 100 * this.canvasRef.current.width),
+            y: (item.y / 100 * this.canvasRef.current.height)
+        }));
     }
 
 
@@ -268,6 +352,11 @@ const otherFunctions = {
     positionResToParent: (parent = { x: null, y: null }, subject = { x: null, y: null }) => {
         return { x: subject.x - parent.x, y: subject.y - parent.y };
     },
+
+    setWhiteboardData: (aCommunication, penProfile, index) => {
+        aCommunication.current.whiteboardData.data[index].penProfile = penProfile;
+    }
+
 
 
 }

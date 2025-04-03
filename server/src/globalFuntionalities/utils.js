@@ -20,7 +20,31 @@ const Utils = {
         })
 
         return response;
+    },
+    checkParameter: (toCheck, obj) => {
+        let givenArray = toCheck.split(".");
+        let levelArray = givenArray.slice(1);
+        let current = obj;
+        let count = 0;
+
+        //iterate over level and return if not exists the obj
+        if (!current) {
+            return givenArray[0];
+        }
+        for (let level of levelArray) {
+            debugger;
+            current = current[level];
+            if (!current) {
+                return level;
+            };
+
+
+        }
+        return 1;
+
+
     }
+
 
 }
 

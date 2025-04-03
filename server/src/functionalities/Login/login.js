@@ -19,7 +19,7 @@ const handle = {
         }
         //Response negative if not found the userData
         else {
-            res.json(Utils.responseJson(['status', 'message'], [false, 'Please provide userdata.email in req headers']));
+            res.json(Utils.responseJson(['status', 'message'], [-1, 'Please provide userdata.email in req headers']));
             return;
         }
 
@@ -28,14 +28,15 @@ const handle = {
         res.cookie('theJWT', jwt.provideToken(enviroment.COOKIE_SECRET, { email: header.email }, '24h'), { signed: true, maxAge: 3600000 * 24, httpOnly: true }); //24 hour
 
         if (out === 1) {
-            res.status(200).json(Utils.responseJson(['status', 'message'], [true, 'succesfully registered user']));
+            console.log('succesfully registered user');
+            res.status(200).json(Utils.responseJson(['status', 'message'], [1, 'succesfully registered user']));
             return;
         } else if (out === 2) {
             console.log('already registered');
-            res.status(200).json(Utils.responseJson(['status', 'message'], [true, 'already registered user']));
+            res.status(200).json(Utils.responseJson(['status', 'message'], [2, 'already registered user']));
             return;
         }
-        res.json(Utils.responseJson(['status', 'message'], [true, 'a problem in login ']));
+        res.json(Utils.responseJson(['status', 'message'], [-1, 'a problem in login ']));
     },
     removeJwt: async (req, res) => {
 
@@ -49,9 +50,9 @@ const handle = {
             res.status(404).json(Utils.responseJsonTemplate(1, [false, 'not found any cookie on the server']));
         }
     },
-    tryUserRegister: (req, res) => {
+    tryUserRegister: async (req, res) => {
         if (req.headers.email) {
-            let out = registerUser(req.headers.email);
+            let out = await registerUser(req.headers.email);
             if (out === 1) {
                 res.status(200).json(Utils.responseJson(['status', 'message'], [true, 'succesfully registered user']));
                 return;
@@ -73,6 +74,7 @@ async function registerUser(email) {
     if (!email) throw new Error('Missing parameters for registerUser function');
 
     const theSupabase = new useSupabase(supabase);
+
     //Check email from server
     const prevEmail = await theSupabase.select('registeredUsers', 'email', { filterName: 'eq', column: 'email', value: email });
 
@@ -82,33 +84,34 @@ async function registerUser(email) {
 
     console.log('the prevEmail :', prevEmail);
 
-    //if email registered already
+    //if email not registered
     if (prevEmail.data === 'empty') {
         let prev = await theSupabase.select('prevdata', 'value', { filterName: 'eq', column: 'name', value: 'profileid' });
         let newNo = null;
 
         if (prev.data !== "empty" || prev.success) {
-            newNo = prev.value + 1;
+            newNo = prev.data.value + 1;
             console.log('the prev is : ', prev, "and new value :", newNo);
         } else {
             console.error('Error : In return value to query the supabase for prevdata.name');
             return false;
         }
 
-        const updatePrevValue = theSupabase.update('prevdata', { column: 'name', value: 'profileid' }, { 'value': newNo });
+        const updatePrevValue = await theSupabase.update('prevdata', { column: 'name', value: 'profileid' }, { 'value': newNo });
+        if (!updatePrevValue.success) throw new Error('error updating the prevValue : ', updatePrevValue.error);
 
-        const { data, error } = await supabase
-            .from('registeredUsers')
-            .insert([
-                { email: email },
-            ])
-            .select()
+        //inset registry in the data base
+        await theSupabase.insert('registeredUsers', [{ email: email, profileid: newNo }]);
+        if (!theSupabase.rsp.success) throw new Error('error insreting the email : ', theSupabase.rsp.error);
 
-        if (error) console.error("Error from registerUser : ", error);
-        else {
-            console.log('the data is  :', data);
-            return 1;
-        }
+        await theSupabase.insert('userProfile', [{ profileid: newNo }]);
+        if (!theSupabase.rsp.success) throw new Error('error insreting the userProfile profileid : ', theSupabase.rsp.error);
+
+
+        return 1;
+
+
+        ///If email registered already
     } else {
         return 2;
     }

@@ -1,13 +1,13 @@
 
 import { useEffect, useState, useRef, useContext } from "react";
-import { handleScroll, mouseEvent, otherEventHandle } from "../../utilities/whiteBoard.Utilities";
+import { handleScroll, mouseEvent, otherEventHandle, resetHandles } from "../../utilities/whiteBoard.Utilities";
 import { useHoldKey } from "../../hooks/holdKeys";
 import { useWhiteboardEvents } from "../../hooks/useWhiteBoardEffects";
 import { CommonContext } from "../../myLib/commonContext/myContext";
 import { SelectorContext } from "./selectorContext";
 import { Selector } from "../selector/selector";
 import { useDraw } from "../../hooks/draw";
-import { otherFunctions } from "../../utilities/draw.Utilities";
+
 
 
 function Content({ SvgArray, canvasArray, roughCanvas }) {
@@ -65,7 +65,7 @@ function WhiteBoard({ }) {
         resumeMouseZoom: otherEventHandle.resumeZoomOnCtrl.bind(null, innerDiv),
         wheelZoom: mouseEvent.wheelZoom.bind(null, ctrlHold, prevScale, innerDiv, totalScrollPossible),
         mouseDown: mouseEvent.down.bind(null, selectedItem),
-        createShape: otherEventHandle.engageItem.bind(null, selectedItem, innerDiv, prevScale, defaultScaleValue, { setSvgArray: setSvgArray, setPen: provideCanvas }),
+        createShape: otherEventHandle.engageItem.bind(null, selectedItem, innerDiv, prevScale, defaultScaleValue, { setSvgArray: setSvgArray, setPen: provideCanvas }, aCommunication),
         trackInnerDivMouseUp: trackEvent.bind(null, 'innerDiv', 'mouseup', null),
         trackInnerDivMouseDown: trackEvent.bind(null, 'innerDiv', 'mousedown', null),
         trackInnerDivMouseLeave: trackEvent.bind(null, 'innerDiv', 'mouseleave', null),
@@ -77,6 +77,36 @@ function WhiteBoard({ }) {
 
         //Provide Functionalities to communication
         selectedItem.pen = { penStyle: selectPenStyle, setPenStyleCallback };
+
+        //Starting of a index  system that sustain the 
+        // global indexes of the whiteboard elems and functions to control it
+        aCommunication.current.globalIndex = {
+            value: 0, getNewIndex: () => {
+                let newIndex = aCommunication.current.globalIndex.value + 1;
+                aCommunication.current.globalIndex.value = newIndex;
+                return newIndex;
+            }
+        }
+
+        //A place to store the data of whiteboard and 
+        // its functions from controlData.utils
+        aCommunication.current.whiteboardData = {
+            data: [],
+            setData: (keyObj, value, index, level) => {
+                if (level === 1) {
+                    if (!aCommunication.current.whiteboardData.data[index]?.[keyObj.one]) throw new Error('undefined properties from setData of whiteboardData function');
+                    aCommunication.current.whiteboardData.data[index][keyObj.one] = value;
+                } else if (level === 2) {
+                    if (!aCommunication.current.whiteboardData.data[index]?.[keyObj.one]?.[keyObj.two]) throw new Error('undefined properties from setData of whiteboardData function');
+                    aCommunication.current.whiteboardData.data[index][keyObj.one][keyObj.two] = value;
+                } else {
+                    throw new Error('please provide valid level for setData whiteboardData function');
+                }
+            },
+            resetWhiteboard: resetHandles.reset.bind(null, aCommunication, setSvgArray, setCanvasArray),
+            recoverWhiteboard: resetHandles.recovery.bind(null, aCommunication, setSvgArray, setCanvasArray)
+
+        }
 
         aCommunication.current.whiteBoard = {
             setColor: (name) => {

@@ -8,7 +8,8 @@
   "main": "main.server.js",
   "scripts": {
     "test": "jest",
-    "dev": "nodemon main.server.js"
+    "dev": "nodemon main.server.js",
+    "inspect": "node inspect main.server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

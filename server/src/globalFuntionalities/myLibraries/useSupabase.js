@@ -1,8 +1,9 @@
-import supabase from "../supabase.js";
+//import supabase from "../supabase.js";
 
 class useSupabase {
     constructor(supabase_instance) {
         this.supabase = supabase_instance;
+        this.rsp = null;
     }
 
     async select(from, toSelect, filter = { filterName, column, value }) {
@@ -21,6 +22,7 @@ class useSupabase {
         }
 
         rsp = this.handleResponse(rsp);
+        this.updateResponse(rsp);     //store response at this.rsp
 
         return rsp;
 
@@ -29,24 +31,31 @@ class useSupabase {
     async update(from, condition = { column: null, value: null }, updateObj) {
         // updateObj like {'profileid' : 2}
 
-        let rsp = await supabase
+        let rsp = await this.supabase
             .from(from)
             .update(updateObj)
             .eq(condition.column, condition.value)
             .select()
 
         rsp = this.handleResponse(rsp);
-        return rsp;
-        /* 
-        
-        let rsp = await supabase
-        .from(from)
-        .upsert(updateObj)
-        .select()
-        rsp = this.handleResponse(rsp);
-        return rsp;
-        */
+        this.updateResponse(rsp);     //store response at this.rsp
 
+        return rsp;
+
+    }
+
+    async insert(from, insertArray) {
+        //insertyArray should contain object , referencing the valus to insert.
+
+        let rsp = null;
+        rsp = await this.supabase
+            .from(from)
+            .insert(insertArray)
+            .select()
+
+        rsp = this.handleResponse(rsp);
+        this.updateResponse(rsp);     //store response at this.rsp
+        return rsp
     }
 
 
@@ -68,11 +77,18 @@ class useSupabase {
         }
         return { success: true, data: data[0] };
     }
+    updateResponse(response) {
+        this.rsp = response;
+    }
+    lastResponse() {
+        return this.rsp;
+    }
 }
 
 
 
 
+/* 
 
 let theSupabase = new useSupabase(supabase);
 async function run() {
@@ -81,7 +97,6 @@ async function run() {
 }
 run();
 
-/* 
 */
 
 

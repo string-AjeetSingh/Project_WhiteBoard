@@ -1,4 +1,4 @@
-
+import controlData from "./controlData";
 
 const selectorWork = {
     select: (widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef) => {
@@ -172,8 +172,8 @@ const selectorWork = {
                     newParameters.cx = newParameters.width / 2;
                 }
                 subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
-                subjectRef.current.svgElemRef.current.setAttribute('rx', newParameters.rx);
-                subjectRef.current.svgElemRef.current.setAttribute('cx', newParameters.cx);
+                subjectRef.current.svgElemRef.current.style.rx = newParameters.rx;
+                subjectRef.current.svgElemRef.current.style.cx = newParameters.cx;
             }
         }
     },
@@ -268,8 +268,10 @@ const selectorWork = {
                 }
 
                 subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
-                subjectRef.current.svgElemRef.current.setAttribute('ry', newParameters.ry);
-                subjectRef.current.svgElemRef.current.setAttribute('cy', newParameters.cy);
+                subjectRef.current.svgElemRef.current.style.ry = newParameters.ry;
+                subjectRef.current.svgElemRef.current.style.cy = newParameters.cy;
+                //subjectRef.current.svgElemRef.current.setAttribute('ry', newParameters.ry);
+                //subjectRef.current.svgElemRef.current.setAttribute('cy', newParameters.cy);
             }
         }
     },
@@ -372,10 +374,10 @@ const selectorWork = {
 
             subjectRef.current.svgRef.current.style.width = newParameters.width + 'px';
             subjectRef.current.svgRef.current.style.height = newParameters.height + 'px';
-            subjectRef.current.svgElemRef.current.setAttribute('ry', newParameters.ry);
-            subjectRef.current.svgElemRef.current.setAttribute('rx', newParameters.rx);
-            subjectRef.current.svgElemRef.current.setAttribute('cy', newParameters.cy);
-            subjectRef.current.svgElemRef.current.setAttribute('cx', newParameters.cx);
+            subjectRef.current.svgElemRef.current.style.ry = newParameters.ry;
+            subjectRef.current.svgElemRef.current.style.rx = newParameters.rx;
+            subjectRef.current.svgElemRef.current.style.cy = newParameters.cy;
+            subjectRef.current.svgElemRef.current.style.cx = newParameters.cx;
 
         }
 
@@ -468,7 +470,11 @@ const otherFunctions = {
         else if (selectedElem.type === 'square') {
             otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true });
         }
-    },
+    }
+
+
+
+
 
 }
 

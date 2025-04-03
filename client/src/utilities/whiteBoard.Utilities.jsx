@@ -1,4 +1,5 @@
 import { Rectangle, Circle, Triangle, Ellipse } from "../components/shapes/shapes";
+import { Canvas } from "../hooks/draw";
 
 const handleScroll = (scrollControlBool, innerDiv, divelem) => {
     //if (scrollControlBool.current) {
@@ -149,7 +150,7 @@ const otherEventHandle = {
             }
         }
     },
-    engageItem: (selectedItem, innerDiv, prevScale, defaultScale, setItemTools = { setSvgArray: null, setPen: null, penStyle }, e) => {
+    engageItem: (selectedItem, innerDiv, prevScale, defaultScale, setItemTools = { setSvgArray: null, setPen: null, penStyle }, aCommunication, e) => {
 
         if (selectedItem.type === 'shapes') {
 
@@ -158,18 +159,20 @@ const otherEventHandle = {
                 const position = getMouseCoordinateByElem(innerDiv, e, prevScale.current, defaultScale.current);
 
                 if (selectedItem.current === 'rectangle') {
+                    let newIndex = aCommunication.current.globalIndex.getNewIndex();
                     setItemTools.setSvgArray((prev) => {
                         let newOne = prev.slice();
-                        newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={100 / normalizeScale} useAs={'rectangle'} />);
+                        newOne.push(<Rectangle index={newIndex} x={position.x} y={position.y} width={150 / normalizeScale} height={100 / normalizeScale} useAs={'rectangle'} />);
                         return newOne;
                     });
                     selectedItem.current = null;
                 }
                 else if (selectedItem.current === 'circle') {
 
+                    let newIndex = aCommunication.current.globalIndex.getNewIndex();
                     setItemTools.setSvgArray((prev) => {
                         let newOne = prev.slice();
-                        newOne.push(<Circle x={position.x} y={position.y} width={200 / normalizeScale} height={200 / normalizeScale} />);
+                        newOne.push(<Circle index={newIndex} x={position.x} y={position.y} width={200 / normalizeScale} height={200 / normalizeScale} />);
                         return newOne;
                     });
                     selectedItem.current = null;
@@ -177,9 +180,10 @@ const otherEventHandle = {
 
                 else if (selectedItem.current === 'ellipse') {
 
+                    let newIndex = aCommunication.current.globalIndex.getNewIndex();
                     setItemTools.setSvgArray((prev) => {
                         let newOne = prev.slice();
-                        newOne.push(<Ellipse x={position.x} y={position.y} width={200 / normalizeScale} height={150 / normalizeScale} />);
+                        newOne.push(<Ellipse index={newIndex} x={position.x} y={position.y} width={200 / normalizeScale} height={150 / normalizeScale} />);
                         return newOne;
                     });
                     selectedItem.current = null;
@@ -187,9 +191,10 @@ const otherEventHandle = {
 
                 else if (selectedItem.current === 'square') {
 
+                    let newIndex = aCommunication.current.globalIndex.getNewIndex();
                     setItemTools.setSvgArray((prev) => {
                         let newOne = prev.slice();
-                        newOne.push(<Rectangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} useAs={'square'} />);
+                        newOne.push(<Rectangle index={newIndex} x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} useAs={'square'} />);
                         return newOne;
                     });
                     selectedItem.current = null;
@@ -197,9 +202,10 @@ const otherEventHandle = {
 
                 else if (selectedItem.current === 'triangle') {
 
+                    let newIndex = aCommunication.current.globalIndex.getNewIndex();
                     setItemTools.setSvgArray((prev) => {
                         let newOne = prev.slice();
-                        newOne.push(<Triangle x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} />);
+                        newOne.push(<Triangle index={newIndex} x={position.x} y={position.y} width={150 / normalizeScale} height={150 / normalizeScale} />);
                         return newOne;
                     });
                     selectedItem.current = null;
@@ -229,6 +235,74 @@ const otherEventHandle = {
     }
 }
 
+const resetHandles = {
+    reset: (aCommunication, setSvgArray, setCanvasArray) => {
+        console.log("the whiteboardData is : ", aCommunication.current.whiteboardData.data);
+        setSvgArray([]);
+        setCanvasArray([]);
+    },
+    recovery: (aCommunication, setSvgArray, setCanvasArray) => {
+
+        const data = aCommunication.current.whiteboardData.data;
+        const conditional = ['circle', 'triangle', 'square', 'rectangle', 'ellipse'];
+
+        const svgs = [];
+        const cans = [];
+        console.log("the whiteboardData is : ", aCommunication.current.whiteboardData.data);
+        const responseOnCondition = [
+            (data) => {
+                //circle
+                svgs.push(<Circle index={data.index} prevData={data} />);
+
+
+            },
+            (data) => {
+                //triangle
+                svgs.push(<Triangle index={data.index} prevData={data} />);
+            },
+            (data) => {
+                //square
+                svgs.push(<Rectangle useAs={'square'} index={data.index} prevData={data} />);
+            },
+            (data) => {
+                //rectangle
+
+                svgs.push(<Rectangle useAs={'rectangle'} index={data.index} prevData={data} />);
+            },
+            (data) => {
+                //ellipse
+                svgs.push(<Ellipse index={data.index} prevData={data} />);
+            }
+        ];
+
+
+        data.forEach((dataItem) => {
+
+            console.log("the item of data[] is : ", dataItem);
+            conditional.forEach((item, index) => {
+                if (dataItem.shapeType === item) {
+                    responseOnCondition[index](dataItem);
+                }
+            })
+            if (dataItem.isPenCanvas) {
+                cans.push(<Canvas index={dataItem.index} prevData={dataItem} isFinal />)
+            }
+        })
+
+        setSvgArray([...svgs]);
+        setCanvasArray([...cans]);
+
+        console.log('from the recovery the data svgElems are : ', svgs);
+        console.log('from the recovery the data canvas are : ', cans);
+    }
+}
+
+
+
+
+
+
+
 function preventDefault(e) {
     e.preventDefault();
 }
@@ -250,4 +324,4 @@ function getMouseCoordinateByElem(elemRef, event, prevScale, defaultScale) {
 
 
 
-export { handleScroll, mouseEvent, otherEventHandle }
+export { handleScroll, mouseEvent, otherEventHandle, resetHandles }
