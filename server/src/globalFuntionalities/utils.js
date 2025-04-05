@@ -1,3 +1,5 @@
+import { clientError } from "./myLibraries/errorClasses.js";
+
 const Utils = {
 
     responseJson: (keyArray, valueArray) => {
@@ -25,14 +27,12 @@ const Utils = {
         let givenArray = toCheck.split(".");
         let levelArray = givenArray.slice(1);
         let current = obj;
-        let count = 0;
 
         //iterate over level and return if not exists the obj
         if (!current) {
             return givenArray[0];
         }
         for (let level of levelArray) {
-            debugger;
             current = current[level];
             if (!current) {
                 return level;
@@ -43,15 +43,69 @@ const Utils = {
         return 1;
 
 
+    },
+    checkParameters: (array) => {
+        //This is a funcionality to check the paramters and 
+        // throw respected error messages if any of them appears
+
+        //array must be like [{type : 'obj', subject : object, path : 'aobj.ajeet.value'}, ...]
+
+        for (let item of array) {
+            debugger;
+            if (item.type === 'obj') {
+                let check = checkObj(item.subject, item.path);
+                debugger;
+                if (check !== 1)
+                    throw new clientError(`Parameter error while checking object with level path = ${item.path}, not found at : ${check} `);
+
+            } else {
+                if (!item.subject)
+                    throw new clientError(`Parameter error while checking varaible = ${item.path}, not found  `);
+
+            }
+        }
+
     }
 
 
+
 }
+
 
 const jsonTemplates = [
     null,
     { templateVariable: ['status', 'message'] }
 ]
+
+function checkObj(obj, path) {
+    let current = obj;
+    path = path.split('.');
+
+    debugger;
+
+    for (let i = 0; i < path.length; i++) {
+        if (i === 0) {
+            debugger;
+            if (!current) {
+
+                debugger;
+                return path[i];
+            }
+
+        } else {
+            current = current[path[i]];
+            debugger;
+            if (!current) {
+                debugger;
+                return path[i];
+            }
+        }
+    }
+
+    debugger;
+    return 1;
+}
+
 
 
 

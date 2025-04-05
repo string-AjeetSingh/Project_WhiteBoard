@@ -6,7 +6,7 @@ const routes = express.Router();
 //routes for porjects.
 routes.put("/saveProject", handle.saveProject);
 routes.post("/createProject", handle.createProject);
-//routes.delete("/removeProject", );
+routes.delete("/removeProject", handle.deleteProject);
 
 
 export default routes;

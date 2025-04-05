@@ -10,7 +10,6 @@ import loginRouter from "./src/functionalities/Login/login.routes.js";
 import projectRouter from "./src/functionalities/projects/projects.routes.js"
 
 import config from "./config.js";
-import { isPromise } from "util/types";
 import jwt from "./src/functionalities/jwt/jwt.js";
 
 

@@ -58,6 +58,21 @@ class useSupabase {
         return rsp
     }
 
+    async deleteRow(from, condition = { column: null, value: null }) {
+
+        let rsp = await this.supabase
+            .from(from)
+            .delete()
+            .eq(condition.column, condition.value);
+
+        // debugger;
+
+        rsp = this.handleResponse(rsp);
+        this.updateResponse(rsp);
+        return rsp;
+
+    }
+
 
     checkSupabase() {
         if (!this.supabase) {
@@ -72,10 +87,10 @@ class useSupabase {
             return { success: false, error: error.message, data: null };
         }
 
-        if (data.length < 1) {
+        if (data?.length < 1) {
             return { success: true, data: 'empty' };
         }
-        return { success: true, data: data[0] };
+        return { success: true, data: data ? data[0] : null };
     }
     updateResponse(response) {
         this.rsp = response;
