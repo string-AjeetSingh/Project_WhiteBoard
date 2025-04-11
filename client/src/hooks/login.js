@@ -5,7 +5,6 @@ import config from "../config";
 
 function useLogin() {
     const auth0 = useAuth0();
-    const tryLoginBool = useRef(true);
     const navigate = useNavigate();
     const location = useLocation();
     const [userServerData, setUserServerData] = useState(null);
@@ -13,7 +12,6 @@ function useLogin() {
 
 
     function login() {
-        tryLoginBool.current = true;  //set bool to attempt login on effect.
         auth0.loginWithRedirect();
     }
 
@@ -40,7 +38,8 @@ function useLogin() {
     }
 
     useEffect(() => {
-        if (auth0.isAuthenticated && auth0.user && tryLoginBool.current) {
+        console.log('the auth0 form the hook : ', auth0);
+        if (auth0.isAuthenticated && auth0.user) {
 
             //request login
             let serverUrl = config.serverUrl !== 0 ? config.serverUrl : window.location.origin;
@@ -52,6 +51,10 @@ function useLogin() {
             })
                 .then((res) => {
                     // console.log("the response from request is : ", res);
+                    if (res.status === 401) {
+                        logout();
+                        return;
+                    }
                     res.json()
                         .then((json) => {
                             if (json.status === 1 || json.status === 2) {
@@ -70,7 +73,10 @@ function useLogin() {
                     console.error('error from login request : ', err);
                 })
 
-            tryLoginBool.current = false; //reset the bool to not repeat the effect without the new login try.
+        }
+        else {
+            if (!auth0.isLoading)
+                navigate('/');
         }
     }, [auth0.user, auth0.isAuthenticated])
 

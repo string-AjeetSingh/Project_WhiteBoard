@@ -10,7 +10,7 @@ function Home({ }) {
     const [width, height] = useInnerWidthHeight();
     const { aCommunication } = useContext(CommonContext);
     const [screenMode, setScreenMode] = useState(null);
-    const { login } = useLogin();
+    const { login, logout } = useLogin();
 
     function onChangeScreenMode(val) {  //no used
         setScreenMode(val);
@@ -39,7 +39,7 @@ function Home({ }) {
                     <div className="flex flex-row absolute top-0 left-0 justify-center items-center w-screen  h-screen   ">
 
                         <SpecialButton onClick={login} theName={'Login'} />
-                        <SpecialButton theName={'Guest'} />
+                        <SpecialButton onClick={logout} theName={'Logout'} />
                     </div>
                 }
 

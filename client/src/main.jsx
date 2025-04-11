@@ -63,7 +63,7 @@ createRoot(document.getElementById('root')).render(
         <Route path='' element={<CommonHome />}>
           <Route path='/menu' element={<Menu />}></Route>
           <Route path='/workSpace/:projectid' element={<Workspace />}></Route>
-          <Route path='' element={<Home />}></Route>
+          <Route path='/' element={<Home />}></Route>
         </Route>
         <Route path='/rough' element={<Rough />}></Route>
         <Route path="/trySocket" element={<TrySocket />}></Route>

@@ -4,6 +4,7 @@ import '../../cssAnimations/navBar.css'
 import { DarkModeToogle } from "./navBar.darkModeButton";
 import { CommonContext } from "../../myLib/commonContext/myContext";
 import useLogin from "../../hooks/login";
+import useScreenMode from '../../hooks/screenMode';
 
 
 
@@ -14,6 +15,7 @@ function NavBar({ }) {
     const panel = useRef({ on: null, off: null });
     const [panelBool, setpanelBool] = useState(0);
     const { trackEvent } = useContext(CommonContext);
+    const [screenMode] = useScreenMode();
 
     const { logout, isAuthenticated } = useLogin();
 
@@ -43,6 +45,56 @@ function NavBar({ }) {
     }
 
 
+    useEffect(() => {
+        let styleElem = document.getElementById('scrollStyle');
+        if (styleElem) {
+            if (screenMode === 'light') {
+                styleElem.innerHTML =
+                    `
+                 /* Scrollbar track */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+      /* for horizontal scrollbar */
+    }
+
+    /* Scrollbar thumb (the handle) */
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--darkPanle);
+      border-radius: 10px;
+
+    }
+
+    /* Scrollbar track background */
+    ::-webkit-scrollbar-track {
+      background: var(--lightPanle);
+                `
+            } else if (screenMode === 'dark') {
+                styleElem.innerHTML =
+                    `
+                /* Scrollbar track */
+   ::-webkit-scrollbar {
+     width: 10px;
+     height: 10px;
+     /* for horizontal scrollbar */
+   }
+
+   /* Scrollbar thumb (the handle) */
+   ::-webkit-scrollbar-thumb {
+     background-color: var(${'--lightPanle'});
+     border-radius: 10px;
+     
+
+   }
+
+   /* Scrollbar track background */
+   ::-webkit-scrollbar-track {
+     background: var(${'--screenModeButton'});
+               `
+
+            }
+        }
+    }, [screenMode])
 
     useEffect(() => {
         if (panelBool === 1) {
@@ -66,7 +118,7 @@ function NavBar({ }) {
     return (
         <>
 
-            <div ref={navDiv} className="p-2 rounded-tr-md rounded-tl-md z-[7] relative 
+            <div ref={navDiv} className="p-1 rounded-tr-md rounded-tl-md z-[7] relative 
             bg-lightPanle dark:bg-darkPanle  flex flex-row justify-between items-center ">
                 {/*Nav Left Side Items   */}
                 <div>

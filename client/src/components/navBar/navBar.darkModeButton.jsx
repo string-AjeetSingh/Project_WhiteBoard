@@ -125,18 +125,18 @@ function DarkModeToogle() {
         return (
             <>
                 <button onClick={toogle}
-                    className="w-[75px] flex  overflow-hidden 
-                    flex-row items-center  relative h-[36px] bg-whiteBoard-one rounded-3xl m-1 ">
+                    className="w-[71px] flex  overflow-hidden 
+                    flex-row items-center  relative h-[32px] bg-whiteBoard-one rounded-3xl m-1 ">
                     <div ref={transitionDiv} className="z-[1] absolute darkModeButtToogle
                     darkModeButtToogleActive  left-[1px] 
-                     size-[34px] rounded-full bg-screenModeButton">
+                     size-[30px] rounded-full bg-screenModeButton">
 
                     </div>
                     <img ref={transitionLight} src="/icons/light.png"
-                        className="lightIcon lightIconActive relative size-7 ml-2  "></img>
+                        className="lightIcon lightIconActive relative size-6 ml-2  "></img>
 
                     <img ref={transitionDark} src="/icons/dark.png"
-                        className="darkIcon darkIconActive relative size-7 ml-1 "></img>
+                        className="darkIcon darkIconActive relative size-6 ml-1 "></img>
 
                 </button>
             </>
@@ -146,17 +146,17 @@ function DarkModeToogle() {
         return (
             <>
                 <button onClick={toogle}
-                    className="w-[75px] flex  overflow-hidden
-                    flex-row items-center  relative h-[36px] bg-whiteBoard-one rounded-3xl m-1 ">
+                    className="w-[71px] flex  overflow-hidden
+                    flex-row items-center  relative h-[32px] bg-whiteBoard-one rounded-3xl m-1 ">
                     <div ref={transitionDiv} className="z-[1] absolute darkModeButtToogle  left-[1px]
-                     size-[34px] rounded-full bg-screenModeButton">
+                     size-[30px] rounded-full bg-screenModeButton">
 
                     </div>
                     <img ref={transitionLight} src="/icons/light.png"
-                        className="lightIcon relative size-7 ml-2  "></img>
+                        className="lightIcon relative size-6 ml-2  "></img>
 
                     <img ref={transitionDark} src="/icons/dark.png"
-                        className="darkIcon relative size-7 ml-1 "></img>
+                        className="darkIcon relative size-6 ml-1 "></img>
 
                 </button>
             </>

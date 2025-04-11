@@ -4,6 +4,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style id="scrollStyle">
+    /* Scrollbar track */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+      /* for horizontal scrollbar */
+    }
+
+    /* Scrollbar thumb (the handle) */
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--darkPanle);
+      border-radius: 10px;
+
+    }
+
+    /* Scrollbar track background */
+    ::-webkit-scrollbar-track {
+      background: var(--lightPanle);
+    }
+  </style>
   <title>Vite + React</title>
 </head>
 

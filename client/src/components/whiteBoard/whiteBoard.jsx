@@ -29,8 +29,8 @@ function WhiteBoard({ }) {
     const mousePoinerPostion = useRef([null, null]);
     const scrollPostion = useRef([null, null]);
     const ctrlHold = useHoldKey(innerDiv, 'Control');
-    const prevScale = useRef(100);
-    const defaultScaleValue = useRef(100)
+    const prevScale = useRef(200);
+    const defaultScaleValue = useRef(100);
     const [whiteBoardColor, setWhiteBoardColor] = useState('var(--whiteBoard-one)');
 
 
@@ -76,6 +76,8 @@ function WhiteBoard({ }) {
 
     useWhiteboardEvents(innerDiv, divelem, bindedFunction);
     useSaveData();
+
+
     useEffect(() => {
 
         //Provide Functionalities to communication

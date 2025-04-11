@@ -8,7 +8,7 @@ async function verifyJwt(req, res, next) {
     // response - Advice to call login route of the api to have cookie again with JWT
 
     if (!req.signedCookies.theJWT) {
-        res.status(404).json(Utils.responseJson(['status', 'message'], [false, 'please login first to have the authorization']));
+        res.status(404).json(Utils.responseJson(['status', 'message'], [-1, 'please login first to have the authorization']));
         return;
     }
     else {
@@ -36,7 +36,7 @@ async function verifyJwt(req, res, next) {
         } catch (err) {
             if (err) {
                 if (res)
-                    res.status(401).json(Utils.responseJson(['status', 'message'], [false, 'err from jwt verification, semmes you are not authorized to use this service']));
+                    res.status(401).json(Utils.responseJson(['status', 'message'], [-2, 'err from jwt verification, semmes you are not authorized to use this service']));
                 else
                     console.error('err from jwt verification, semmes you are not authorized to use this service');
 
