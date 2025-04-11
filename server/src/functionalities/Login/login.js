@@ -25,15 +25,16 @@ const handle = {
 
         //Set cookie, a JWT token containing the email set for 24 hours.
         let out = await registerUser(header.email);
-        res.cookie('theJWT', jwt.provideToken(enviroment.COOKIE_SECRET, { email: header.email }, '24h'), { signed: true, maxAge: 3600000 * 24, httpOnly: true }); //24 hour
 
-        if (out === 1) {
+        if (out.status === 1) {
             console.log('succesfully registered user');
-            res.status(200).json(Utils.responseJson(['status', 'message'], [1, 'succesfully registered user']));
+            res.cookie('theJWT', jwt.provideToken(enviroment.COOKIE_SECRET, { email: header.email, profileid: out.data.profileid }, '24h'), { signed: true, maxAge: 3600000 * 24, httpOnly: true }); //24 hour
+            res.status(200).json(Utils.responseJson(['status', 'message', 'data'], [1, 'succesfully registered user', out.data]));
             return;
-        } else if (out === 2) {
+        } else if (out.status === 2) {
             console.log('already registered');
-            res.status(200).json(Utils.responseJson(['status', 'message'], [2, 'already registered user']));
+            res.cookie('theJWT', jwt.provideToken(enviroment.COOKIE_SECRET, { email: header.email, profileid: out.data.profileid }, '24h'), { signed: true, maxAge: 3600000 * 24, httpOnly: true }); //24 hour
+            res.status(200).json(Utils.responseJson(['status', 'message', 'data'], [2, 'already registered user', out.data]));
             return;
         }
         res.json(Utils.responseJson(['status', 'message'], [-1, 'a problem in login ']));
@@ -76,7 +77,7 @@ async function registerUser(email) {
     const theSupabase = new useSupabase(supabase);
 
     //Check email from server
-    const prevEmail = await theSupabase.select('registeredUsers', 'email', { filterName: 'eq', column: 'email', value: email });
+    const prevEmail = await theSupabase.select('registeredUsers', 'email, profileid', { filterName: 'eq', column: 'email', value: email });
 
     if (!prevEmail.success) {
         return -1;
@@ -108,12 +109,12 @@ async function registerUser(email) {
         if (!theSupabase.rsp.success) throw new Error('error insreting the userProfile profileid : ', theSupabase.rsp.error);
 
 
-        return 1;
+        return { status: 1, data: { profileid: newNo } };
 
 
         ///If email registered already
     } else {
-        return 2;
+        return { status: 2, data: { ...theSupabase.rsp.data } };
     }
 
 }

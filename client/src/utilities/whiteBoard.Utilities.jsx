@@ -280,11 +280,11 @@ const resetHandles = {
 
             console.log("the item of data[] is : ", dataItem);
             conditional.forEach((item, index) => {
-                if (dataItem.shapeType === item) {
+                if (dataItem && dataItem.shapeType === item) {
                     responseOnCondition[index](dataItem);
                 }
             })
-            if (dataItem.isPenCanvas) {
+            if (dataItem && dataItem.isPenCanvas) {
                 cans.push(<Canvas index={dataItem.index} prevData={dataItem} isFinal />)
             }
         })

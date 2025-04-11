@@ -1,9 +1,9 @@
 import controlData from "./controlData";
 
 const eventHandles = {
-    useSelector: (selector, svgRef, svgElemRef, name, index) => {
+    useSelector: (selector, svgRef, svgElemRef, name, index, saveFlag) => {
 
-        selector.current.select(svgRef, svgElemRef, name, index);
+        selector.current.select(svgRef, svgElemRef, name, index, saveFlag);
 
     }
 
@@ -63,7 +63,10 @@ const otherFunctions = {
             }
         })
 
-    }
+    },
+
+
+
 
 
 

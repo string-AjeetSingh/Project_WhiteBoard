@@ -5,6 +5,8 @@ class clientError extends Error {
         this.type = type;
         this.name = 'clientError';
         this.message = this.name + ":  " + message;
+
+
     }
 
     logit(type = 'error') {
@@ -25,7 +27,7 @@ class supabaseError extends Error {
         this.name = 'supabaseError';
         this.message = this.name + ': ' + message;
     }
-    logIt(type = 'error') {
+    logit(type = 'error') {
         if (type === 'warn') {
             console.warn(this.message);
 

@@ -7,6 +7,7 @@ import { CommonContext } from "../../myLib/commonContext/myContext";
 import { SelectorContext } from "./selectorContext";
 import { Selector } from "../selector/selector";
 import { useDraw } from "../../hooks/draw";
+import useSaveData from "../../hooks/saveData";
 
 
 
@@ -28,9 +29,10 @@ function WhiteBoard({ }) {
     const mousePoinerPostion = useRef([null, null]);
     const scrollPostion = useRef([null, null]);
     const ctrlHold = useHoldKey(innerDiv, 'Control');
-    const prevScale = useRef(200);
+    const prevScale = useRef(100);
     const defaultScaleValue = useRef(100)
     const [whiteBoardColor, setWhiteBoardColor] = useState('var(--whiteBoard-one)');
+
 
     const { selectedItem, aCommunication, trackEvent } = useContext(CommonContext);
     const [SvgArray, setSvgArray] = useState([
@@ -73,6 +75,7 @@ function WhiteBoard({ }) {
     }
 
     useWhiteboardEvents(innerDiv, divelem, bindedFunction);
+    useSaveData();
     useEffect(() => {
 
         //Provide Functionalities to communication
@@ -91,7 +94,7 @@ function WhiteBoard({ }) {
         //A place to store the data of whiteboard and 
         // its functions from controlData.utils
         aCommunication.current.whiteboardData = {
-            data: [],
+            //the "data" in this scope is initialized by the next effect on getting the server data.
             setData: (keyObj, value, index, level) => {
                 if (level === 1) {
                     if (!aCommunication.current.whiteboardData.data[index]?.[keyObj.one]) throw new Error('undefined properties from setData of whiteboardData function');
@@ -113,6 +116,29 @@ function WhiteBoard({ }) {
                 otherEventHandle.setWhiteBoardColor(name, setWhiteBoardColor);
             }
         }
+    }, [])
+
+    useEffect(() => { //Some work when serverData is ready from the parent workspace
+        let interval = setInterval(() => {
+            if (aCommunication.current.whiteBoardServerData?.ready) {
+                clearInterval(interval);
+                let serverData = aCommunication.current.whiteBoardServerData.data;
+                aCommunication.current.whiteboardData.data = serverData.data ? serverData.data : [];
+
+                if (serverData.data)
+                    aCommunication.current.globalIndex.value = serverData.data[serverData.data.length - 1].index;
+
+                aCommunication.current.whiteboardData.recoverWhiteboard();
+            }
+        }, 0);
+        return (() => {
+            if (interval) {
+                clearInterval(interval);
+            }
+
+            if (aCommunication.current.whiteboardData.data)
+                aCommunication.current.whiteboardData.data = null;
+        })
     }, [])
     return (
         <>

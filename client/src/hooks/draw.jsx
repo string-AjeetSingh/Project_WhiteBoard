@@ -11,6 +11,8 @@ function Canvas({ index, width, height, theRef, heighlight, x, y, isFinal, prevD
     const { aCommunication, selectedItem } = useContext(CommonContext);
     const localRef = useRef(null);
     const interval = useRef(null);
+    const theImg = useRef(null);
+    const markLocalDataSave = useRef(false);
 
     function startErasing() {
         if (aCommunication.current?.draw) {
@@ -24,9 +26,14 @@ function Canvas({ index, width, height, theRef, heighlight, x, y, isFinal, prevD
 
     useEffect(() => {
 
+
         if (theRef?.current) {
             theRef.ready = true;
+            theRef.localSave = markLocalDataSave;
             localRef.current = theRef.current;
+            localRef.localSave = markLocalDataSave;
+        } else {
+            localRef.localSave = markLocalDataSave;
         }
         const theEvents = new effectEventClass();
 
@@ -42,23 +49,29 @@ function Canvas({ index, width, height, theRef, heighlight, x, y, isFinal, prevD
         if (isFinal) {
             interval.current = setInterval(() => {
                 try {
-                    const imageData = localRef.current.toDataURL("image/png");
-                    controlData.saveData(index, localRef, null, aCommunication, ['top', 'left', 'width', 'height']);
-                    aCommunication.current.whiteboardData.data[index].style.shapeElem = {
-                        imageData: imageData
+                    if (markLocalDataSave.current) {
+
+                        const imageData = localRef.current.toDataURL("image/png");
+                        aCommunication.current.whiteboardData.data[index].style.imageData = imageData
+
+                        controlData.saveData(index, localRef, null, aCommunication, ['top', 'left', 'width', 'height']);
+                        markLocalDataSave.current = false;
+                        otherFunctions.updateSaveMark(aCommunication.current.markSave);
                     }
                 } catch (error) {
                     console.error('the error from interval of canvas : ', error);
                 }
-                console.log("the canvas whiteboarddata is : ", aCommunication.current.whiteboardData.data[index]);
-            }, 1000 * 5);
+                // console.log("the canvas whiteboarddata is : ", aCommunication.current.whiteboardData.data[index]);
+            }, 0);
 
             // Initailize the data of elem
             if (!aCommunication.current.whiteboardData.data[index]) {
                 aCommunication.current.whiteboardData.data[index] = { index: index, style: {}, attribute: {}, isPenCanvas: true, penProfile: {} };
+                const imageData = localRef.current.toDataURL("image/png");
+                aCommunication.current.whiteboardData.data[index].style.imageData = imageData
+                //controlData.saveData(index, localRef, null, aCommunication, ['top', 'left', 'width', 'height']);
+                //otherFunctions.updateSaveMark(aCommunication.current.markSave);
             }
-
-
 
 
         }
@@ -81,24 +94,51 @@ function Canvas({ index, width, height, theRef, heighlight, x, y, isFinal, prevD
             localRef.current.style.height = prevData.style.svgElem.height;
             localRef.current.style.top = prevData.style.svgElem.top;
             localRef.current.style.left = prevData.style.svgElem.left;
+            localRef.current.width = parseInt(prevData.style.svgElem.width);
+            localRef.current.height = parseInt(prevData.style.svgElem.height);
 
-            const context = localRef.current.getContext('2d');
-            const img = new Image();
-            img.src = prevData.style.shapeElem.imageData;
-            img.onload = () => {
-                context.drawImage(img, 0, 0, localRef.current.width, localRef.current.height);
+            if (localRef.current && prevData?.style?.imageData) {
+
+                const context = localRef.current.getContext('2d');
+                theImg.current = new Image();
+                theImg.current.onload = () => {
+                    context.drawImage(theImg.current, 0, 0, localRef.current.width, localRef.current.height);
+                    console.log('✅ Image should succesfully created');
+
+                }
+                theImg.current.onerror = (e) => {
+                    console.error('❌ Image failed, with error : ', e);
+                }
+                theImg.current.src = prevData.style.imageData;
+
+
+
             }
 
 
 
-
         }
+
+        return (() => {
+
+            //Clear canvas , before re-draw
+            if (localRef.current) {
+                if (theImg.current) {
+                    theImg.current.onload = null;
+                    theImg.current.onerror = null;
+                }
+
+                let context = localRef.current.getContext('2d');
+                context.clearRect(0, 0, localRef.current.width, localRef.current.height);
+
+            }
+        })
     }, [prevData])
 
     if (prevData) {
         return (
             <>
-                <canvas ref={theRef ? theRef : localRef} width={prevData.style.svgElem.width} height={prevData.style.svgElem.height}
+                <canvas ref={theRef ? theRef : localRef}
                     className="absolute border border-amber-950 "></canvas>
             </>
         );
@@ -145,6 +185,7 @@ function useDraw(parentRef, setCanvas, setRoughCanvas, preScale) {
     function readyToErase(theRef) {
         //Get canvas ref to work with
         canvasRef.current = theRef.current;
+        canvasRef.localSave = theRef.localSave;
         theLogic.current = new drawLogic(parentRef, canvasRef, null, null, null, mousePositionRef, normalizeScale);
         theLogic.current.selectPenStyle(penStyle.current.lineWidth, penStyle.current.strokeColor, penStyle.current.penProfileNumber);
         theLogic.current.startDrawing(true);

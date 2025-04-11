@@ -44,6 +44,11 @@ function DarkModeToogle() {
         localStorage.setItem('screenMode', outResult.current);
         toggleDarkMode();
 
+        if (aCommunication.current) {
+            aCommunication.current.screenMode = outResult.current;
+
+        }
+
     }
 
 
@@ -76,6 +81,9 @@ function DarkModeToogle() {
         if (aCommunication.current?.sendTo_Home) {
             aCommunication.current.sendTo_Home(localStorage.getItem('screenMode'));
         }
+        if (aCommunication.current?.sendTo_Menu) {
+            aCommunication.current.sendTo_Menu(localStorage.getItem('screenMode'));
+        }
         // localStorage.setItem("theme", thebody.classList.contains("dark") ? "dark" : "light");
         //console.log(localStorage.getItem("theme"));
 
@@ -86,9 +94,20 @@ function DarkModeToogle() {
 
         if (!localStorage.getItem('screenMode')) {
             localStorage.setItem('screenMode', 'light');
+            if (aCommunication.current) {
+                aCommunication.current.screenMode = 'light';
+
+            }
+        } else {
+            if (aCommunication.current) {
+                aCommunication.current.screenMode = localStorage.getItem('screenMode');
+
+            }
         }
 
         toggleDarkMode();
+
+
 
         if (transitionDiv.current) {
             transitionDiv.current.addEventListener('transitionend', transitionendEvent)

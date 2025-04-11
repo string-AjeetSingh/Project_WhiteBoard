@@ -35,10 +35,11 @@ function Selector({ }) {
     }
 
     useEffect(() => {
-        theSelector.current.select = (svgRef, svgElemRef, type, index) => {
+        theSelector.current.select = (svgRef, svgElemRef, type, index, saveFlag) => {
             selectedElem.current = { svgRef: svgRef, svgElemRef: svgElemRef };
             selectedElem.type = type;
             selectedElem.index = index;
+            selectedElem.localSave = saveFlag;
             //console.log('the selectedElem : ', selectedElem);
             selectorWork.select(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv);
 
@@ -54,11 +55,14 @@ function Selector({ }) {
                     selectorWork.activeIncrement(selectedElem, innerDiv, widthRef, null, 'width', { enable: true });
                     selectorWork.performWidthIncrement(selectedElem, null, widthRef, null, { enable: true, width: width });
                     otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                    selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
                 },
                 heightModification: (height) => {
                     selectorWork.activeIncrement(selectedElem, innerDiv, widthRef, null, 'height', { enable: true });
                     selectorWork.performHeightIncrement(selectedElem, null, heightRef, null, { enable: true, height: height });
                     otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                    selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
+
                 },
                 dotModification: (length) => {
                     selectorWork.activeDotIncrement(selectedElem, innerDiv, dotRef, null, null, { enable: true });
@@ -70,13 +74,16 @@ function Selector({ }) {
                         otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
 
                     }
+                    selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
 
                 },
                 borderModification: (type, param = { strokeWidth: null, radius: null }) => {
                     selectorWork.performBorderModification(selectedElem, { type: type, ...param });
+                    selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
                 },
                 colorModification: (hex, type) => {
                     selectorWork.performColorModification(selectedElem, { type: type, hexColor: hex });
+                    selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
                 }
 
             }
@@ -109,12 +116,18 @@ function Selector({ }) {
     useEffect(() => {
 
         if (eventDetail.name === 'innerDiv' && eventDetail.type === 'mouseup') {
+            if (boolActiveIncrement.current)
+                selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
+
             selectorWork.deActivateIncrement(boolActiveIncrement);
         }
         if (eventDetail.name === 'ToolPanel' && eventDetail.type === 'click') {
             // otherFunctions.unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef);
         }
         if (eventDetail.name === 'RightSide' && eventDetail.type === 'mouseleave') {
+            if (boolActiveIncrement.current)
+                selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
+
             selectorWork.deActivateIncrement(boolActiveIncrement);
         }
         //console.log('TRACK EVENT S : ', eventDetail);

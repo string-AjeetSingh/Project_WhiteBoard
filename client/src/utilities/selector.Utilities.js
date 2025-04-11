@@ -433,7 +433,18 @@ const selectorWork = {
         } else if (modification.type === 'bodyColor') {
             selectedElem.current.svgElemRef.current.style.fill = modification.hexColor;
         }
+    },
+
+    confirmUpdateFlag(arrayToTrue) {
+        //update the item.current to true;
+        if (arrayToTrue) {
+            arrayToTrue.forEach((item) => {
+                if (item)
+                    item.current = true;
+            })
+        }
     }
+
 
 
 }

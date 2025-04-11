@@ -1,13 +1,15 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom"
-
+import config from "../config";
 
 function useLogin() {
     const auth0 = useAuth0();
     const tryLoginBool = useRef(true);
     const navigate = useNavigate();
     const location = useLocation();
+    const [userServerData, setUserServerData] = useState(null);
+    const serverData = useRef(null);
 
 
     function login() {
@@ -15,15 +17,20 @@ function useLogin() {
         auth0.loginWithRedirect();
     }
 
+    useEffect(() => {
+        console.log("from login user : ", auth0.user);
+    }, [auth0.user])
+
     function logout() {
 
         //request logout
-        fetch('/api/logout', {
+        let serverUrl = config.serverUrl !== 0 ? config.serverUrl : window.location.origin;
+        fetch(serverUrl + '/api/logout', {
             method: 'DELETE',
             credentials: 'include'
         })
             .then((res) => {
-                alert("the response from request is :");
+                // alert("the response from request is :");
                 // console.log("the response from request is : ", res);
                 auth0.logout({ logoutParams: { returnTo: window.location.origin } });
             }).catch((err) => {
@@ -34,9 +41,10 @@ function useLogin() {
 
     useEffect(() => {
         if (auth0.isAuthenticated && auth0.user && tryLoginBool.current) {
-            alert('going to use request login');
+
             //request login
-            fetch('/api/login', {
+            let serverUrl = config.serverUrl !== 0 ? config.serverUrl : window.location.origin;
+            fetch(serverUrl + '/api/login', {
                 method: 'POST',
                 credentials: 'include', headers: {
                     'userdata': `{"email" : "${auth0.user ? auth0.user.email : null}"} `
@@ -50,6 +58,8 @@ function useLogin() {
                                 if (location.pathname === '/') {
                                     navigate('/menu');
                                 }
+                                setUserServerData({ ...json.data });
+                                serverData.current = json.data;
                             } else {
                                 throw new Error(' a problem with login ');
                             }
@@ -64,7 +74,7 @@ function useLogin() {
         }
     }, [auth0.user, auth0.isAuthenticated])
 
-    return { login, logout, isAuthenticated: auth0.isAuthenticated, user: auth0.user, isLoading: auth0.isLoading }
+    return { login, userServerData, serverData, logout, isAuthenticated: auth0.isAuthenticated, user: auth0.user, isLoading: auth0.isLoading }
 
 
 }

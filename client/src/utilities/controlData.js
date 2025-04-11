@@ -1,3 +1,5 @@
+import config from "../config";
+
 const controlData = {
     getLatestData,
     getLatestAttributeData,
@@ -41,13 +43,18 @@ const controlData = {
         })
 
         if (!newStyle.empty)
-            aCommunication.current.whiteboardData.data[index].style = { ...newStyle };
+            aCommunication.current.whiteboardData.data[index].style = { ...aCommunication.current.whiteboardData.data[index].style, ...newStyle };
 
         if (!newAttrib.empty)
-            aCommunication.current.whiteboardData.data[index].attribute = { ...newAttrib };
+            aCommunication.current.whiteboardData.data[index].attribute = { ...aCommunication.current.whiteboardData.data[index].attribute, ...newAttrib };
+
+        //uploadData(aCommunication.current.whiteBoardServerData.data.projectid, aCommunication.current.whiteboardData.data);
     }
 
 }
+
+
+
 
 function getLatestData(arrayToWant, elemRef) {
 
@@ -67,6 +74,30 @@ function getLatestAttributeData(arrayToWant, elemRef) {
         attributeData[item] = elemRef.current.getAttribute(item);
     })
     return attributeData;
+}
+
+async function uploadData(projectid, data) {
+
+    let serverUrl = config.serverUrl !== 0 ? config.serverUrl : window.location.origin;
+    fetch(serverUrl + "/api/saveProject", {
+        method: 'PUT',
+        headers: {
+            projectid: projectid,
+            "Content-Type": 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+    }).then((res) => {
+        if (res.status === 200) {
+            res.json().then((jsonData) => {
+                if (jsonData.status === 1) {
+                    console.log(jsonData.message);
+                } else {
+                    console.error(jsonData.message)
+                }
+            })
+        }
+    })
 }
 
 export default controlData;

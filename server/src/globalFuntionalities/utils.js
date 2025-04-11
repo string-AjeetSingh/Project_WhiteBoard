@@ -51,10 +51,10 @@ const Utils = {
         //array must be like [{type : 'obj', subject : object, path : 'aobj.ajeet.value'}, ...]
 
         for (let item of array) {
-            debugger;
+
             if (item.type === 'obj') {
                 let check = checkObj(item.subject, item.path);
-                debugger;
+
                 if (check !== 1)
                     throw new clientError(`Parameter error while checking object with level path = ${item.path}, not found at : ${check} `);
 
@@ -74,35 +74,32 @@ const Utils = {
 
 const jsonTemplates = [
     null,
-    { templateVariable: ['status', 'message'] }
+    { templateVariable: ['status', 'message'] },
+    { templateVariable: ['status', 'message', 'data'] }
+
 ]
 
 function checkObj(obj, path) {
     let current = obj;
     path = path.split('.');
 
-    debugger;
 
     for (let i = 0; i < path.length; i++) {
         if (i === 0) {
-            debugger;
-            if (!current) {
 
-                debugger;
+            if (!current) {
                 return path[i];
             }
 
         } else {
             current = current[path[i]];
-            debugger;
+
             if (!current) {
-                debugger;
                 return path[i];
             }
         }
     }
 
-    debugger;
     return 1;
 }
 

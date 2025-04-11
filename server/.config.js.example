@@ -3,5 +3,6 @@ export default {
     "SUPABASE": {
         "URL": "supabase url from your account",
         "PUBLIC_KEY": "supabase public key"
-    }
+    },
+    "PORT" : <PORT you want to run on >
 }

@@ -10,7 +10,42 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3500',
         changeOrigin: true,
+        logLevel: 'debug'
       }
     }
   }
 })
+
+/* 
+server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3500',
+        changeOrigin: true,
+      }
+    }
+  }
+
+--
+ server: {
+    middlewareMode: true, // IMPORTANT: Enables full control
+    configureServer(server) {
+      server.middlewares.use(
+        '/api',
+        createProxyMiddleware({
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          ws: true,
+          logLevel: 'debug', // Optional: helps you debug
+          pathRewrite: { '^/api': '' },
+          onProxyRes(proxyRes, req, res) {
+            // Example: Log raw response headers
+            console.log('Proxy Response:', proxyRes.statusCode, proxyRes.headers);
+          }
+        })
+      );
+    }
+}
+
+       */
+

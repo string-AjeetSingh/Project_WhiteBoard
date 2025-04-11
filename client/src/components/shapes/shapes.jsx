@@ -14,9 +14,10 @@ function Rectangle({ index, x, y, width, height, useAs, prevData }) {
     const { theSelector } = useContext(SelectorContext);
     const { aCommunication } = useContext(CommonContext);
     const interval = useRef(null);
+    const markLocalDataSave = useRef(null);
 
     const bindedFunction = {
-        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, useAs, index),
+        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, useAs, index, markLocalDataSave),
     }
 
 
@@ -31,16 +32,20 @@ function Rectangle({ index, x, y, width, height, useAs, prevData }) {
     useEffect(() => {
 
         interval.current = setInterval(() => {
-            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['width', 'height', 'x', 'y', 'rx', 'strokeWidth', 'fill', 'stroke']);
+            if (markLocalDataSave.current) {
 
-            //console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+                controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['width', 'height', 'x', 'y', 'rx', 'strokeWidth', 'fill', 'stroke']);
+                markLocalDataSave.current = false;
+                //console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+            }
 
-        }, 1000 * 5);
+        }, 0);
 
 
         // Initailize the data of elem
         if (!aCommunication.current.whiteboardData.data[index]) {
             aCommunication.current.whiteboardData.data[index] = { index: index, style: {}, attribute: {}, shapeType: useAs };
+            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['width', 'height', 'x', 'y', 'rx', 'strokeWidth', 'fill', 'stroke']);
         }
         //Remove the data of elem
         return (() => {
@@ -111,10 +116,12 @@ function Circle({ index, x, y, cx, cy, width, height, radius, prevData }) {
     const shapeRef = useRef(null);
     const { theSelector } = useContext(SelectorContext);
     const { aCommunication } = useContext(CommonContext);
+    const markLocalDataSave = useRef(false);
     const interval = useRef(null);
 
+
     const bindedFunction = {
-        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'circle', index),
+        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'circle', index, markLocalDataSave),
     }
 
 
@@ -128,15 +135,19 @@ function Circle({ index, x, y, cx, cy, width, height, radius, prevData }) {
     }, [])
     useEffect(() => {
         interval.current = setInterval(() => {
-            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['r', 'cx', 'cy', 'strokeWidth', 'fill', 'stroke'],);
+            if (markLocalDataSave.current) {
 
-            // console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+                controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['r', 'cx', 'cy', 'strokeWidth', 'fill', 'stroke'],);
+                markLocalDataSave.current = false;
+                //console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
 
-        }, 1000 * 5);
+            }
+        }, 0);
 
         // Initailize the data of elem
         if (!aCommunication.current.whiteboardData.data[index]) {
             aCommunication.current.whiteboardData.data[index] = { index: index, style: {}, attribute: {}, shapeType: 'circle' };
+            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['r', 'cx', 'cy', 'strokeWidth', 'fill', 'stroke'],);
         }
         //Remove the data of elem
         return (() => {
@@ -206,6 +217,7 @@ function Triangle({ index, x, y, width, height, prevData }) {
     const shapeRef = useRef(null);
     const { theSelector } = useContext(SelectorContext);
     const { aCommunication } = useContext(CommonContext);
+    const markLocalDataSave = useRef(false);
     const interval = useRef(null);
 
     /* 
@@ -215,8 +227,8 @@ function Triangle({ index, x, y, width, height, prevData }) {
         p2: `${10 / 100 * width},${height - (10 / 100 * height)}`,
         p3: `${width - (10 / 100 * width)},${height - (10 / 100 * height)}`,
         
-    }
-    */
+        }
+        */
     const thePoints = {
         p1: `${width / 2},${5}`,
         p2: `${5},${height - 5}`,
@@ -225,7 +237,7 @@ function Triangle({ index, x, y, width, height, prevData }) {
     }
 
     const bindedFunction = {
-        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'triangle', index),
+        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'triangle', index, markLocalDataSave),
     }
 
 
@@ -240,16 +252,21 @@ function Triangle({ index, x, y, width, height, prevData }) {
     useEffect(() => {
 
         interval.current = setInterval(() => {
-            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['strokeWidth', 'fill', 'stroke'], [], ['points'],);
+            if (markLocalDataSave.current) {
 
-            //console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+                controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['strokeWidth', 'fill', 'stroke'], [], ['points'],);
+                markLocalDataSave.current = false;
 
-        }, 1000 * 5);
+                //console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+
+            }
+        }, 0);
 
 
         // Initailize the data of elem
         if (!aCommunication.current.whiteboardData.data[index]) {
             aCommunication.current.whiteboardData.data[index] = { index: index, style: {}, attribute: {}, shapeType: 'triangle' };
+            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['strokeWidth', 'fill', 'stroke'], [], ['points'],);
         }
         //Remove the data of elem
         return (() => {
@@ -317,10 +334,11 @@ function Ellipse({ index, x, y, width, height, prevData }) {
     const shapeRef = useRef(null);
     const { theSelector } = useContext(SelectorContext);
     const { aCommunication } = useContext(CommonContext);
+    const markLocalDataSave = useRef(false);
     const interval = useRef(null);
 
     const bindedFunction = {
-        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'ellipse', index),
+        provideToSelector: eventHandles.useSelector.bind(null, theSelector, svgRef, shapeRef, 'ellipse', index, markLocalDataSave),
     }
 
 
@@ -334,15 +352,20 @@ function Ellipse({ index, x, y, width, height, prevData }) {
     }, [])
     useEffect(() => {
         interval.current = setInterval(() => {
-            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['rx', 'ry', 'cx', 'cy', 'strokeWidth', 'fill', 'stroke'],);
+            if (markLocalDataSave.current) {
 
-            console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+                controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['rx', 'ry', 'cx', 'cy', 'strokeWidth', 'fill', 'stroke'],);
+                markLocalDataSave.current = false;
 
-        }, 1000 * 5);
+                //   console.log('the whiteboard data is : ', aCommunication.current.whiteboardData.data[index]);
+            }
+
+        }, 0);
 
         // Initailize the data of elem
         if (!aCommunication.current.whiteboardData.data[index]) {
             aCommunication.current.whiteboardData.data[index] = { index: index, style: {}, attribute: {}, shapeType: 'ellipse' };
+            controlData.saveData(index, svgRef, shapeRef, aCommunication, ['width', 'height', 'left', 'top'], ['rx', 'ry', 'cx', 'cy', 'strokeWidth', 'fill', 'stroke'],);
         }
         //Remove the data of elem
         return (() => {

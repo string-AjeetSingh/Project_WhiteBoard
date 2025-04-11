@@ -4,6 +4,7 @@ class useSupabase {
     constructor(supabase_instance) {
         this.supabase = supabase_instance;
         this.rsp = null;
+        this.responseArrayBool = false;
     }
 
     async select(from, toSelect, filter = { filterName, column, value }) {
@@ -80,17 +81,33 @@ class useSupabase {
         }
     }
 
+    responseDataAsArray() {
+        this.responseArrayBool = true;
+    }
+
     handleResponse(response) {
         const { data, error } = response;
+
         if (error) {
             console.error("Supabase Error:", error.message);
-            return { success: false, error: error.message, data: null };
+            let type = null;
+            if (error.code === '23505')
+                type = 'uniqueConflict'
+
+            return { success: false, error: error.message, data: null, errorType: type };
+        }
+        if (this.responseArrayBool && data) {
+            return { success: true, data: data }
+            this.responseArrayBool = false;
         }
 
-        if (data?.length < 1) {
+        if (data?.length < 1)
             return { success: true, data: 'empty' };
-        }
-        return { success: true, data: data ? data[0] : null };
+
+        else if (data?.length === 1)
+            return { success: true, data: data ? data[0] : null };
+
+        return { success: true, data: data ? data : null };
     }
     updateResponse(response) {
         this.rsp = response;

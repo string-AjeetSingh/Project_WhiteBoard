@@ -12,6 +12,7 @@ import { Workspace } from './pages/Workspace'
 import { Menu } from './components/menu/menu'
 import { Home } from './pages/Home'
 import { NavBar } from './components/navBar/navBar'
+import TrySocket from './components/rough/trySocket'
 
 function Dashboard({ }) {
   return (
@@ -61,20 +62,11 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path='' element={<CommonHome />}>
           <Route path='/menu' element={<Menu />}></Route>
-          <Route path='/workSpace' element={<Workspace />}></Route>
+          <Route path='/workSpace/:projectid' element={<Workspace />}></Route>
           <Route path='' element={<Home />}></Route>
         </Route>
-        <Route path='' element={<><h1>provide child addresh , like /home, /rough, /dashboard</h1></>}></Route>
         <Route path='/rough' element={<Rough />}></Route>
-        <Route path='/dashboard' element={<Dashboard />}>
-          <Route index element={<h1>From /dashboard</h1>}></Route>
-          <Route path='profile' element={<h1>From dashboard/profile</h1>}></Route>
-        </Route>
-        <Route path='/concert' >
-          <Route index element={<h1>From Consert</h1>}></Route>
-          <Route path='trending' element={<h1>From the Concert/trending </h1>}></Route>
-          <Route path=':city' element={<h1>From consert:city</h1>}></Route>
-        </Route>
+        <Route path="/trySocket" element={<TrySocket />}></Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,

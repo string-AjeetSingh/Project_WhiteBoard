@@ -60,9 +60,6 @@ class drawLogic {
         this.engagePenStyle = this.engagePenStyle.bind(this);
         this.selectPenStyle = this.selectPenStyle.bind(this);
         this.outPenProfileFor_aCommunication = this.outPenProfileFor_aCommunication.bind(this);
-        this.stopStoredDrawing = this.stopStoredDrawing.bind(this);
-        this.startStoredPointDraw = this.startStoredPointDraw.bind(this);
-        this.drawStoredPoints = this.drawStoredPoints.bind(this);
         this.convertStoredPointsRawDataToPercentages = this.convertStoredPointsRawDataToPercentages.bind(this);
         this.convertStoredPointsPercentagesToRawData = this.convertStoredPointsPercentagesToRawData.bind(this);
     }
@@ -131,49 +128,14 @@ class drawLogic {
 
 
     }
-    setStoredPenPoints(data) {
-        this.storedPenPoints = data;
-
-    }
     setCanvasRef(theRef) {
         this.canvasRef = theRef;
     }
     setNormalizedScale(normalizedValue) {
         this.normalizedScale = normalizedValue;
     }
-    startStoredPointDraw() {
 
-        this.context = this.canvasRef.current.getContext('2d');
-        //et parentPos = otherFunctions.getBoundingClientRectRespectToZoomScale(this.normalizedScale, this.canvasRef);
-        //  let drawPos = otherFunctions.positionResToParent(parentPos, { x: this.mousePositionRef.current.x, y: this.mousePositionRef.current.y });
-        this.convertStoredPointsPercentagesToRawData();
-        let drawPos = { x: this.storedPenPoints[0].x, y: this.storedPenPoints[0].y };
-        //console.log('the drawStarts from the position : ', drawPos);
 
-        this.context.beginPath();
-
-        this.engagePenStyle();
-        this.context.moveTo(drawPos.x, drawPos.y);
-        this.isDrawing = true;
-
-        this.drawStoredPoints();
-
-    }
-    drawStoredPoints() {
-        if (!this.isDrawing) return;
-
-        //console.log("drawing at : ", e.offsetX, e.offsetY);
-        this.storedPenPoints.forEach((item, index) => {
-            if (index !== 0) {
-                this.context.lineTo(item.x, item.y);
-                // console.log("the prevCoords", this.prevCoor);
-                this.context.stroke();
-            }
-        })
-
-        this.stopStoredDrawing();
-
-    }
     draw(e) {
         if (!this.isDrawing) return;
 
@@ -184,21 +146,14 @@ class drawLogic {
         // console.log("the prevCoords", this.prevCoor);
         this.context.stroke();
     }
-    stopStoredDrawing() {
-        if (this.isDrawing) {
-            this.isDrawing = false;
-        } else {
-            setTimeout(() => {
-                if (this.isDrawing) {
-                    this.isDrawing = false;
-                }
-            }, 3)
-        }
-    }
+
     stopDrawing(e) {
         if (this.isDrawing) {
             this.isDrawing = false;
             if (!this.workingEraser) this.calibrateDimentionsForNewCanvas();
+            if (this.canvasRef.localSave)
+                this.canvasRef.localSave.current = true;
+
             removeEvent(this.canvasRef, 'mousemove', this.draw);
             removeEvent(this.canvasRef, 'mouseup', this.stopDrawing);
         } else {
@@ -258,7 +213,7 @@ class drawLogic {
 
             const finalContext = this.finalCanvasRef.current.getContext('2d');
             finalContext.drawImage(this.canvasRef.current, dimentions.contentRectCoord.p1.x, dimentions.contentRectCoord.p1.y, dimentions.contentWidth + 10, dimentions.contentHeight + 10, 0, 0, dimentions.contentWidth + 10, dimentions.contentHeight + 10);
-
+            this.finalCanvasRef.localSave.current = true;
             //Remove Rough Canvas
             this.setRoughCanvas(null);
 
@@ -355,6 +310,9 @@ const otherFunctions = {
 
     setWhiteboardData: (aCommunication, penProfile, index) => {
         aCommunication.current.whiteboardData.data[index].penProfile = penProfile;
+    },
+    updateSaveMark(theRef) {
+        theRef.current = true;
     }
 
 

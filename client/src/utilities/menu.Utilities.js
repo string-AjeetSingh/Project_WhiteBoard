@@ -1,4 +1,6 @@
+import config from './../config.js'
 
+let serverUrl = config.serverUrl !== 0 ? config.serverUrl : window.location.origin;
 
 const menuWork = {
     handle: {
@@ -62,7 +64,75 @@ const menuWork = {
             e.stopPropagation();
             setPanel(0);
             console.log('from the blur panel');
+        },
+        async createMenuOperation(setPanel, projecttitle, e) {
+            e.stopPropagation();
+
+            let rsp = await fetch(serverUrl + "/api/createProject", {
+                method: 'POST', headers: {
+                    'projecttitle': projecttitle
+                },
+                credentials: 'include'
+            });
+            if (rsp) {
+                let jsonData = await rsp.json();
+                console.log("the response from the server is : ", jsonData);
+                if (jsonData.status === 1) {
+                    alert("succesfull created project with title - " + projecttitle);
+                    setPanel(0);
+                } else {
+                    alert(jsonData.message);
+                    setPanel(0);
+                }
+            }
+        },
+        doesProjectExists: async (title) => {
+
+            let rsp = await fetch(serverUrl + '/api/ifProjectExists', {
+                method: 'GET', headers: {
+                    projecttitle: title
+                }, credentials: "include"
+            });
+            if (rsp.status === 200) {
+                let jsonData = await rsp.json();
+                return jsonData.exists;
+            }
+
+            return -1;
+        },
+        fetchProjects: async (profileid) => {
+
+            let rsp = await fetch(serverUrl + '/api/fetchAllProjects', {
+                method: 'GET', headers: {
+                    profileid: profileid
+                }, credentials: "include"
+            });
+            if (rsp.status === 200) {
+                let jsonData = await rsp.json();
+                return jsonData.data;
+            }
+        },
+
+        deleteProject: async (projectid) => {
+            let rsp = await fetch(serverUrl + '/api/removeProject', {
+                method: 'DELETE', headers: {
+                    projectid: projectid
+                }, credentials: "include"
+            });
+            if (rsp.status === 200) {
+                let jsonData = await rsp.json();
+                if (jsonData.status === 1) {
+                    alert(jsonData.message);
+                } else {
+                    alert('problem deleting the project, see log');
+                    console.error(jsonData.message)
+                }
+                //return jsonData.data;
+            }
         }
+
+
+
 
     },
     otherFunctions: {
