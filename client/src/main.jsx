@@ -13,6 +13,7 @@ import { Menu } from './components/menu/menu'
 import { Home } from './pages/Home'
 import { NavBar } from './components/navBar/navBar'
 import TrySocket from './components/rough/trySocket'
+import TryDesign from './components/rough/tryDesign'
 
 function Dashboard({ }) {
   return (
@@ -62,6 +63,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path='' element={<CommonHome />}>
           <Route path='/menu' element={<Menu />}></Route>
+          <Route path='/tryDesign' element={<TryDesign />}></Route>
           <Route path='/workSpace/:projectid' element={<Workspace />}></Route>
           <Route path='/' element={<Home />}></Route>
         </Route>

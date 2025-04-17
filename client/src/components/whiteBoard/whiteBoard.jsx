@@ -8,6 +8,9 @@ import { SelectorContext } from "./selectorContext";
 import { Selector } from "../selector/selector";
 import { useDraw } from "../../hooks/draw";
 import useSaveData from "../../hooks/saveData";
+import useNormalizedScale from "../../hooks/normalizedScale";
+import { useMouseMovement } from "../../hooks/mousePointerMove";
+import { wrap } from "framer-motion";
 
 
 
@@ -24,6 +27,7 @@ function Content({ SvgArray, canvasArray, roughCanvas }) {
 function WhiteBoard({ }) {
     const divelem = useRef(null);
     const innerDiv = useRef(null);
+    const wrapperDiv = useRef(null);
     const scrollControlBool = useRef(false);
     const middleMouseBool = useRef(false);
     const mousePoinerPostion = useRef([null, null]);
@@ -32,7 +36,8 @@ function WhiteBoard({ }) {
     const prevScale = useRef(200);
     const defaultScaleValue = useRef(100);
     const [whiteBoardColor, setWhiteBoardColor] = useState('var(--whiteBoard-one)');
-
+    const [mouseMove] = useMouseMovement(prevScale);
+    const [normalizedScale] = useNormalizedScale();
 
     const { selectedItem, aCommunication, trackEvent } = useContext(CommonContext);
     const [SvgArray, setSvgArray] = useState([
@@ -65,7 +70,7 @@ function WhiteBoard({ }) {
         mouseLeave: mouseEvent.leave.bind(null, middleMouseBool),
         preventMouseZoom: otherEventHandle.preventZoomOnCtrl.bind(null, innerDiv),
         resumeMouseZoom: otherEventHandle.resumeZoomOnCtrl.bind(null, innerDiv),
-        wheelZoom: mouseEvent.wheelZoom.bind(null, ctrlHold, prevScale, innerDiv, totalScrollPossible),
+        wheelZoom: mouseEvent.wheelZoom.bind(null, ctrlHold, prevScale, innerDiv, wrapperDiv, divelem, totalScrollPossible),
         mouseDown: mouseEvent.down.bind(null, selectedItem),
         createShape: otherEventHandle.engageItem.bind(null, selectedItem, innerDiv, prevScale, defaultScaleValue, { setSvgArray: setSvgArray, setPen: provideCanvas }, aCommunication),
         trackInnerDivMouseUp: trackEvent.bind(null, 'innerDiv', 'mouseup', null),
@@ -82,6 +87,9 @@ function WhiteBoard({ }) {
 
         //Provide Functionalities to communication
         selectedItem.pen = { penStyle: selectPenStyle, setPenStyleCallback };
+
+
+        aCommunication.current.prevScale = prevScale;
 
         //Starting of a index  system that sustain the 
         // global indexes of the whiteboard elems and functions to control it
@@ -144,18 +152,27 @@ function WhiteBoard({ }) {
     }, [])
     return (
         <>
-            <div ref={divelem} className="  h-full overflow-scroll 
+            <div ref={divelem} className="  w-[500px] h-[500px] overflow-scroll 
              border-2 border-amber-600 rounded-2xl 
               relative "
             >
+                <div ref={wrapperDiv}
+                    style={{
+                        width: 1000 * normalizedScale + 'px',
+                        height: 1000 * normalizedScale + 'px'
+                    }} className="  relative  border border-green-500">
+
+                </div>
                 <div style={{
-                    transformOrigin: "top left",
+                    transformOrigin: `100px 100px`,
+                    //transformOrigin: 'top left',
                     transform: `scale(${prevScale.current}%)`,
                     backgroundColor: whiteBoardColor
 
                 }}
-                    ref={innerDiv} className=" h-[1000px] 
-                 text-black w-[1000px] absolute text-center "
+                    ref={innerDiv} className=" h-[1000px] border border-black
+
+                text-black w-[1000px] top-0 left-0 absolute text-center "
                 >
                     <SelectorContext.Provider value={{ theSelector, innerDiv, prevScale }}>
 

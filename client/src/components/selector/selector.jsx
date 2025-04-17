@@ -5,6 +5,7 @@ import { selectorWork, otherFunctions, bindedToUseInThisModule } from "../../uti
 import { effectEventClass } from "../../myLib/effectEventClass";
 import { CommonContext } from '../../myLib/commonContext/myContext';
 import ElementTracker from '../../myLib/trackElemProperties';
+import { RightMiniPanel, RightPanel } from "../rightClickPanel/rightClickPanel";
 
 
 function Selector({ }) {
@@ -12,6 +13,8 @@ function Selector({ }) {
     const heightRef = useRef(null);
     const dotRef = useRef(null);
     const moveRef = useRef(null);
+    const RightRef = useRef(null);
+    const RightMiniRef = useRef(null);
     const selectedElem = useRef(null);
     const boolActiveIncrement = useRef(null);
     const { theSelector, innerDiv, prevScale } = useContext(SelectorContext);
@@ -41,7 +44,7 @@ function Selector({ }) {
             selectedElem.index = index;
             selectedElem.localSave = saveFlag;
             //console.log('the selectedElem : ', selectedElem);
-            selectorWork.select(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv);
+            selectorWork.select(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, RightMiniRef);
 
             aCommunication.current.setFromSelector((prev) => {
                 let newOne = { ...prev };
@@ -54,13 +57,13 @@ function Selector({ }) {
                 widthModification: (width) => {
                     selectorWork.activeIncrement(selectedElem, innerDiv, widthRef, null, 'width', { enable: true });
                     selectorWork.performWidthIncrement(selectedElem, null, widthRef, null, { enable: true, width: width });
-                    otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                    otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { all: true });
                     selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
                 },
                 heightModification: (height) => {
                     selectorWork.activeIncrement(selectedElem, innerDiv, widthRef, null, 'height', { enable: true });
                     selectorWork.performHeightIncrement(selectedElem, null, heightRef, null, { enable: true, height: height });
-                    otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                    otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { all: true });
                     selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
 
                 },
@@ -68,10 +71,10 @@ function Selector({ }) {
                     selectorWork.activeDotIncrement(selectedElem, innerDiv, dotRef, null, null, { enable: true });
                     selectorWork.performDotIncrement(selectedElem, null, dotRef, null, { enable: true, length: length });
                     if (selectedElem.type === 'circle' || selectedElem.type === 'square') {
-                        otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true, move: true });
+                        otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { dot: true, move: true });
                     }
                     else if (selectedElem.type === 'rectangle' || selectedElem.type === 'triangle' || selectedElem.type === 'ellipse') {
-                        otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { all: true });
+                        otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { all: true });
 
                     }
                     selectorWork.confirmUpdateFlag([aCommunication.current.markSave, selectedElem.localSave]);
@@ -159,12 +162,12 @@ function Selector({ }) {
             console.log('the width increment to be done');
 
             selectorWork.performWidthIncrement(selectedElem, mousePointerRef, widthRef, innerDiv);
-            otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true, height: true });
+            otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true, height: true });
 
         }
         if (boolActiveIncrement.current === 'height') {
             selectorWork.performHeightIncrement(selectedElem, mousePointerRef, heightRef, innerDiv);
-            otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true, width: true });
+            otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true, width: true });
         }
         if (boolActiveIncrement.current === 'dot') {
 
@@ -172,19 +175,19 @@ function Selector({ }) {
             selectorWork.performDotIncrement(selectedElem, mousePointerRef, dotRef, innerDiv);
 
             if (selectedElem.type === 'circle') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true });
             }
             else if (selectedElem.type === 'ellipse') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true, width: true, height: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true, width: true, height: true });
             }
             else if (selectedElem.type === 'rectangle') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { width: true, height: true, move: true, dot: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { width: true, height: true, move: true, dot: true });
             }
             else if (selectedElem.type === 'square') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true });
             }
             else if (selectedElem.type === 'triangle') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true, width: true, height: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true, width: true, height: true });
 
             }
 
@@ -194,19 +197,19 @@ function Selector({ }) {
             selectorWork.performMovement(selectedElem, innerDiv, moveRef, mousePointerRef);
 
             if (selectedElem.type === 'circle') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { dot: true });
             }
             else if (selectedElem.type === 'ellipse') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true, width: true, height: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { dot: true, width: true, height: true });
             }
             else if (selectedElem.type === 'rectangle') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { width: true, height: true, dot: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { width: true, height: true, dot: true });
             }
             else if (selectedElem.type === 'square') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { dot: true });
             }
             else if (selectedElem.type === 'triangle') {
-                otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { dot: true, width: true, height: true });
+                otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { dot: true, width: true, height: true });
 
             }
         }
@@ -249,6 +252,26 @@ function Selector({ }) {
                     top: '40px'
                 }}
                 className=" absolute size-4 rounded-full bg-amber-900" >
+
+            </div>
+            <div ref={RightMiniRef}                 //Right Mini
+
+                style={{
+                    left: '60px',
+                    top: '60px'
+                }}
+                className=" absolute border border-amber-800 " >
+                <RightMiniPanel />
+
+            </div>
+            <div ref={RightRef}                 //Right
+
+                style={{
+                    left: '60px',
+                    top: '200px'
+                }}
+                className=" absolute " >
+                <RightPanel />
 
             </div>
         </>

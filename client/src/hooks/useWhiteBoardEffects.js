@@ -10,13 +10,13 @@ const useWhiteboardEvents = (innerDiv, divelem, bindedFunction) => {
     useEffect(() => {
         if (divelem.current) {
 
-            divelem.current.scrollTop = (divelem.current.scrollHeight - divelem.current.clientHeight) / 2;
-            divelem.current.scrollLeft = (divelem.current.scrollWidth - divelem.current.clientWidth) / 2;
-            divelem.current.addEventListener('scroll', bindedFunction.handleScroll);
+            //divelem.current.scrollTop = (divelem.current.scrollHeight - divelem.current.clientHeight) / 2;
+            //divelem.current.scrollLeft = (divelem.current.scrollWidth - divelem.current.clientWidth) / 2;
+            // divelem.current.addEventListener('scroll', bindedFunction.handleScroll);
         }
         return () => {
             if (divelem.current) {
-                divelem.current.removeEventListener('scroll', bindedFunction.handleScroll);
+                // divelem.current.removeEventListener('scroll', bindedFunction.handleScroll);
             }
         };
     }, [divelem.current]);

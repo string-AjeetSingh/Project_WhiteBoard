@@ -71,7 +71,7 @@ const mouseEvent = {
 
     },
 
-    wheelZoom: (ctrlhold, prevScale, thediv, totalScroll, e) => {
+    wheelZoom: (ctrlhold, prevScale, thediv, wrapperDiv, parentDiv, totalScroll, e) => {
         // console.log('From Zoom the control hold : ', ctrlhold);
 
 
@@ -82,6 +82,14 @@ const mouseEvent = {
                 if (prevScale.current === totalScroll[1]) return;
                 let newScale = prevScale.current - 5;
                 thediv.current.style.transform = `scale(${newScale}%)`
+
+                outBoundingDetail(thediv, true);
+
+                //update the position of the wrapperDiv, so we could have scrolling over scalled innerDiv
+
+                setWrapperPos(wrapperDiv, thediv, parentDiv);
+
+                outBoundingDetail(wrapperDiv, true);
                 prevScale.current = newScale;
 
 
@@ -90,6 +98,12 @@ const mouseEvent = {
                 if (prevScale.current === totalScroll[0]) return;
                 let newScale = prevScale.current + 5;
                 thediv.current.style.transform = `scale(${newScale}%)`
+
+                outBoundingDetail(thediv, true);
+                //update the position of the wrapperDiv, so we could have scrolling over scalled innerDiv
+                setWrapperPos(wrapperDiv, thediv, parentDiv);
+                outBoundingDetail(wrapperDiv, true);
+
                 prevScale.current = newScale;
 
             }
@@ -316,7 +330,26 @@ function getMouseCoordinateByElem(elemRef, event, prevScale, defaultScale) {
     }
 }
 
+function outBoundingDetail(ref, wantLog) {
+    if (!ref) {
+        console.error("Provide ref elem to the function please");
+        return -1;
+    }
+    const boundingData = ref.current.getBoundingClientRect();
 
+    if (wantLog)
+        console.log('the bounding data from the outBoundingDetail : ', boundingData);
+
+    return boundingData;
+}
+
+function setWrapperPos(wrapperDiv, theDiv, parentDiv) {
+    let boundingClient = outBoundingDetail(theDiv);
+    let parentBounding = outBoundingDetail(parentDiv);
+    //update the position of the wrapperDiv, so we could have scrolling over scalled innerDiv
+    wrapperDiv.current.style.left = (boundingClient.x - parentBounding.x) + "px";
+    wrapperDiv.current.style.top = (boundingClient.x - parentBounding.y) + 'px';
+}
 
 
 

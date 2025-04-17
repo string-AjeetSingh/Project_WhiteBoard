@@ -1,21 +1,21 @@
 import controlData from "./controlData";
 
 const selectorWork = {
-    select: (widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef) => {
+    select: (widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef, miniRightRef) => {
         if (subjectRef.type === 'rectangle') {
-            setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef);
+            setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: subjectRef, parentRef: parentRef, rightMiniRef: miniRightRef });
         }
         else if (subjectRef.type === 'circle') {
-            setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef, { dot: true, move: true });
+            setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: subjectRef, parentRef: parentRef }, { dot: true, move: true });
         }
         else if (subjectRef.type === 'square') {
-            setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef, { dot: true, move: true });
+            setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: subjectRef, parentRef: parentRef }, { dot: true, move: true });
         }
         else if (subjectRef.type === 'triangle') {
-            setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef);
+            setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: subjectRef, parentRef: parentRef });
         }
         else if (subjectRef.type === 'ellipse') {
-            setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef);
+            setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: subjectRef, parentRef: parentRef });
         }
 
     },
@@ -467,19 +467,18 @@ const otherFunctions = {
             right: boundingData.right / scaleFactor,
             bottom: boundingData.bottom / scaleFactor
         };
-
         return scaledBoundingData;
     },
     showSelectorBody: (widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv) => {
 
         if (selectedElem.type === 'circle') {
-            otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true });
+            otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true });
         }
         else if (selectedElem.type === 'rectangle') {
-            otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { width: true, height: true, move: true, dot: true });
+            otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { width: true, height: true, move: true, dot: true });
         }
         else if (selectedElem.type === 'square') {
-            otherFunctions.setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, selectedElem, innerDiv, { move: true, dot: true });
+            otherFunctions.setSelectorBodyToSubject({ widthRef: widthRef, heightRef: heightRef, dotRef: dotRef, moveRef: moveRef, subjectRef: selectedElem, parentRef: innerDiv }, { move: true, dot: true });
         }
     }
 
@@ -491,48 +490,180 @@ const otherFunctions = {
 
 const bindedToUseInThisModule = {};
 
+function setSelectorBodyToSubject(
+    theElems = { widthRef: null, heightRef: null, dotRef: null, moveRef: null, subjectRef: null, parentRef: null, rightMiniRef: null },
+    toEffect = { all: true, width: null, height: null, dot: null, move: null }
+) {
+    if (!theElems.parentRef && !theElems.subjectRef)
+        throw new Error(' Please provide valid required parameters to the functions');
 
-function setSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef, subjectRef, parentRef, toEffect = { all: true, width: null, height: null, dot: null, move: null }) {
-    const parentPos = bindedToUseInThisModule.boundingDataRespectToZoom(parentRef);
-    const subjectPos = bindedToUseInThisModule.boundingDataRespectToZoom(subjectRef.current.svgRef);
+    const parentPos = bindedToUseInThisModule.boundingDataRespectToZoom(theElems.parentRef);
+    const subjectPos = bindedToUseInThisModule.boundingDataRespectToZoom(theElems.subjectRef.current.svgRef);
+    let rightMiniPos = null;
+
+    if (theElems.rightMiniRef)
+        rightMiniPos = bindedToUseInThisModule.boundingDataRespectToZoom(theElems.rightMiniRef);
+
     const newParameteres = {};
 
-    newParameteres.forWidthRef = {
-        left: subjectPos.x - parentPos.x + subjectPos.width,
-        top: subjectPos.y - parentPos.y
-    };
-    newParameteres.forHeightRef = {
-        left: subjectPos.x - parentPos.x,
-        top: subjectPos.y - parentPos.y + subjectPos.height
-    };
 
-    if (toEffect.all || toEffect.width) {
-        setLeftTop(newParameteres.forWidthRef.left, newParameteres.forWidthRef.top, widthRef);
-        widthRef.current.style.height = subjectPos.height + 'px';
-    }
-    if (toEffect.all || toEffect.height) {
-        setLeftTop(newParameteres.forHeightRef.left, newParameteres.forHeightRef.top, heightRef);
-        heightRef.current.style.width = subjectPos.width + "px";
+    //Work for width Ref
+    if (theElems.widthRef) {
+
+        newParameteres.forWidthRef = {
+            left: subjectPos.x - parentPos.x + subjectPos.width,
+            top: subjectPos.y - parentPos.y,
+        };
+
+        if (toEffect.all || toEffect.width) {
+            setLeftTop(newParameteres.forWidthRef.left, newParameteres.forWidthRef.top, theElems.widthRef);
+            theElems.widthRef.current.style.height = subjectPos.height + "px";
+        }
+
     }
 
-    newParameteres.forDotRef = {
-        left: subjectPos.x - parentPos.x + subjectPos.width,
-        top: subjectPos.y - parentPos.y + subjectPos.height
-    };
+    if (theElems.heightRef) {
 
-    if (toEffect.all || toEffect.dot) {
-        setLeftTop(newParameteres.forDotRef.left, newParameteres.forDotRef.top, dotRef);
+        //Work for height Ref
+        newParameteres.forHeightRef = {
+            left: subjectPos.x - parentPos.x,
+            top: subjectPos.y - parentPos.y + subjectPos.height,
+        };
+
+        if (toEffect.all || toEffect.height) {
+            setLeftTop(newParameteres.forHeightRef.left, newParameteres.forHeightRef.top, theElems.heightRef);
+            theElems.heightRef.current.style.width = subjectPos.width + "px";
+        }
+
+
+
     }
 
-    newParameteres.forMoveRef = {
-        left: subjectPos.x - parentPos.x + subjectPos.width / 2,
-        top: subjectPos.y - parentPos.y + subjectPos.height + 10
+    if (theElems.dotRef) {
+
+        //Dot ref work
+        newParameteres.forDotRef = {
+            left: subjectPos.x - parentPos.x + subjectPos.width,
+            top: subjectPos.y - parentPos.y + subjectPos.height,
+        };
+
+        if (toEffect.all || toEffect.dot) {
+            setLeftTop(newParameteres.forDotRef.left, newParameteres.forDotRef.top, theElems.dotRef);
+        }
+
     }
-    if (toEffect.all || toEffect.move) {
-        setLeftTop(newParameteres.forMoveRef.left, newParameteres.forMoveRef.top, moveRef);
+
+    if (theElems.moveRef) {
+
+        //For move Ref
+        newParameteres.forMoveRef = {
+            left: subjectPos.x - parentPos.x + subjectPos.width / 2,
+            top: subjectPos.y - parentPos.y + subjectPos.height + 10,
+        };
+
+        if (toEffect.all || toEffect.move) {
+            setLeftTop(newParameteres.forMoveRef.left, newParameteres.forMoveRef.top, theElems.moveRef);
+
+        }
+    }
+
+    if (theElems.rightMiniRef) {
+        //For rightMiniREf
+
+        /* 
+        (subjectPos.x + subjectPos.width / 2) + (rightMiniPos.width / 2)
+        */
+
+        newParameteres.forRightMini = {
+            left: (subjectPos.x - parentPos.x + subjectPos.width / 2) - (rightMiniPos.width / 2),
+            top: subjectPos.y - parentPos.y - rightMiniPos.height
+        }
+
+        setLeftTop(newParameteres.forRightMini.left, newParameteres.forRightMini.top, theElems.rightMiniRef);
+
+
     }
 }
 
+
+/* 
+
+function setSelectorBodyToSubject(
+    theElems = { widthRef: null, heightRef: null, dotRef: null, moveRef: null, subjectRef: null, parentRef: null, rightMiniRef: null },
+    toEffect = { all: true, width: null, height: null, dot: null, move: null }
+) {
+    if (!theElems.parentRef && !theElems.subjectRef)
+        throw new Error(' Please provide valid required parameters to the functions');
+
+    const parentPos = bindedToUseInThisModule.boundingDataRespectToZoom(theElems.parentRef);
+    const subjectPos = bindedToUseInThisModule.boundingDataRespectToZoom(theElems.subjectRef.current.svgRef);
+    const newParameteres = {};
+
+
+    //Work for width Ref
+    if (theElems.widthRef) {
+
+        newParameteres.forWidthRef = {
+            left: subjectPos.x - parentPos.x + subjectPos.width,
+            top: subjectPos.y - parentPos.y,
+        };
+
+        if (toEffect.all || toEffect.width) {
+            setLeftTop(newParameteres.forWidthRef.left, newParameteres.forWidthRef.top, theElems.widthRef);
+            theElems.widthRef.current.style.height = subjectPos.height + "px";
+        }
+
+    }
+
+    if (theElems.heightRef) {
+
+        //Work for height Ref
+        newParameteres.forHeightRef = {
+            left: subjectPos.x - parentPos.x,
+            top: subjectPos.y - parentPos.y + subjectPos.height,
+        };
+        if (toEffect.all || toEffect.height) {
+            setLeftTop(newParameteres.forHeightRef.left, newParameteres.forHeightRef.top, theElems.heightRef);
+            theElems.heightRef.current.style.width = subjectPos.width + "px";
+        }
+
+    }
+
+    if (theElems.dotRef) {
+
+        //Dot ref work
+        newParameteres.forDotRef = {
+            left: subjectPos.x - parentPos.x + subjectPos.width,
+            top: subjectPos.y - parentPos.y + subjectPos.height,
+        };
+
+        if (toEffect.all || toEffect.dot) {
+            setLeftTop(newParameteres.forDotRef.left, newParameteres.forDotRef.top, theElems.dotRef);
+        }
+
+    }
+
+    if (theElems.moveRef) {
+
+        //For move Ref
+        newParameteres.forMoveRef = {
+            left: subjectPos.x - parentPos.x + subjectPos.width / 2,
+            top: subjectPos.y - parentPos.y + subjectPos.height + 10,
+        };
+
+        if (toEffect.all || toEffect.move) {
+            setLeftTop(newParameteres.forMoveRef.left, newParameteres.forMoveRef.top, theElems.moveRef);
+        }
+    }
+
+    if (theElems.rightMiniRef) {
+        //For rightMiniREf
+
+
+    }
+}
+
+*/
 function unsetSelectorBodyToSubject(widthRef, heightRef, dotRef, moveRef) {
 
     const removeCoord = -10

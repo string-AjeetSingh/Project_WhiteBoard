@@ -1,35 +1,45 @@
-import { KeyFrameTry } from "./subComponents";
 import { useRef, useEffect, useState } from "react";
 import "../../cssAnimations/rough.css";
-import { DarkModeToogle } from "../navBar/navBar.darkModeButton";
-import { SubPanelContent } from "../mainContainer/mainContainer.leftSpace.subPanelContents";
-import { addEvent, removeEvent } from "../../utilities/addRemoveEvent";
-
-import ParticleCanvas from "../particleCanvas/particles2";
-import SpecialButton from "../SpecialButtons/specialButtons";
+import ScrollBar from "../scrollBar/scrollBar";
 
 
 
+function Box({ left, top }) {
+    return (
+        <>
+            <div
+                style={{
+                    left: left + 'px',
+                    top: top + 'px'
+                }}
+                className="absolute size-20 bg-blue-500 rounded-b-md">
+
+            </div>
+        </>
+    );
+}
 
 
 
 function Rough({ }) {
-
+    const innerDiv = useRef(null);
+    const parentDiv = useRef(null);
     return (
         <>
+            <div ref={parentDiv} className=" relative
+              p-2 m-10 bg-amber-700 rounded-lg  h-[500px] overflow-hidden">
+                <div ref={innerDiv} style={{
+                    transform: 'translateX(50px)'
+                }}
+                    className="relative w-full h-full">
 
-            {/*<KeyFrameTry />  */}
-
-
-            <div className="relative">
-                {/*<ParticleCanvas /><br />  */}
-
-                <ParticleCanvas /><br />
-                <div className="flex flex-row absolute top-0 left-0 justify-center items-center w-screen  h-screen border-2 z-10 ">
-
-                    <SpecialButton theName={'Login'} />
-                    <SpecialButton theName={'Guest'} />
+                    <Box left={20} top={20} />
+                    <Box left={200} top={200} />
+                    <Box left={600} top={600} />
+                    <Box left={-90} top={0} />
+                    <Box left={-90} top={400} />
                 </div>
+                <ScrollBar parentDiv={parentDiv} innerDiv={innerDiv} />
             </div>
         </>
     );
