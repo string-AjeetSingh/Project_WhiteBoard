@@ -7,17 +7,33 @@ function useMouseMovement(prevScale, baseScale = 100) {
     const positionRef = useRef({ x: null, y: null });
     const normalizeScale = useRef(null);
 
-    normalizeScale.current = prevScale.current / baseScale;
+    calculateNormalizeScale();
+
+    function calculateNormalizeScale() {
+        if (prevScale)
+            normalizeScale.current = prevScale.current / baseScale;
+    }
 
     function handleMouseMovement(e) {
-        normalizeScale.current = prevScale.current / baseScale;
+        calculateNormalizeScale();
 
+        if (normalizeScale.current) {
+            const scaleNormalize = normalizeScale.current;
+            setPosition({ x: e.clientX, y: e.clientY });
+            positionRef.current = { x: e.clientX / scaleNormalize, y: e.clientY / scaleNormalize };
 
-        const scaleNormalize = prevScale.current / baseScale;
-        setPosition({ x: e.clientX, y: e.clientY });
-        positionRef.current = { x: e.clientX / scaleNormalize, y: e.clientY / scaleNormalize };
+        } else {
+            setPosition({ x: e.clientX, y: e.clientY });
+            positionRef.current = { x: e.clientX, y: e.clientY };
+        }
+
 
     }
+
+    useEffect(() => {
+        if (!prevScale)
+            console.warn("No prevScale Ref to the useMouseMovement hook, Unable to calculate the normalizedScale");
+    }, [prevScale])
 
     useEffect(() => {
         window.addEventListener('mousemove', handleMouseMovement)
@@ -26,6 +42,8 @@ function useMouseMovement(prevScale, baseScale = 100) {
 
         })
     }, [])
+
+
 
     return [position, positionRef, normalizeScale];
 }

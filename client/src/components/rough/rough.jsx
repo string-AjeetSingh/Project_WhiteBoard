@@ -4,6 +4,7 @@ import ScrollBar from "../scrollBar/scrollBar";
 
 
 
+
 function Box({ left, top }) {
     return (
         <>
@@ -24,22 +25,32 @@ function Box({ left, top }) {
 function Rough({ }) {
     const innerDiv = useRef(null);
     const parentDiv = useRef(null);
+    const [parentDimention, setPDimention] = useState({
+        width: 400,
+        height: 500
+    })
+    const [childDimention, setCDimention] = useState({
+        width: 1000,
+        height: 2000,
+        scaled: 1.10,
+    })
     return (
         <>
-            <div ref={parentDiv} className=" relative
-              p-2 m-10 bg-amber-700 rounded-lg  h-[500px] overflow-hidden">
-                <div ref={innerDiv} style={{
-                    transform: 'translateX(50px)'
-                }}
-                    className="relative w-full h-full">
-
-                    <Box left={20} top={20} />
-                    <Box left={200} top={200} />
-                    <Box left={600} top={600} />
-                    <Box left={-90} top={0} />
-                    <Box left={-90} top={400} />
+            <div ref={parentDiv} style={{
+                width: parentDimention.width + 'px',
+                height: parentDimention.height + 'px'
+            }}
+                className="relative m-10 overflow-hidden bg-amber-800 ">
+                <div
+                    style={{ transform: `scale(${childDimention.scaled})` }}
+                    ref={innerDiv} className="absolute size-[800px] bg-amber-300">
+                    <Box left={10} top={10} />
+                    <Box left={5} top={50} />
+                    <Box left={200} top={400} />
+                    <Box left={500} top={500} />
                 </div>
-                <ScrollBar parentDiv={parentDiv} innerDiv={innerDiv} />
+                <ScrollBar viewHeight={parentDimention.height} viewWidth={parentDimention.width}
+                    parentRef={parentDiv} childRef={innerDiv} childScaled={childDimention.scaled} />
             </div>
         </>
     );
